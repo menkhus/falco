@@ -24,7 +24,8 @@ class packageList():
         self.packageFile = packageFile
         self.packageList = []
     def getList (self):
-        """ get the data from the file and return a list
+        """ getList is a generator, it gets the data from the file 
+            and yields the data as needed
         """
         import re
         try:
@@ -39,7 +40,7 @@ class packageList():
                 each = each.strip('\n')
                 if each != '':
                     self.packageList.append(each)
-        return (self.packageList)
+                    yield each
 
 def package_check(package=''):
     """ Check a package string for existence in the nvd cpe data
