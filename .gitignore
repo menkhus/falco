@@ -1,0 +1,6 @@
+software_inventory_check.log
+software_inventory_check_needs_versions.txt
+test_query.sql
+vfeed.db
+vfeed_products.py
+vfeed_scratchpad.ipynb
