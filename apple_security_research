@@ -1,0 +1,746 @@
+In loking at the open source used in OSX Maverics, I noted that versions were included.  I 
+wrote a program to compare the program and versions listed with known vulnerabilities in the
+CVE database. 
+
+The list of open source can be found fomr apple, here: https://www.apple.com/opensource/
+
+This list, as I looked at it on July 7, 2014 is as follows:
+Component	Project		Version	Used in
+---------	-------		-------	-------
+AddressBook-Metakit	Metakit	2.4.9.2	Mac OS X, Xcode Tools
+AirPortFamily	wpa_supplicant	0.3.9	Mac OS X
+AKCmds	LibTIFF	3.8.2	Mac OS X, Xcode Tools
+amavisd	amavisd	amavisd-new-2.6.5	Mac OS X, Server
+apache	apache	2.2.19	Mac OS X, Xcode Tools
+apache_mod_bw	apache_mod_bw	0.8	Server
+apache_mod_encoding2	apache_mod_encoding2	20021209	Server
+apache_mod_jk	apache_mod_jk	1.2.30	Server
+apache_mod_perl	mod_perl	2.0.5	Mac OS X, Xcode Tools
+apache_mod_php	php	5.3.6	Mac OS X, Server, Xcode Tools
+" "	FreeType 2	2.4.4	-
+" "	libjpeg	8c	-
+" "	libpng	1.5.2	-
+" "	suhosin	0.9.10	-
+" "	xdebug	2.1.1	-
+apache_mod_python	apache_mod_python	3.3.1	Server
+apache_mod_scgi_pubsub	apache_mod_scgi_pubsub	1.11-pubsub	Mac OS X
+apache_mod_xsendfile	apache_mod_xsendfile	0.9	Server
+AppleShareClientLib	openssl	0.9.1c	Mac OS X, Xcode Tools
+apr	apr	1.4.2	Mac OS X, Xcode Tools
+" "	apr-util	1.3.10	-
+autoconf	autoconf	2.61	Xcode Tools
+autofs	autofs	N/A	Mac OS X
+automake	automake	1.10	Xcode Tools
+awk	awk	October 23, 2007	Mac OS X
+bash	bash	3.2	Mac OS X
+bc	bc	1.06	Mac OS X
+BerkeleyDB	BerkeleyDB	4.7.25	Mac OS X, Server
+bind9	bind9	9.7.3	Mac OS X
+bison	bison	2.3	Xcode Tools
+bsdiff	bsdiff	4.3	Mac OS X
+bsdmake	bsdmake	2006-04-12	Xcode Tools
+" "	bsdmake-mk	2005-10-18	-
+bzip2	bzip2	1.0.6	Mac OS X, Xcode Tools
+cctools	gas	1.38.1	Mac OS X, Xcode Tools
+ChatServer	jabberd2	2.2.13	Server
+" "	libidn	0.6.14	-
+" "	udns	0.0.9	-
+" "	Proxy65	1.2.0	-
+Chess	sjeng	11.2	Mac OS X
+clamav	clamav	0.97	Server
+CommonCrypto	openssl	openssl-0.9.6	Mac OS X, Xcode Tools
+" "	Gladman AES	aes-src-26-08-05	-
+" "	Gladman SHA2	sha-26-08-05	-
+" "	libTomCrypt	1.17	-
+CoreCollaboration	abstract	1.0.0	Server
+" "	actionmailer	3.0.0.beta2	-
+" "	actionpack	3.0.0.beta2	-
+" "	activemodel	3.0.0.beta2	-
+" "	activerecord	3.0.0.beta2	-
+" "	activeresource	3.0.0.beta2	-
+" "	activesupport	3.0.0.beta2	-
+" "	arel	0.3.3	-
+" "	builder	2.1.2	-
+" "	bundler	0.9.23	-
+" "	erubis	2.6.5	-
+" "	i18n	0.3.7	-
+" "	json_pure	1.2.0	-
+" "	libxml-ruby	1.1.3	-
+" "	mail	2.1.5.3	-
+" "	memcache-client	1.8.2	-
+" "	mime-types	1.16	-
+" "	msgpack	0.3.9apple	-
+" "	patron	0.4.5	-
+" "	polyglot	0.3.1	-
+" "	rack	1.1.0	-
+" "	rack-mount	0.6.3	-
+" "	rack-test	0.5.3	-
+" "	rails	3.0.0.beta2	-
+" "	railties	3.0.0.beta2	-
+" "	rake	0.8.7	-
+" "	sprockets	1.0.2	-
+" "	sqlite3-ruby	1.2.5	-
+" "	text-format	1.0.0	-
+" "	text-hyphen	1.0.0	-
+" "	thor	0.13.4	-
+" "	treetop	1.4.5	-
+" "	tzinfo	0.3.20	-
+" "	lxml	2.2.8	-
+CPAN	Algorithm-Annotate	0.10	Mac OS X, Xcode Tools
+" "	Algorithm-C3	0.08	-
+" "	Algorithm-Diff	1.1902	-
+" "	App-CLI	0.08	-
+" "	App-CLI	0.313	-
+" "	Archive-Zip	1.30	-
+" "	Authen-SASL	2.14	-
+" "	Authen-SASL	2.15	-
+" "	BerkeleyDB	0.42	-
+" "	BerkeleyDB	0.43	-
+" "	Bit-Vector	7.1	-
+" "	Carp-Clan	6.04	-
+" "	Class-Accessor	0.34	-
+" "	Class-Autouse	1.29	-
+" "	Class-C3	0.22	-
+" "	Class-C3	0.23	-
+" "	Class-Data-Inheritable	0.08	-
+" "	Class-MOP	1.00	-
+" "	Class-MOP	1.11	-
+" "	Compress-Bzip2	2.09	-
+" "	Convert-ASN1	0.22	-
+" "	Convert-BinHex	1.119	-
+" "	Convert-TNEF	0.17	-
+" "	Convert-UUlib	1.33	-
+" "	Crypt-OpenSSL-RSA	0.26	-
+" "	Crypt-OpenSSL-Random	0.04	-
+" "	DBD-SQLite	1.29	-
+" "	DBD-SQLite	1.31	-
+" "	DBI	1.609	-
+" "	DBI	1.615	-
+" "	Data-Hierarchy	0.34	-
+" "	Data-OptList	0.106	-
+" "	Date-Calc	6.3	-
+" "	Devel-GlobalDestruction	0.02	-
+" "	Devel-GlobalDestruction	0.03	-
+" "	Digest-CRC	0.14	-
+" "	Digest-CRC	0.16	-
+" "	Digest-HMAC	1.02	-
+" "	Digest-SHA1	2.12	-
+" "	Digest-SHA1	2.13	-
+" "	Dist-CheckConflicts	0.02	-
+" "	Encode-Detect	1.01	-
+" "	Error	0.17016	-
+" "	Expect	1.21	-
+" "	File-Slurp	9999.13	-
+" "	File-chdir	0.1002	-
+" "	File-chdir	0.1004	-
+" "	Font-AFM	1.20	-
+" "	FreezeThaw	0.50	-
+" "	FreezeThaw	0.5001	-
+" "	GSSAPI	0.26	-
+" "	GSSAPI	0.28	-
+" "	Geography-Countries	2009041301	-
+" "	HTML-Format	2.04	-
+" "	HTML-Parser	3.64	-
+" "	HTML-Parser	3.68	-
+" "	HTML-Tagset	3.20	-
+" "	HTML-Tree	3.23	-
+" "	HTML-Tree	4.1	-
+" "	IO-Digest	0.10	-
+" "	IO-Pager	0.06	-
+" "	IO-Socket-INET6	2.57	-
+" "	IO-Socket-INET6	2.65	-
+" "	IO-Socket-SSL	1.35	-
+" "	IO-String	1.08	-
+" "	IO-Stty	.02	-
+" "	IO-Stty	0.03	-
+" "	IO-Tty	1.08	-
+" "	IO-Tty	1.10	-
+" "	IO-stringy	2.110	-
+" "	IP-Country	2.27	-
+" "	Inline	0.46	-
+" "	Inline-Python	0.38	-
+" "	Inline-Struct	0.06	-
+" "	Inline-Wrapper	0.05	-
+" "	Internals	1.1	-
+" "	List-MoreUtils	0.22	-
+" "	List-MoreUtils	0.26	-
+" "	Locale-Maketext-Lexicon	0.79	-
+" "	Locale-Maketext-Lexicon	0.82	-
+" "	MIME-tools	5.427	-
+" "	MIME-tools	5.428	-
+" "	MLDBM	2.04	-
+" "	MRO-Compat	0.11	-
+" "	Mac-AppleEvents-Simple	1.18	-
+" "	Mac-Apps-Launch	1.93	-
+" "	Mac-Carbon	0.82	-
+" "	Mac-Errors	1.14	-
+" "	Mac-Glue	1.30	-
+" "	Mac-OSA-Simple	1.09	-
+" "	Mail-DKIM	0.38	-
+" "	Mail-DKIM	0.39	-
+" "	Mail-SPF-Query	1.999.1	-
+" "	Mail-SPF	v2.007	-
+" "	MailTools	2.06	-
+" "	MailTools	2.07	-
+" "	Moose	1.01	-
+" "	Moose	1.21	-
+" "	Net-CIDR-Lite	0.20	-
+" "	Net-CIDR-Lite	0.21	-
+" "	Net-DNS	0.66	-
+" "	Net-DNS-Resolver-Programmable	v0.003	-
+" "	Net-IP	1.25	-
+" "	Net-SSLeay	1.36	-
+" "	Net-Server	0.97	-
+" "	Net-Server	0.99	-
+" "	NetAddr-IP	4.028	-
+" "	NetAddr-IP	4.037	-
+" "	Package-DeprecationManager	0.10	-
+" "	Package-Stash	0.29	-
+" "	Package-Stash-XS	0.22	-
+" "	Params-Util	1.00	-
+" "	Params-Util	1.03	-
+" "	Parse-RecDescent	1.965001	-
+" "	Path-Class	0.18	-
+" "	Path-Class	0.21	-
+" "	PerlIO-eol	0.14	-
+" "	PerlIO-gzip	0.18	-
+" "	PerlIO-via-Bzip2	0.02	-
+" "	PerlIO-via-dynamic	0.13	-
+" "	PerlIO-via-symlink	0.05	-
+" "	Pod-Readme	0.09	-
+" "	Pod-Readme	0.10	-
+" "	Proc-Reliable	1.16	-
+" "	Regexp-Common	2010010201	-
+" "	Scope-Guard	0.12	-
+" "	Scope-Guard	0.20	-
+" "	Socket6	0.23	-
+" "	Sub-Exporter	0.982	-
+" "	Sub-Install	0.925	-
+" "	Sub-Name	0.04	-
+" "	Sub-Name	0.05	-
+" "	Sub-Uplevel	0.22	-
+" "	Sys-Hostname-Long	1.4	-
+" "	Task-Weaken	1.03	-
+" "	TermReadKey	2.30	-
+" "	Test-Exception	0.29	-
+" "	Test-Exception	0.31	-
+" "	Test-Fatal	0.005	-
+" "	Test-Pod	1.42	-
+" "	Test-Pod	1.44	-
+" "	Test-Requires	0.06	-
+" "	Text-Balanced	2.02	-
+" "	Time-Epoch	0.02	-
+" "	Time-Progress	1.5	-
+" "	Time-Progress	1.7	-
+" "	TimeDate	1.20	-
+" "	Try-Tiny	0.04	-
+" "	Try-Tiny	0.09	-
+" "	UNIVERSAL-require	0.13	-
+" "	URI	1.53	-
+" "	URI	1.56	-
+" "	Unix-Syslog	1.1	-
+" "	XML-LibXML	1.70	-
+" "	XML-LibXSLT	1.70	-
+" "	XML-NamespaceSupport	1.10	-
+" "	XML-NamespaceSupport	1.11	-
+" "	XML-Parser	2.36	-
+" "	XML-Parser	2.40	-
+" "	XML-SAX	0.96	-
+" "	XML-Simple	2.18	-
+" "	XML-Writer	0.606	-
+" "	XML-Writer	0.612	-
+" "	XML-XPath	1.13	-
+" "	YAML-Syck	1.07	-
+" "	YAML-Syck	1.17	-
+" "	libwww-perl	5.837	-
+" "	perl-ldap	0.40	-
+" "	perl-ldap	0.4001	-
+CRFSuite	CRFSuite	0.11	Mac OS X
+cron	cron	2007-02-15	Mac OS X
+cups	CUPS	1.5.0 (r9834)	Mac OS X, Printing
+curl	curl	7.21.4	Mac OS X, Xcode Tools
+cvs	cvs	1.12.13	Xcode Tools
+cxxfilt	binutils	070207	Mac OS X
+CyrusIMAP	Cyrus IMAP Server	cyrus_imap_2.3.8	Server
+DataDetectorsCore	OpenFST	1.2.4	Mac OS X
+" "	International Components for Unicode	3.6	-
+distcc	distcc	3.1	Mac OS X, Xcode Tools
+doc_cmds	checknr	2004-09-18	Mac OS X
+" "	colcrt	2004-09-18	-
+" "	getNAME	2004-09-18	-
+" "	makewhatis	2004-09-18	-
+dovecot	dovecot	Released v2.0.13	Server
+" "	dovecot-pigeonhole	Released v0.2.3	-
+DSPasswordServerFramework	OpenSSH	3.8.1p1	Mac OS X
+dtrace	dtrace	on-src-20060828	Mac OS X, Xcode Tools
+efax	efax	0.9a-001114	Mac OS X
+emacs	Emacs	22.1	Mac OS X
+enscript	enscript	1.6.4	Mac OS X
+expat	expat	2.0.1	Mac OS X, Xcode Tools
+FaceCoreLight	libsvm	2.88	Mac OS X
+fetchmail	fetchmail	6.3.18	Mac OS X
+file	file	5.04	Mac OS X
+FileSync	lookup3	n/a	Mac OS X, Xcode Tools
+flex	flex	2.5.35	Xcode Tools
+Fonts	stixfonts	1.0.0	Mac OS X
+gdb	gdb	6.3.50-20050815	Xcode Tools
+giflib	giflib	giflib-4.1.6	Mac OS X, Xcode Tools
+Git	git	1.7.4.4	Xcode Tools
+" "	git-htmldocs	1.7.4.4	-
+" "	git-manpages	1.7.4.4	-
+glibtool	glibtool	2.2.10	Mac OS X, Xcode Tools
+gm4	m4	1.4.6	Xcode Tools
+gnudiff	diffutils	2.8.1	Mac OS X
+gnumake	make	3.81	Xcode Tools
+gnuserv	gnuserv	3.12.4	Mac OS X
+gnutar	tar	1.17	Mac OS X
+gnuzip	gzip	1.3.12	Mac OS X
+GoogleContactSync	GData	1.6.0	Mac OS X
+gpatch	patch	2.5.8	Mac OS X
+gperf	gperf	3.0.3	Xcode Tools
+gpt	gpt	RELENG_7_3_0_RELEASE	Mac OS X
+grep	grep	2.5.1	Mac OS X
+groff	groff	1.19.2	Mac OS X
+Heimdal	Heimdal	1.2.99pre7	Mac OS X, Xcode Tools
+hunspell	hunspell	1.2.8	Mac OS X
+" "	sjp.pl	20080831	-
+ICU	International Components for Unicode	4.6.1	Mac OS X
+InternetServicesSupport	expat	1.95.5	Mac OS X
+iodbc	iodbc	3.52.6	Mac OS X, Xcode Tools
+ipsec	racoon	Original version number unavailable, but later based on 0.6.7	Mac OS X, Xcode Tools
+" "	libipsec	Original version number unavailable, but later based on 0.6.5	-
+" "	setkey	Original version number unavailable, but later based on 0.6.5	-
+" "	racoonctl	Original version number unavailable, but later based on 0.6.5	-
+JavaTools	Ant	1.8.2	Mac OS X, Xcode Tools
+" "	JUnit	4.8.2	-
+" "	Maven	3.0.3	-
+" "	Derby	10.8.1.2	-
+KFonts	Nanum	Version 3.010;PS 1;hotconv 1.0.56;makeotf.lib2.0.21325	Mac OS X
+ksh	ksh	2007-11-05	Mac OS X
+" "	ksh	2007-11-05	-
+less	less	418	Mac OS X
+libarchive	libarchive	2.8.3	Mac OS X
+Libcpp_kext	GCC	4.2.1	Xcode Tools
+libcppabi	gcc	4.2.1	Mac OS X, Xcode Tools
+libedit	libedit	3.0	Mac OS X, Xcode Tools
+libiconv	libiconv	1.11	Mac OS X, Xcode Tools
+libJP2	libJP2	libJP2-5.1	Mac OS X, Xcode Tools
+libjpeg	libjpeg	libjpeg-6b	Mac OS X, Xcode Tools
+libOpenEXR		libOpenEXR-1.7.0	Mac OS X, Xcode Tools
+libpcap	libpcap	1.0.0	Mac OS X, Xcode Tools
+libpng	libpng	libpng-1.4.3	Mac OS X, Xcode Tools
+libradiance		libRadiance	Mac OS X, Xcode Tools
+libstdcxx	gcc	4.2.1	Mac OS X, Xcode Tools
+libsubversion	subversion	1.6.16	Mac OS X, Xcode Tools
+libtiff	libtiff	libTIFF-3.9.4	Mac OS X, Xcode Tools
+libutil	libutil	2005-02-13	Mac OS X
+" "	libutil	1.3	-
+libxml2	libxml2	2.7.3	Mac OS X, Xcode Tools
+libxslt	libxslt	1.1.24	Mac OS X, Xcode Tools
+lsof	lsof	4.84	Mac OS X
+lukemftp	lukemftp	20070806	Mac OS X
+lukemftpd	tnftpd	20100324	Mac OS X
+mailman	mailman	mailman 2.1.14	Server
+man	man	1.6c	Mac OS X
+MeCab	MeCab	0.95	Mac OS X, Xcode Tools
+memcached	memcached	1.4.5	Mac OS X, Xcode Tools
+MITKerberosShim	MITKerberosShim	1.0	Mac OS X, Xcode Tools
+mtest	mtest		Mac OS X
+nano	nano	2.0.6	Mac OS X
+nasm	nasm	0.98.40	Xcode Tools
+ncurses	ncurses	5.5	Mac OS X, Xcode Tools
+neon	neon	0.29.0	Mac OS X
+net_snmp	net-snmp	5.6	Mac OS X, Xcode Tools
+netcat	nc	HEAD	Mac OS X
+NotificationServer	idavoll	0.9.1	Mac OS X
+" "	wokkel	0.6.3	-
+ntp	ntp	4.2.6	Mac OS X
+OpenAL	OpenAL	1.1	Mac OS X, Xcode Tools
+OpenBSM	openbsm	1.1p2	Mac OS X, Xcode Tools
+OpenLDAP	OpenLDAP	2.4.23	Mac OS X, Xcode Tools
+OpenPAM	OpenPAM	20071221	Mac OS X, Xcode Tools
+OpenSSH	OpenSSH	5.6p1	Mac OS X
+OpenSSL097	OpenSSL	0.9.7l	Mac OS X
+OpenSSL098	OpenSSL	0.9.8r	Mac OS X, Xcode Tools
+passwordserver_sasl	passwordserver_sasl	2.1.22	Mac OS X, Xcode Tools
+patch_cmds	diffstat	1.51	Mac OS X
+" "	patch	2009-10-27	-
+pcre	pcre	8.02	Mac OS X
+perl	perl	5.10.1	Mac OS X, Xcode Tools
+" "	perl	5.12.2	-
+PodcastLibrary	Sinatra	1.0	Mac OS X
+" "	Builder	2.1.2	-
+" "	sqlite3-ruby	1.3.0	-
+PodcastProducerServer	rails	2.3.5	Server
+postfix	Postfix	postfix-2.8.3	Mac OS X, Server
+PostgreSQL	PostgreSQL	9.0.4	Mac OS X, Server, Xcode Tools
+procmail	procmail	3.22	Mac OS X
+pyobjc	pyobjc	2.3.2a0	Mac OS X, Xcode Tools
+" "	pyobjc	trunk-20090623	-
+pyOpenSSL	pyOpenSSL	0.12	Mac OS X
+PyRSS2Gen	PyRSS2Gen	1.0.0	Mac OS X
+python	python	2.5.5	Mac OS X, Xcode Tools
+" "	python	2.6.6	-
+" "	python	2.7.1	-
+python_dateutil	python_dateutil	1.5	Mac OS X
+python_modules	altgraph	0.6.8	Mac OS X, Xcode Tools
+" "	altgraph	0.7.1	-
+" "	bdist_mpkg	0.4.3	-
+" "	bdist_mpkg	0.4.4	-
+" "	bonjour-py	0.3	-
+" "	macholib	1.2.1.dev-r432	-
+" "	macholib	1.3.0	-
+" "	modulegraph	0.7.2.dev-r439	-
+" "	modulegraph	0.8.1	-
+" "	numpy	1.2.1	-
+" "	numpy	1.5.1	-
+" "	py2app	0.4.2	-
+" "	py2app	0.5.2	-
+" "	setuptools	0.6c12dev-r8538	-
+" "	setuptools	0.6c9	-
+" "	xattr	0.5	-
+" "	xattr	0.6.1	-
+Quartz2D	LibTIFF	3.8.2	Mac OS X, Xcode Tools
+QuartzComposer	libOSC	0.3	Mac OS X, Xcode Tools
+rcs	rcs	5.7	Xcode Tools
+RemoteDesktop	keysymdef.h	1.4	Mac OS X
+" "	Brian Gladman's Rijndael Implementation	1.0	-
+" "	AGRegex	SVN rev 4649	-
+" "	VNC Reflector	1.2.4	-
+" "	MAPKIT	1.4	-
+" "	PCRE	6.7	-
+" "	JPEG Library	6b	-
+RemoteDeviceManagement	has_many_polymorphs	2.13	Mac OS X, Server
+" "	HttpAcceptLanguage	1.0.1	-
+" "	json	1.5.1	-
+" "	macaddr	1.0.0	-
+" "	Plist	3.1.0	-
+" "	rack	1.1.0	-
+" "	rails	2.3.5	-
+" "	SproutCore	2.3.5	-
+" "	uuid	2.3.1	-
+removefile	srm	1.2.8	Mac OS X, Xcode Tools
+rsync	rsync	2.6.9	Mac OS X
+ruby	ruby	1.8.7-p249	Mac OS X, Xcode Tools
+RubyCocoa	RubyCocoa	trunk	Mac OS X, Xcode Tools
+RubyGems	RubyGems	1.3.6	Mac OS X
+Sandbox	TinyScheme	1.38	Mac OS X
+SceneKit	colladaDOM	2.2	Mac OS X
+" "	PCRECPP	8.0	-
+screen	screen	4.0.3	Mac OS X
+ScreenSharing	keysymdef.h	1.4	Mac OS X
+" "	Brian Gladman's Rijndael Implementation	1.0	-
+" "	VNC Reflector	1.2.4	-
+" "	JPEG Library	6b	-
+ServerEventMonitor	femail	0.97	Mac OS X
+SmartcardCCID	ccid	1.3.11	Mac OS X
+" "	libusb	0.1.13b	-
+smb	smbfs	1.3.6	Mac OS X
+SpamAssassin	SpamAssassin	3.3.2-r929478	Server, Xcode Tools
+Spotlight	SQLite	3.1.3	Mac OS X, Xcode Tools
+SQLite	SQLite	3.6.22	Mac OS X, Xcode Tools
+srm	srm	1.2.8	Mac OS X
+subversion	subversion	1.6.16	Mac OS X
+sudo	sudo	1.7.4p6	Mac OS X
+tcl	tcl	8.5.9	Mac OS X, Xcode Tools
+" "	tk	8.5.9	-
+" "	tcl84	8.4.19	-
+" "	tk84	8.4.19	-
+" "	bwidget	1.9.1	-
+" "	expect	5.45	-
+" "	ffidl	0.6.1	-
+" "	incrtcl	3.4	-
+" "	iwidgets	4.0.2	-
+" "	memchan	2.2.1	-
+" "	mk4tcl	2.4.9.7	-
+" "	tbcload	1.7	-
+" "	tcllib	1.12	-
+" "	tclsoap	1.6.8.1	-
+" "	tclvfs	1.4.1	-
+" "	tclx	8.4	-
+" "	tclxml	2.6	-
+" "	tcldom	2.6	-
+" "	tclxslt	2.6	-
+" "	tdom	0.8.3	-
+" "	thread	2.6.6	-
+" "	tkcon	2.6	-
+" "	tkimg	1.4	-
+" "	tklib	0.5	-
+" "	tktable	2.10	-
+" "	tktreectrl	2.2.10	-
+" "	tls	1.6.1	-
+" "	trf	2.1.4	-
+" "	xotcl	1.6.6	-
+" "	quicktimetcl	3.2	-
+" "	snack	2.2.10	-
+" "	tclresource	1.1.2	-
+" "	tclae	2.0.5	-
+" "	tclapplescript	1.0	-
+" "	sdx	2.0	-
+tcp_wrappers	tcp_wrappers	7.6-ipv6.4	Mac OS X, Xcode Tools
+tcpdump	tcpdump	4.0.0	Mac OS X
+tcsh	tcsh	6.15.00	Mac OS X
+texi2html	texi2html	1.70	Mac OS X
+texinfo	texinfo	4.8	Mac OS X
+text_cmds	banner	2005-09-16	Mac OS X
+" "	cat	2005-09-16	-
+" "	cksum	2005-09-16	-
+" "	col	2005-09-16	-
+" "	colrm	2005-09-16	-
+" "	column	2006-09-19	-
+" "	comm	2005-09-16	-
+" "	csplit	2005-09-16	-
+" "	cut	2005-09-16	-
+" "	ed	2005-09-16	-
+" "	expand	2005-09-16	-
+" "	fmt	2005-09-16	-
+" "	fold	2005-09-16	-
+" "	head	2007-01-11	-
+" "	join	2005-09-16	-
+" "	lam	2005-09-16	-
+" "	look	2005-09-16	-
+" "	md5	2005-09-16	-
+" "	nl	2005-09-16	-
+" "	paste	2005-09-16	-
+" "	pr	2005-09-16	-
+" "	rev	2009-12-13	-
+" "	rs	2005-09-16	-
+" "	sed	2005-09-16	-
+" "	coreutils/sort	coreutils-5.93	-
+" "	split	2005-09-16	-
+" "	tail	2005-09-16	-
+" "	tr	2005-09-16	-
+" "	ul	2005-09-16	-
+" "	unexpand	2005-09-16	-
+" "	uniq	2005-09-16	-
+" "	unvis	2005-09-16	-
+" "	vis	2005-09-16	-
+" "	wc	2005-09-16	-
+tidy	tidy	2006.11.1	Mac OS X, Xcode Tools
+Tier3Fonts	PTSans	2.003	Mac OS X
+Twisted	Twisted	11.0.0	Mac OS X, Xcode Tools
+uucp	uucp	1.07	Mac OS X
+vim	vim	7.3	Mac OS X
+WebmailServer	roundcubemail	0.5.2	Server
+X11_quartz_wm	quartz-wm	1.1.0	X11
+X11apps	appres	1.0.3	X11
+" "	bdftopcf	1.0.3	-
+" "	bitmap	1.0.5	-
+" "	editres	1.0.5	-
+" "	fonttosfnt	1.0.4	-
+" "	fslsfonts	1.0.3	-
+" "	fstobdf	1.0.4	-
+" "	iceauth	1.0.5	-
+" "	ico	1.0.3	-
+" "	listres	1.0.2	-
+" "	luit	1.1.0	-
+" "	mesa-demos	8.0.1	-
+" "	mkfontdir	1.0.6	-
+" "	mkfontscale	1.0.8	-
+" "	oclock	1.0.2	-
+" "	rgb	1.0.4	-
+" "	sessreg	1.0.6	-
+" "	showfont	1.0.3	-
+" "	setxkbmap	1.2.0	-
+" "	smproxy	1.0.4	-
+" "	twm	1.0.6	-
+" "	viewres	1.0.3	-
+" "	x11perf	1.5.3	-
+" "	xauth	1.0.6	-
+" "	xbacklight	1.1.2	-
+" "	xbitmaps	1.1.1	-
+" "	xcalc	1.0.4.1	-
+" "	xclipboard	1.1.1	-
+" "	xclock	1.0.5	-
+" "	xcmsdb	1.0.3	-
+" "	xconsole	1.0.4	-
+" "	xcursorgen	1.0.4	-
+" "	xditview	1.0.2	-
+" "	xdm	1.1.10	-
+" "	xdpyinfo	1.2.0	-
+" "	xedit	1.2.0	-
+" "	xev	1.1.0	-
+" "	xeyes	1.1.1	-
+" "	xfd	1.1.0	-
+" "	xfontsel	1.0.3	-
+" "	xfs	1.1.1	-
+" "	xfsinfo	1.0.3	-
+" "	xgamma	1.0.4	-
+" "	xgc	1.0.3	-
+" "	xhost	1.0.4	-
+" "	xinput	1.5.3	-
+" "	xkbcomp	1.2.1	-
+" "	xkeyboard-config	2.0	-
+" "	xkbevd	1.1.2	-
+" "	xkbprint	1.0.3	-
+" "	xkbutils	1.0.3	-
+" "	xkill	1.0.3	-
+" "	xload	1.1.0	-
+" "	xlogo	1.0.3	-
+" "	xlsatoms	1.1.0	-
+" "	xlsclients	1.1.1	-
+" "	xlsfonts	1.0.3	-
+" "	xmag	1.0.4	-
+" "	xman	1.1.1	-
+" "	xmessage	1.0.3	-
+" "	xmh	1.0.2	-
+" "	xmodmap	1.0.5	-
+" "	xmore	1.0.2	-
+" "	xpr	1.0.3	-
+" "	xprop	1.2.0	-
+" "	xrandr	1.3.4	-
+" "	xrdb	1.0.9	-
+" "	xrefresh	1.0.4	-
+" "	xscope	1.3	-
+" "	xset	1.2.1	-
+" "	xsetmode	1.0.0	-
+" "	xsetpointer	1.0.1	-
+" "	xsetroot	1.1.0	-
+" "	xsm	1.0.2	-
+" "	xstdcmap	1.0.2	-
+" "	xterm	269	-
+" "	xtrap	1.0.2	-
+" "	xvinfo	1.1.1	-
+" "	xwd	1.0.4	-
+" "	xwininfo	1.1.1	-
+" "	xwud	1.0.3	-
+X11fonts	encodings	1.0.4	X11
+" "	font-adobe-100dpi	1.0.3	-
+" "	font-adobe-75dpi	1.0.3	-
+" "	font-adobe-utopia-100dpi	1.0.4	-
+" "	font-adobe-utopia-75dpi	1.0.4	-
+" "	font-adobe-utopia-type1	1.0.4	-
+" "	font-alias	1.0.4	-
+" "	font-arabic-misc	1.0.3	-
+" "	font-bh-100dpi	1.0.3	-
+" "	font-bh-75dpi	1.0.3	-
+" "	font-bh-lucidatypewriter-100dpi	1.0.3	-
+" "	font-bh-lucidatypewriter-75dpi	1.0.3	-
+" "	font-bh-ttf	1.0.3	-
+" "	font-bh-type1	1.0.3	-
+" "	font-bitstream-100dpi	1.0.3	-
+" "	font-bitstream-75dpi	1.0.3	-
+" "	font-bitstream-speedo	1.0.2	-
+" "	font-bitstream-type1	1.0.3	-
+" "	font-cronyx-cyrillic	1.0.3	-
+" "	font-cursor-misc	1.0.3	-
+" "	font-daewoo-misc	1.0.3	-
+" "	font-dec-misc	1.0.3	-
+" "	font-ibm-type1	1.0.3	-
+" "	font-isas-misc	1.0.3	-
+" "	font-jis-misc	1.0.3	-
+" "	font-micro-misc	1.0.3	-
+" "	font-misc-cyrillic	1.0.3	-
+" "	font-misc-ethiopic	1.0.3	-
+" "	font-misc-meltho	1.0.3	-
+" "	font-misc-misc	1.1.2	-
+" "	font-mutt-misc	1.0.3	-
+" "	font-schumacher-misc	1.1.2	-
+" "	font-screen-cyrillic	1.0.4	-
+" "	font-sony-misc	1.0.3	-
+" "	font-sun-misc	1.0.3	-
+" "	font-winitzki-cyrillic	1.0.3	-
+" "	font-xfree86-type1	1.0.4	-
+" "	ttf-bitstream-vera	1.10	-
+X11libs	cairo	1.10.2	X11
+" "	libAppleWM	1.4.1	-
+" "	libdmx	1.1.1	-
+" "	libfontenc	1.1.0	-
+" "	libFS	1.0.3	-
+" "	libICE	1.0.7	-
+" "	libpng	1.5.1	-
+" "	libpng	1.4.5	-
+" "	libpng	1.2.44	-
+" "	libSM	1.2.0	-
+" "	libX11	1.4.3	-
+" "	libXau	1.0.6	-
+" "	libXaw	1.0.9	-
+" "	libXaw	1.0.4	-
+" "	libXcomposite	0.4.3	-
+" "	libXcursor	1.1.11	-
+" "	libXdamage	1.1.3	-
+" "	libXdmcp	1.1.0	-
+" "	libXevie	1.0.3	-
+" "	libXext	1.2.0	-
+" "	libXfixes	5.0	-
+" "	libXfont	1.4.3	-
+" "	libXfontcache	1.0.5	-
+" "	libXft	2.2.0	-
+" "	libXi	1.4.2	-
+" "	libXinerama	1.1.1	-
+" "	libxcb	1.7	-
+" "	libxkbfile	1.0.7	-
+" "	libxkbui	1.0.2	-
+" "	libXmu	1.1.0	-
+" "	libXp	1.0.1	-
+" "	libXpm	3.5.9	-
+" "	libXrandr	1.3.1	-
+" "	libXrender	0.9.6	-
+" "	libXres	1.0.5	-
+" "	libXScrnSaver	1.2.1	-
+" "	libXt	1.1.1	-
+" "	libXTrap	1.0.0	-
+" "	libXtst	1.2.0	-
+" "	libXv	1.0.6	-
+" "	libXvMC	1.0.6	-
+" "	libXxf86dga	1.1.2	-
+" "	libXxf86misc	1.0.3	-
+" "	libXxf86vm	1.1.1	-
+" "	MesaGLUT	7.8.2	-
+" "	MesaLib	7.8.2	-
+" "	pixman	0.20.2	-
+" "	xcb-util	0.3.6	-
+" "	xpyb	1.2	-
+" "	xtrans	1.2.6	-
+X11misc	gccmakedep	1.0.2	X11
+" "	font-util	1.2.0	-
+" "	lndir	1.0.2	-
+" "	makedepend	1.0.3	-
+" "	pkg-config	0.25	-
+" "	util-macros	1.13.0	-
+" "	xorg-sgml-doctools	1.7	-
+X11proto	xcb-proto	1.6	Mac OS X, X11
+" "	fontconfig	2.8.0	-
+" "	freetype	2.4.4	-
+" "	applewmproto	1.4.2	-
+" "	bigreqsproto	1.1.1	-
+" "	compositeproto	0.4.2	-
+" "	damageproto	1.2.1	-
+" "	dmxproto	2.3.1	-
+" "	dri2proto	2.3	-
+" "	evieext	1.1.1	-
+" "	fixesproto	5.0	-
+" "	fontcacheproto	0.1.3	-
+" "	fontsproto	2.1.1	-
+" "	glproto	1.4.12	-
+" "	inputproto	2.0.1	-
+" "	kbproto	1.0.5	-
+" "	printproto	1.0.5	-
+" "	randrproto	1.3.2	-
+" "	recordproto	1.14.1	-
+" "	renderproto	0.11.1	-
+" "	resourceproto	1.1.1	-
+" "	scrnsaverproto	1.2.1	-
+" "	trapproto	3.4.3	-
+" "	videoproto	2.3.1	-
+" "	xcmiscproto	1.2.1	-
+" "	xextproto	7.2.0	-
+" "	xf86bigfontproto	1.2.0	-
+" "	xf86dgaproto	2.1	-
+" "	xf86driproto	2.1.1	-
+" "	xf86miscproto	0.9.3	-
+" "	xf86rushproto	1.1.2	-
+" "	xf86vidmodeproto	2.3.1	-
+" "	xineramaproto	1.2.1	-
+" "	xorg-docs	1.6	-
+" "	xproto	7.0.21	-
+X11server	xorg-server	1.6.5-apple3	Mac OS X, X11
+" "	xorg-server	1.10.2	-
+" "	xinit	1.3.0	-
+" "	Sparkle	2768e60ce1fe19f2b263cce0ed62147863a1a3d2	-
+xar	xar	1.4	Mac OS X, Xcode Tools
+zip	zip	3.0	Mac OS X
+" "	unzip	5.52	-
+zlib	zlib	1.2.5	Mac OS X, Xcode Tools
+ZopeInterface	Zope	3.5.1	Mac OS X
+zsh	zsh	4.3.11	Mac OS X
