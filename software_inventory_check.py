@@ -58,71 +58,28 @@ class packageList():
                     self.packageList.append(each)
                     yield each
 
-def package_check(package=''):
-    """ Check a package string for existence in the nvd cpe data
-        data string is packagename:version
-        depends on the vfeed.db database from the vfeed application
-    """
-    import sqlite3
-    feed = '/Users/menkhus/src/vFeed/vFeed-master/vfeed.db'
-    #feed = 'vfeed.db'
-    conn = sqlite3.connect(feed)
-    cursor = conn.cursor()
-#   We need to add the CVSS scores
-    sql = r"""SELECT DISTINCT c.cveid, n.cvss_base, c.cpeid, n.date_published, n.summary
-    FROM nvd_db as n
-    JOIN cve_cpe as c
-    WHERE c.cpeid
-    """
-    sql += r' LIKE "%:' + package
-# do we want to filter CVSS about 7?
-    sql += r'" and c.cveid = n.cveid ORDER BY n.date_published DESC LIMIT 20;'
-    data = cursor.execute(sql)
-    if data != None:
-        data = data.fetchall()
-	if len(data) > 0:
-            print "*** Potential security defect found in %s ***"%(package,)
-            for entry in data:
-                print "CVE: %s\nCVSS Score: %s\nCPE id: %s\nPublished on: \
-                %s\nSummary Description: %s\n"%(entry[0],entry[1],\
-                entry[2],entry[3],entry[4])
-                # can I print the CVSS identifier?
-                # can I print the CVSS identifier in such a way
-                # that it represents a shape?
-                # 
-                # how can I model the attack surface?  What ports does 
-                # this application use?  
-                # What would a malicious attack file look like for this 
-                # cve / security defect?
-                # what does any attack file look like?
-            print
-        conn.close()
-        return data
-    else:
-        conn.close()
-        return None
-
-class checknvd_by_package_package_check():
+class checknvd_by_package():
     """ Check a package string for existence in the nvd cpe data
         data string is 'packagename:version'
         depends on the vfeed.db database from the vfeed application
     """
-    def __init__ (self, package='', database='vfeed.db', items=5):
+    def __init__ (self, package=None, database='vfeed.db', items=5):
         """ Setup class 
         """
-        import sqlite3
         self.package=package 
         self.database = database
         self.items=items
+    def get_data(self):
+        """   Get the data from the database.
+        todo add the CVSS scores
+        """
         try:
-            self.conn = sqlite3.connect(feed)
+            import sqlite3
+            self.conn = sqlite3.connect(self.database)
             self.cursor = self.conn.cursor()
-        except EXCEPTION,e:
-            print "checknvd_by_packagename: %s"%(e,)
+        except Exception, e:
+            print "checknvd_by_package.getdata: %s"%(e,)
             exit()
-
-    def get_data():
-        #   todo add the CVSS scores
         self.sql = r"""SELECT DISTINCT c.cveid, n.cvss_base, c.cpeid, n.date_published, n.summary
         FROM nvd_db as n
         JOIN cve_cpe as c
@@ -130,14 +87,20 @@ class checknvd_by_package_package_check():
         """
         self.sql += r' LIKE "%:' + self.package
         self.sql += r'" and c.cveid = n.cveid ORDER BY n.date_published '
-        self.sql += r'DESC LIMIT ' + self.items + ';'
-        self.data = cursor.execute(self.sql)
+        self.sql += r'DESC LIMIT ' + str(self.items) + ';'
+        self.data = self.cursor.execute(self.sql)
         if self.data != None:
             self.data = self.data.fetchall()
+            self.conn.close()
+            return self.data
+        else:
+            return None
+    def __str__(self):
+        self.s = ''
         if len(self.data) > 0:
-                print "*** Potential security defect found in %s ***"%(package,)
+                self.s = "*** Potential security defect found in %s ***"%(self.package,)
                 for entry in self.data:
-                    print "CVE: %s\nCVSS Score: %s\nCPE id: %s\nPublished on: \
+                    self.s = "CVE: %s\nCVSS Score: %s\nCPE id: %s\nPublished on: \
                     %s\nSummary Description: %s\n"%(entry[0],entry[1],\
                     entry[2],entry[3],entry[4])
                     # can I print the CVSS identifier?
@@ -149,12 +112,9 @@ class checknvd_by_package_package_check():
                     # What would a malicious attack file look like for this 
                     # cve / security defect?
                     # what does any attack file look like?
-                print
-                self.conn.close()
-                return self.data
+                return self.s
         else:
-            self.conn.close()
-            return None
+            return self.s
 
 def main ():
     """  read a package inventory file in the form package:version
@@ -176,9 +136,9 @@ def main ():
     for package in packages:
         print package
         try:
-            p = checknvd_by_package package_check(package=package, database='vfeed.db', items=5)
+            p = checknvd_by_package(package=package, database='vfeed.db', items=5)
+            p.get_data()
             print p
-            #package_check(package)
         except KeyboardInterrupt:
             # quit the application
             exit()
