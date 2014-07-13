@@ -7,11 +7,12 @@ depends on vfeed database, and a package inventory list
 depends on list being in name or name:version format, 1 per line
 
 author: Mark Menkhus
+This is a RedCup research group project
 menkhus@icloud.com
 
 All rights reserved.
 
-Copyright 2014 Mark Menkhus
+Copyright 2014 Mark Menkhus, RedCup Research Group
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
