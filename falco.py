@@ -64,12 +64,12 @@ class checknvd_by_package():
         data string is 'packagename:version'
         depends on the vfeed.db database from the vfeed application
     """
-    def __init__ (self, package=None, database='vfeed.db', items=5):
+    def __init__ (self, package=None, database='vfeed.db', items=10):
         """ Setup class 
         """
-        self.package=package 
+        self.package = package 
         self.database = database
-        self.items=items
+        self.items = items
     def get_data(self):
         """   Get the data from the database.
         todo add the CVSS scores
@@ -86,9 +86,11 @@ class checknvd_by_package():
         JOIN cve_cpe as c
         WHERE c.cpeid
         """
-        self.sql += r' LIKE "%:' + self.package
-        self.sql += r'" and c.cveid = n.cveid ORDER BY n.date_published '
-        self.sql += r'DESC LIMIT ' + str(self.items) + ';'
+        self.sql += r' LIKE "%:' + self.package + r'"'
+        self.sql += r' and c.cveid = n.cveid '
+        self.sql += r'ORDER BY n.date_published DESC'
+        #self.sql += r'LIMIT ' + str(self.items) + ';'
+        self.sql += r';'
         self.data = self.cursor.execute(self.sql)
         if self.data != None:
             self.data = self.data.fetchall()
@@ -117,27 +119,64 @@ class checknvd_by_package():
         else:
             return self.s
 
+import argparse
+
+# programmer tools
+
+def command_line ():
+    """process command line arguments
+    Arguments:
+    -v --verbosity: verbosity
+    positional argument 1: project types
+    positional argument 2: project name
+    positional argument 3: new project directory
+    output: help, useage, and state variables for options on the command line
+    """
+    DESC = """Checks a list of software programs for known security
+    defects documented in the National Vulnerability Database.  Matches the
+    project name and version name to CPE vectors in the NVD database.
+    """
+    import argparse
+    parser = argparse.ArgumentParser(description=DESC)
+    #parser.add_argument('-c', '--cvss_minimum', help='minimum CVSS score to report', nargs='?', type=float, default=0.0)
+    parser.add_argument('-p', '--packagelistfile', help='file where the list of packages to evaluate is stored', nargs='?', default='testlist.txt')
+    parser.add_argument('-i', '--items_reported', help='number of items reported for NVD/CVE matches', nargs='?', type=int, default=1)    
+    parser.add_argument('-v', '--vfeed_database', help='location of vfeed.db sqlite database from vfeed project', nargs='?', type=str, default='vfeed.db')
+    args = parser.parse_args()
+    return args
+
 def main ():
     """  read a package inventory file in the form package:version
         check the packages in the NVD database, and report to std out
         depends on vfeed database, package.txt file
 
     """
-    #packages = packageList('packages.txt')
-    packages = packageList('testlist.txt')
-    packages = packages.getList()
+    args = command_line()
+    # TDB - class does not implement this
+    #if args.cvss_minimum:
+    #    cvss_minimum = args.cvss_minimum
+    if args.packagelistfile:
+        print "Using %s as the package list"%(args.packagelistfile)
+        packages = packageList(args.packagelistfile)
+        packages = packages.getList()
+    if args.items_reported:
+        i = args.items_reported
+    if args.vfeed_database:
+        d = args.vfeed_database
+    p = checknvd_by_package(package='apache:http_server', database=d, items=20)
+    p.get_data()
+    print p
+    exit()
     # we need to put command line options
     # database
-    # min cvss
-    # clipping limit of the number of CVE's
     # age of the CVE's
     # we need to characterize the attack surface, ports program names
     # we need to characterize how to defend against these problems. Besides
     # patching, what else can be done.
     for package in packages:
-        print package
+        print "Checking package text: %s"%(package,)
         try:
-            p = checknvd_by_package(package=package, database='vfeed.db', items=5)
+            p = checknvd_by_package(package=package, database=d, items=i)
             p.get_data()
             print p
         except KeyboardInterrupt:
