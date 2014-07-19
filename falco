@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
-"""  software_inventory_vulnerability_check search a list of program
-package names and versions in the NVD database.
+"""  falco is a software inventory vulnerability check search tool.  Falco
+searches a user provided list of program package names and versions against
+the NVD database, and reports security defects listed against that data.
 
-depends on vfeed database, and a package inventory list
-depends on list being in name or name:version format, 1 per line
+depdendencies:
+    -vfeed database, and a package inventory list
+    - software list formatting list being in name or name:version format
+    1 package per line, comments start with #
 
 author: Mark Menkhus
 This is a RedCup research group project
@@ -94,6 +97,7 @@ class checknvd_by_package():
         self.data = self.cursor.execute(self.sql)
         if self.data != None:
             self.data = self.data.fetchall()
+            print type(self.data),len(self.data)
             self.conn.close()
             return self.data
         else:
@@ -159,6 +163,11 @@ def main ():
         print "Using %s as the package list"%(args.packagelistfile)
         packages = packageList(args.packagelistfile)
         packages = packages.getList()
+    else:
+        packages = packageList(testlist.txt)
+        packages = packages.getList()        
+        for each in packages:
+            print each
     if args.items_reported:
         i = args.items_reported
     if args.vfeed_database:
