@@ -7,7 +7,7 @@ the NVD database, and reports security defects listed against that data.
 depdendencies:
     -vfeed database, and a package inventory list
     - software list formatting list being in name or name:version format
-    1 package per line, comments start with #
+      1 package per line, comments start with #
 
 author: Mark Menkhus
 This is a RedCup research group project
@@ -67,7 +67,7 @@ class checknvd_by_package():
         data string is 'packagename:version'
         depends on the vfeed.db database from the vfeed application
     """
-    def __init__ (self, package=None, database='vfeed.db', items=10):
+    def __init__ (self, package=None, database='vfeed.db', items=99):
         """ Setup class 
         """
         self.package = package 
@@ -89,15 +89,14 @@ class checknvd_by_package():
         JOIN cve_cpe as c
         WHERE c.cpeid
         """
-        self.sql += r' LIKE "%:' + self.package + r'"'
+        self.sql += r'LIKE "%:' + self.package + r'%"'
         self.sql += r' and c.cveid = n.cveid '
-        self.sql += r'ORDER BY n.date_published DESC'
-        #self.sql += r'LIMIT ' + str(self.items) + ';'
+        self.sql += r'ORDER BY n.date_published DESC '
+        self.sql += r'LIMIT ' + str(self.items)
         self.sql += r';'
         self.data = self.cursor.execute(self.sql)
         if self.data != None:
             self.data = self.data.fetchall()
-            print type(self.data),len(self.data)
             self.conn.close()
             return self.data
         else:
@@ -105,9 +104,10 @@ class checknvd_by_package():
     def __str__(self):
         self.s = ''
         if len(self.data) > 0:
-                self.s = "*** Potential security defect found in %s ***"%(self.package,)
+                self.s = ''
                 for entry in self.data:
-                    self.s = "CVE: %s\nCVSS Score: %s\nCPE id: %s\nPublished on: \
+                    self.s += "***Potential security defect found in %s ***"%(self.package,)
+                    self.s += "CVE: %s\nCVSS Score: %s\nCPE id: %s\nPublished on: \
                     %s\nSummary Description: %s\n"%(entry[0],entry[1],\
                     entry[2],entry[3],entry[4])
                     # can I print the CVSS identifier?
@@ -127,7 +127,7 @@ import argparse
 
 # programmer tools
 
-def command_line ():
+def command_line():
     """process command line arguments
     Arguments:
     -v --verbosity: verbosity
@@ -149,14 +149,14 @@ def command_line ():
     args = parser.parse_args()
     return args
 
-def main ():
+def main():
     """  read a package inventory file in the form package:version
         check the packages in the NVD database, and report to std out
         depends on vfeed database, package.txt file
 
     """
     args = command_line()
-    # TDB - class does not implement this
+    # TBD - class does not implement this
     #if args.cvss_minimum:
     #    cvss_minimum = args.cvss_minimum
     if args.packagelistfile:
@@ -164,18 +164,12 @@ def main ():
         packages = packageList(args.packagelistfile)
         packages = packages.getList()
     else:
-        packages = packageList(testlist.txt)
+        packages = packageList('testlist.txt')
         packages = packages.getList()        
-        for each in packages:
-            print each
     if args.items_reported:
         i = args.items_reported
     if args.vfeed_database:
         d = args.vfeed_database
-    p = checknvd_by_package(package='apache:http_server', database=d, items=20)
-    p.get_data()
-    print p
-    exit()
     # we need to put command line options
     # database
     # age of the CVE's
