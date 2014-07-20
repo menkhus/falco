@@ -145,6 +145,7 @@ def command_line():
     import argparse
     parser = argparse.ArgumentParser(description=DESC)
     #parser.add_argument('-c', '--cvss_minimum', help='minimum CVSS score to report', nargs='?', type=float, default=0.0)
+    parser.add_argument('-d', '--debug', help='turn on debug outout')
     parser.add_argument('-p', '--packagelistfile', help='file where the list of packages to evaluate is stored', nargs='?', default='testlist.txt')
     parser.add_argument('-i', '--items_reported', help='number of items reported for NVD/CVE matches', nargs='?', type=int, default=1)    
     parser.add_argument('-v', '--vfeed_database', help='location of vfeed.db sqlite database from vfeed project', nargs='?', type=str, default='vfeed.db')
@@ -158,6 +159,11 @@ def main():
 
     """
     args = command_line()
+    if args.debug:
+        print "Using %s as the package list"%(args.packagelistfile)
+        packages = packageList(args.packagelistfile)
+        packages = packages.getList()
+
     # TBD - class does not implement this
     #if args.cvss_minimum:
     #    cvss_minimum = args.cvss_minimum
