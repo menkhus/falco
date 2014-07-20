@@ -101,6 +101,8 @@ class checknvd_by_package():
             return self.data
         else:
             return None
+    def __len__(self):
+        return len(self.data)
     def __str__(self):
         self.s = ''
         if len(self.data) > 0:
@@ -177,11 +179,14 @@ def main():
     # we need to characterize how to defend against these problems. Besides
     # patching, what else can be done.
     for package in packages:
-        print "Checking package text: %s"%(package,)
         try:
             p = checknvd_by_package(package=package, database=d, items=i)
             p.get_data()
-            print p
+            if len(p) > 0:
+                print "Package text: %s"%(package,)," found:"
+                print p
+            else:
+                print "Package text: %s"%(package,)," not found."
         except KeyboardInterrupt:
             # quit the application
             exit()
