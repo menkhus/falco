@@ -33,6 +33,10 @@ You may obtain a copy of the License at
 __version__ = '0.1'
 __author__ = 'Mark Menkhus, menkhus@icloud.com'
 
+import argparse
+
+DEBUG = False
+
 class packageList():
     """ return a list of packages to get tested.
         input: filename where the content is a packagenames
@@ -125,32 +129,28 @@ class checknvd_by_package():
         else:
             return self.s
 
-import argparse
-
-# programmer tools
-
 def command_line():
+    import argparse
     """process command line arguments
-    Arguments:
-    -v --verbosity: verbosity
-    positional argument 1: project types
-    positional argument 2: project name
-    positional argument 3: new project directory
+    Arguments: --debug, --packagelistfilem --items_reported, --vfeed_database
     output: help, useage, and state variables for options on the command line
     """
     DESC = """Checks a list of software programs for known security
     defects documented in the National Vulnerability Database.  Matches the
     project name and version name to CPE vectors in the NVD database.
     """
-    import argparse
     parser = argparse.ArgumentParser(description=DESC)
     #parser.add_argument('-c', '--cvss_minimum', help='minimum CVSS score to report', nargs='?', type=float, default=0.0)
-    parser.add_argument('-d', '--debug', help='turn on debug outout')
+    parser.add_argument('--debug', help='turn on debug output', action = 'store_true')
     parser.add_argument('-p', '--packagelistfile', help='file where the list of packages to evaluate is stored', nargs='?', default='testlist.txt')
     parser.add_argument('-i', '--items_reported', help='number of items reported for NVD/CVE matches', nargs='?', type=int, default=1)    
     parser.add_argument('-v', '--vfeed_database', help='location of vfeed.db sqlite database from vfeed project', nargs='?', type=str, default='vfeed.db')
     args = parser.parse_args()
     return args
+
+def db_print (DEBUG, m='module', s='string'):
+    if DEBUG == True:
+        print "debug: module %s, \ndebug message: %s"%(m,s)
 
 def main():
     """  read a package inventory file in the form package:version
@@ -160,10 +160,7 @@ def main():
     """
     args = command_line()
     if args.debug:
-        print "Using %s as the package list"%(args.packagelistfile)
-        packages = packageList(args.packagelistfile)
-        packages = packages.getList()
-
+        DEBUG = True
     # TBD - class does not implement this
     #if args.cvss_minimum:
     #    cvss_minimum = args.cvss_minimum
@@ -190,6 +187,7 @@ def main():
             p.get_data()
             if len(p) > 0:
                 print "Package text: %s"%(package,)," found:"
+                db_print (DEBUG,m='main, packagelistfile',s=package)
                 print p
             else:
                 print "Package text: %s"%(package,)," not found."
