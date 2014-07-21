@@ -112,7 +112,7 @@ class checknvd_by_package():
         if len(self.data) > 0:
                 self.s = ''
                 for entry in self.data:
-                    self.s += "***Potential security defect found in %s ***"%(self.package,)
+                    self.s += "*** Potential security defect found in %s\n"%(self.package,)
                     self.s += "CVE: %s\nCVSS Score: %s\nCPE id: %s\nPublished on: \
                     %s\nSummary Description: %s\n"%(entry[0],entry[1],\
                     entry[2],entry[3],entry[4])
@@ -161,6 +161,8 @@ def main():
     args = command_line()
     if args.debug:
         DEBUG = True
+    else:
+        DEBUG = False
     # TBD - class does not implement this
     #if args.cvss_minimum:
     #    cvss_minimum = args.cvss_minimum
