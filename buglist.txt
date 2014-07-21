@@ -1,0 +1,22 @@
+
+    + needs to understand how old the database, and report version of database
+    + CVE reports are done multitple times for each match of a CPE
+        + needs to report each CPE match but only one CVE match
+    + needs to report in JSON output
+    + Needs to report Nessus, Metasploit and other cross references for each finding
+    + Needs Summary of findings
+        + needs all not found, and summary of them
+        + needs all found and summary of them
+        + needs summary list of CVEs
+        + needs summary list of all apps with vulns, and their CVEs
+        + Needs sort based on criticality
+        + needs sort based on CPE primative, ex: AV:N etc.
+    + Needs -l to save output to a report
+    + needs to report the reference URLs for the VU findings
+    + needs to create a database for all findings
+    + needs to ouput XML of all findings
+    + needs to output HTML, with tables
+    + needs to output spreadsheet of all findings 
+
+    + need new tool to look at installed system and gather package names and versions
+    + need to gather license information
