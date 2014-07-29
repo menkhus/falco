@@ -1,5 +1,6 @@
 
     + needs to understand how old the database, and report version of database
+    + CPE needs to match based on match, greater than, less than NOT regex
     + CVE reports are done multitple times for each match of a CPE
         + needs to report each CPE match but only one CVE match
     + needs to report in JSON output

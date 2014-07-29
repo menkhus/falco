@@ -34,11 +34,15 @@ __version__ = '0.1'
 __author__ = 'Mark Menkhus, menkhus@icloud.com'
 
 import argparse
+import time
+import re
+import sqlite3
 
+# enable a simple debug printout function
 DEBUG = False
 
 class packageList():
-    """ return a list of packages to get tested.
+    """ return a generator of list of packages to get tested.
         input: filename where the content is a packagenames
         one per line, comments with # sign
     """
@@ -51,16 +55,17 @@ class packageList():
         """ getList is a generator, it gets the data from the file 
             and yields the data as needed
         """
-        import re
         try:
             self.packageListInput = open (self.packageFile, 'r').readlines() 
         except Exception, e:
             print "packageList: Exception - %s"%(e,)
             exit(1)
         for each in self.packageListInput:
+            # eliminate commented lines
             if re.search(r'^#', each):
                 pass
             else:
+                # remove newline
                 each = each.strip('\n')
                 if each != '':
                     self.packageList.append(each)
@@ -77,17 +82,23 @@ class checknvd_by_package():
         self.package = package 
         self.database = database
         self.items = items
+        self.db_version = None
     def get_data(self):
         """   Get the data from the database.
         todo add the CVSS scores
         """
         try:
-            import sqlite3
+            """ open the database using sqlite3, setup a connection
+            and establish the sql cursor
+            """
             self.conn = sqlite3.connect(self.database)
             self.cursor = self.conn.cursor()
         except Exception, e:
             print "checknvd_by_package.getdata: %s"%(e,)
             exit()
+        # setting up a SQL query for get CPE and CVE data from two tables
+        # and match against a package name in the CPE identifiers.
+        # match :packagename: or :packagename:n.n.n: packagename
         self.sql = r"""SELECT DISTINCT c.cveid, n.cvss_base, c.cpeid, n.date_published, n.summary
         FROM nvd_db as n
         JOIN cve_cpe as c
@@ -101,40 +112,79 @@ class checknvd_by_package():
         self.data = self.cursor.execute(self.sql)
         if self.data != None:
             self.data = self.data.fetchall()
+            # note the fetchall gets multitple entries for a given CPE
+            # the cpe matching is regex rather than implementing the
+            # CPE v1.0 matching, less than or greater than logic.
             self.conn.close()
             return self.data
         else:
             return None
     def __len__(self):
+        """ enable len operations on obect data
+        """
         return len(self.data)
+    def db_ver(self):
+        """ return the db_version
+        """
+        if self.db_version == None:
+            try:
+                self.conn = sqlite3.connect(self.database)
+                self.cursor = self.conn.cursor()
+                self.db_version = self.cursor.execute(r'select db_version from stat_vfeed_kpi;')
+                self.db_version = self.db_version.fetchall()
+                self.db_version = self.db_version[0]
+                # note the fetchall gets multitple entries for a given CPE
+                # the cpe matching is regex rather than implementing the
+                # CPE v1.0 matching, less than or greater than logic.
+                self.conn.close()           
+            except Exception, e:
+                print "checknvd_by_package.db_ver: %s"%(e,)
+                exit()
+            return self.db_version[0]
+        else:
+            return self.db_version[0]
     def __str__(self):
+        """ implement string output for object, embedded formatting and 
+        labeling for the data.
+        """
+        # accumulate all of the string data in s
         self.s = ''
         if len(self.data) > 0:
                 self.s = ''
+                # accumulate CVE identifiers in cvelist, so that we don't repeat informing
+                # about a CVE in the s string
+                self.cvelist = []
                 for entry in self.data:
-                    self.s += "*** Potential security defect found in %s\n"%(self.package,)
-                    self.s += "CVE: %s\nCVSS Score: %s\nCPE id: %s\nPublished on: \
-                    %s\nSummary Description: %s\n"%(entry[0],entry[1],\
-                    entry[2],entry[3],entry[4])
-                    # can I print the CVSS identifier?
-                    # can I print the CVSS identifier in such a way
-                    # that it represents a shape?
-                    # 
-                    # how can I model the attack surface?  What ports does 
-                    # this application use?  
-                    # What would a malicious attack file look like for this 
-                    # cve / security defect?
-                    # what does any attack file look like?
+                    if entry[0] not in self.cvelist:
+                        self.s += "\t\t*** Potential security defect found in %s\n"%(self.package,)
+                        self.s += "CVE: %s\nCVSS Score: %s\nCPE id: %s\nPublished on: \
+%s\nSummary Description: %s\n\n"%(entry[0],entry[1],\
+                        entry[2],entry[3],entry[4])
+                        # record the CVE and don't report it again in the string output
+                        self.cvelist.append(entry[0])
+                        # can I print the CVSS identisfier?
+                        # can I print the CVSS identifier in such a way
+                        # that it represents a shape?
+                        # 
+                        # how can I model the attack surface?  What ports does 
+                        # this application use?  
+                        # What would a malicious attack file look like for this 
+                        # cve / security defect?
+                        # what does any attack file look like?
                 return self.s
         else:
             return self.s
+    def __repr__ (self):
+        """ implement the string representation of the object
+        """
+        return __str__()
 
 def command_line():
-    import argparse
     """process command line arguments
     Arguments: --debug, --packagelistfilem --items_reported, --vfeed_database
     output: help, useage, and state variables for options on the command line
     """
+
     DESC = """Checks a list of software programs for known security
     defects documented in the National Vulnerability Database.  Matches the
     project name and version name to CPE vectors in the NVD database.
@@ -149,6 +199,9 @@ def command_line():
     return args
 
 def db_print (DEBUG, m='module', s='string'):
+    """ debug print:
+    print what module, and then what string output
+    """
     if DEBUG == True:
         print "debug: module %s, \ndebug message: %s"%(m,s)
 
@@ -183,19 +236,29 @@ def main():
     # we need to characterize the attack surface, ports program names
     # we need to characterize how to defend against these problems. Besides
     # patching, what else can be done.
+    not_found = ''
+    found = ''
     for package in packages:
         try:
             p = checknvd_by_package(package=package, database=d, items=i)
             p.get_data()
             if len(p) > 0:
-                print "Package text: %s"%(package,)," found:"
+                found += "Package text: " + package + " found."
                 db_print (DEBUG,m='main, packagelistfile',s=package)
                 print p
-            else:
-                print "Package text: %s"%(package,)," not found."
+            #else:
+                not_found += "Package text: " + package + " not found.\n"
         except KeyboardInterrupt:
+            db_version = p.db_ver()
+            print "Version of vfeed database used in this report was %s, and the"%(db_version,),
+            print "report was run on %s."%(time.strftime("%d/%m/%Y at %H:%M:%S"),)
+            print "The report was interuppted with control-c"
             # quit the application
             exit()
+    print not_found
+    db_version = p.db_ver()
+    print "Version of vfeed database used in this report was %s, and the"%(db_version,),
+    print "report was run on %s."%(time.strftime("%d/%m/%Y at %H:%M:%S"),)
 
 if __name__ == "__main__":
     main()
