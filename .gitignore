@@ -5,3 +5,4 @@ vfeed.db
 vfeed_products.py
 vfeed_scratchpad.ipynb
 *.pyc
+apple*
