@@ -1,16 +1,10 @@
 
-    + needs to understand how old the database, and report version of database
     + CPE needs to match based on match, greater than, less than NOT regex
-    + CVE reports are done multitple times for each match of a CPE
         + needs to report each CPE match but only one CVE match
     + needs to report in JSON output
     + Needs to report Nessus, Metasploit and other cross references for each finding
-    + Needs Summary of findings
-        + needs all not found, and summary of them
-        + needs all found and summary of them
         + needs summary list of CVEs
         + needs summary list of all apps with vulns, and their CVEs
-        + Needs sort based on criticality
         + needs sort based on CPE primative, ex: AV:N etc.
     + Needs -l to save output to a report
     + needs to report the reference URLs for the VU findings
