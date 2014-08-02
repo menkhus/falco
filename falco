@@ -4,7 +4,7 @@
 searches a user provided list of program package names and versions against
 the NVD database, and reports security defects listed against that data.
 
-depdendencies:
+dependencies:
     -vfeed database, and a package inventory list
     - software list formatting list being in name or name:version format
       1 package per line, comments start with #
@@ -37,6 +37,7 @@ import argparse
 import time
 import re
 import sqlite3
+TESTLIST = 'testlist.txt'
 
 # enable a simple debug printout function
 DEBUG = False
@@ -46,7 +47,7 @@ class packageList():
         input: filename where the content is a packagenames
         one per line, comments with # sign
     """
-    def __init__ (self, packageFile='testlist.txt'):
+    def __init__ (self, packageFile=TESTLIST):
         """ get a file name when object is instantiated
         """
         self.packageFile = packageFile
@@ -85,15 +86,14 @@ class checknvd_by_package():
         self.db_version = None
     def get_data(self):
         """   Get the data from the database.
-        todo add the CVSS scores
         """
         if not re.search(":",self.package):
             #print "checknvd_by_package, package has no version info: %s"%(self.package,)
             self.data = None
             return None 
         try:
-            """ open the database using sqlite3, setup a connection
-            and establish the sql cursor
+            """ open the database using Sqlite3, setup a connection
+            and establish the SQL cursor
             """
             self.conn = sqlite3.connect(self.database)
             self.cursor = self.conn.cursor()
@@ -115,6 +115,7 @@ class checknvd_by_package():
         self.sql += r' LIMIT ' + str(self.items)
         self.sql += r';'
         #print self.sql
+        # exit
         self.data = self.cursor.execute(self.sql)
         if self.data != None:
             self.data = self.data.fetchall()
@@ -126,7 +127,7 @@ class checknvd_by_package():
         else:
             return None
     def __len__(self):
-        """ enable len operations on obect data
+        """ enable len operations on this object's data
         """
         if self.data:
             return len(self.data)
@@ -161,7 +162,9 @@ class checknvd_by_package():
         if len(self.data) > 0:
                 self.s = ''
                 # accumulate CVE identifiers in cvelist, so that we don't repeat informing
-                # about a CVE in the s string
+                # about a CVE in the s string, this accumulation may be dead code, since 
+                # the SQL seems to eliminate duplicates
+                # 
                 self.cvelist = []
                 for entry in self.data:
                     if entry[0] not in self.cvelist:
@@ -171,7 +174,7 @@ class checknvd_by_package():
                         entry[2],entry[3],entry[4])
                         # record the CVE and don't report it again in the string output
                         self.cvelist.append(entry[0])
-                        # can I print the CVSS identisfier?
+                        # can I print the CVSS identifier?
                         # can I print the CVSS identifier in such a way
                         # that it represents a shape?
                         # 
@@ -190,18 +193,18 @@ class checknvd_by_package():
 
 def command_line():
     """process command line arguments
-    Arguments: --debug, --packagelistfilem --items_reported, --vfeed_database
-    output: help, useage, and state variables for options on the command line
+    Arguments: --debug, --packagelistfile --items_reported, --vfeed_database
+    output: help, usage, and state variables for options on the command line
     """
 
-    DESC = """Checks a list of software programs for known security
+    DESC = """Checks a file list of software programs for known security
     defects documented in the National Vulnerability Database.  Matches the
     project name and version name to CPE vectors in the NVD database.
     """
     parser = argparse.ArgumentParser(description=DESC)
     #parser.add_argument('-c', '--cvss_minimum', help='minimum CVSS score to report', nargs='?', type=float, default=0.0)
     parser.add_argument('--debug', help='turn on debug output', action = 'store_true')
-    parser.add_argument('-p', '--packagelistfile', help='file where the list of packages to evaluate is stored', nargs='?', default='testlist.txt')
+    parser.add_argument('-p', '--packagelistfile', help='file where the list of packages to evaluate is stored', nargs='?', default=TESTLIST)
     parser.add_argument('-i', '--items_reported', help='number of items reported for NVD/CVE matches', nargs='?', type=int, default=1)    
     parser.add_argument('-v', '--vfeed_database', help='location of vfeed.db sqlite database from vfeed project', nargs='?', type=str, default='vfeed.db')
     args = parser.parse_args()
@@ -210,6 +213,7 @@ def command_line():
 def db_print (DEBUG, m='module', s='string'):
     """ debug print:
     print what module, and then what string output
+    doh, why use this when python has logging?
     """
     if DEBUG == True:
         print "debug: module %s, \ndebug message: %s"%(m,s)
@@ -217,6 +221,9 @@ def db_print (DEBUG, m='module', s='string'):
 def detailed_vuln_report(vuln_data={}):
     """ print a detailed vulnerability report 
     based on the collected vulnerability data
+
+    input: a dictionary of vulnerability information
+    output: print to std out
     """
     s = ''
     for each in vuln_data.keys():
@@ -239,26 +246,23 @@ def main():
         DEBUG = True
     else:
         DEBUG = False
-    # TBD - class does not implement this
-    #if args.cvss_minimum:
-    #    cvss_minimum = args.cvss_minimum
     if args.packagelistfile:
         print "\tReport generated using %s as the package list."%(args.packagelistfile)
         packages = packageList(args.packagelistfile)
         packages = packages.getList()
     else:
-        packages = packageList('testlist.txt')
+        packages = packageList(TESTLIST)
         packages = packages.getList()        
     if args.items_reported:
         i = args.items_reported
     if args.vfeed_database:
         d = args.vfeed_database
     # we need to put command line options
-    # database
     # age of the CVE's
     # we need to characterize the attack surface, ports program names
     # we need to characterize how to defend against these problems. Besides
     # patching, what else can be done.
+    # variables used for reporting
     not_found = ''
     not_found_c = 0
     found = ''
@@ -278,6 +282,7 @@ def main():
                 not_found_c += 1
                 not_found += "Package text: " + package + " not found.\n"
         except KeyboardInterrupt:
+            # if the user is impatient, report some output
             db_version = p.db_ver()
             print "Version of vfeed database used in this report was %s, and the"%(db_version,),
             print "report was run on %s."%(time.strftime("%d/%m/%Y at %H:%M:%S"),)
@@ -291,7 +296,7 @@ def main():
             print "PARTIAL findings as follows:"
             detailed_vuln_report (detailed_report)
             # quit the application
-            exit()
+            exit(1)
     # print summary
     print "\tReport of possible vulnerability findings, for %s packages requested:"%(found_c + not_found_c,)
     print "These %s packages were found with vulnerability in the NVD database and reported above:"%(found_c,)
@@ -303,6 +308,6 @@ def main():
     db_version = p.db_ver()
     print "Version of vfeed database used in this report was %s\nThe"%(db_version,),
     print "report was run on %s."%(time.strftime("%d/%m/%Y at %H:%M:%S"),)
-
+    exit(0)
 if __name__ == "__main__":
     main()
