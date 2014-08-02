@@ -6,3 +6,5 @@ vfeed_products.py
 vfeed_scratchpad.ipynb
 *.pyc
 apple*
+falco_output.txt.old
+packages_log.txt

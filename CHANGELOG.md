@@ -1,3 +1,4 @@
+version 0.2 - added a few features, changed reporting, cleaned up code
 
 version .1 - project inception, project has working prototype, added license
 
