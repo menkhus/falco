@@ -237,24 +237,39 @@ def main():
     # we need to characterize how to defend against these problems. Besides
     # patching, what else can be done.
     not_found = ''
+    not_found_c = 0
     found = ''
+    found_c = 0
     for package in packages:
         try:
             p = checknvd_by_package(package=package, database=d, items=i)
             p.get_data()
             if len(p) > 0:
-                found += "Package text: " + package + " found."
-                db_print (DEBUG,m='main, packagelistfile',s=package)
+                found += "Package text: " + package + " found.\n"
+                found_c += 1
+                #db_print (DEBUG,m='main, packagelistfile',s=package)
                 print p
-            #else:
+            else:
+                not_found_c += 1
                 not_found += "Package text: " + package + " not found.\n"
         except KeyboardInterrupt:
             db_version = p.db_ver()
             print "Version of vfeed database used in this report was %s, and the"%(db_version,),
             print "report was run on %s."%(time.strftime("%d/%m/%Y at %H:%M:%S"),)
             print "The report was interuppted with control-c"
+            # print summary
+            print "\tThis is a partial report of findings:"
+            # print summary
+            print "These %s packages were found in the NVD database and reported above:"%(found_c,)
+            print found 
+            print "These %s packages were not found in the NVD database:"%(not_found_c,)
+            print not_found
             # quit the application
             exit()
+    # print summary
+    print "These %s packages were found in the NVD database and reported above:"%(found_c,)
+    print found 
+    print "These %s packages were not found in the NVD database:"%(not_found_c,)
     print not_found
     db_version = p.db_ver()
     print "Version of vfeed database used in this report was %s, and the"%(db_version,),
