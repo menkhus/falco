@@ -3,6 +3,7 @@
 # Mark Menkhus, RedCup working group
 # menkhus@icloud.com
 apache:http_server:
+oscar
 mail:8.1
 perl:5.16.2
 md5:1.34
