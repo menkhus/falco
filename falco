@@ -102,13 +102,15 @@ class checknvd_by_package():
         self.sql = r"""SELECT DISTINCT c.cveid, n.cvss_base, c.cpeid, n.date_published, n.summary
         FROM nvd_db as n
         JOIN cve_cpe as c
-        WHERE c.cpeid
         """
-        self.sql += r'LIKE "%:' + self.package + r'%"'
-        self.sql += r' and c.cveid = n.cveid '
-        self.sql += r'ORDER BY n.date_published DESC '
-        self.sql += r'LIMIT ' + str(self.items)
+        self.sql += r' WHERE c.cveid = n.cveid AND'
+        self.sql += r' c.cpeid LIKE "%:' + self.package + r'%"'
+        self.sql += r' GROUP BY c.cveid '
+        self.sql += r' ORDER BY CAST(n.cvss_base AS REAL) DESC,'
+        self.sql += r' n.date_published DESC'
+        self.sql += r' LIMIT ' + str(self.items)
         self.sql += r';'
+        #print self.sql
         self.data = self.cursor.execute(self.sql)
         if self.data != None:
             self.data = self.data.fetchall()
