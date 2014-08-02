@@ -30,7 +30,7 @@ You may obtain a copy of the License at
     limitations under the License.
 """
 
-__version__ = '0.1'
+__version__ = '0.2'
 __author__ = 'Mark Menkhus, menkhus@icloud.com'
 
 import argparse
@@ -87,6 +87,10 @@ class checknvd_by_package():
         """   Get the data from the database.
         todo add the CVSS scores
         """
+        if not re.search(":",self.package):
+            #print "checknvd_by_package, package has no version info: %s"%(self.package,)
+            self.data = None
+            return None 
         try:
             """ open the database using sqlite3, setup a connection
             and establish the sql cursor
@@ -124,7 +128,10 @@ class checknvd_by_package():
     def __len__(self):
         """ enable len operations on obect data
         """
-        return len(self.data)
+        if self.data:
+            return len(self.data)
+        else: 
+            return 0
     def db_ver(self):
         """ return the db_version
         """
@@ -207,6 +214,20 @@ def db_print (DEBUG, m='module', s='string'):
     if DEBUG == True:
         print "debug: module %s, \ndebug message: %s"%(m,s)
 
+def detailed_vuln_report(vuln_data={}):
+    """ print a detailed vulnerability report 
+    based on the collected vulnerability data
+    """
+    s = ''
+    for each in vuln_data.keys():
+        entry = vuln_data[each]
+        for cve in entry:
+            s += "\t\t*** Potential security defect found in %s\n"%(each,)
+            s += "CVE: %s\nCVSS Score: %s\nCPE id: %s\nPublished on: \
+            %s\nSummary Description: %s\n\n"%(cve[0],cve[1],\
+            cve[2],cve[3],cve[4])  
+    print s
+
 def main():
     """  read a package inventory file in the form package:version
         check the packages in the NVD database, and report to std out
@@ -222,7 +243,7 @@ def main():
     #if args.cvss_minimum:
     #    cvss_minimum = args.cvss_minimum
     if args.packagelistfile:
-        print "Using %s as the package list"%(args.packagelistfile)
+        print "\tReport generated using %s as the package list."%(args.packagelistfile)
         packages = packageList(args.packagelistfile)
         packages = packages.getList()
     else:
@@ -242,15 +263,17 @@ def main():
     not_found_c = 0
     found = ''
     found_c = 0
+    detailed_report = {}
     for package in packages:
         try:
             p = checknvd_by_package(package=package, database=d, items=i)
-            p.get_data()
+            report = p.get_data()
             if len(p) > 0:
                 found += "Package text: " + package + " found.\n"
                 found_c += 1
                 #db_print (DEBUG,m='main, packagelistfile',s=package)
-                print p
+                #print p
+                detailed_report[package]=report
             else:
                 not_found_c += 1
                 not_found += "Package text: " + package + " not found.\n"
@@ -259,22 +282,26 @@ def main():
             print "Version of vfeed database used in this report was %s, and the"%(db_version,),
             print "report was run on %s."%(time.strftime("%d/%m/%Y at %H:%M:%S"),)
             print "The report was interuppted with control-c"
-            # print summary
-            print "\tThis is a partial report of findings:"
-            # print summary
+            # print partial summary
+            print "\tThis is a PARTIAL report of findings:"
             print "These %s packages were found in the NVD database and reported above:"%(found_c,)
             print found 
             print "These %s packages were not found in the NVD database:"%(not_found_c,)
             print not_found
+            print "PARTIAL findings as follows:"
+            detailed_vuln_report (detailed_report)
             # quit the application
             exit()
     # print summary
-    print "These %s packages were found in the NVD database and reported above:"%(found_c,)
+    print "\tReport of possible vulnerability findings, for %s packages requested:"%(found_c + not_found_c,)
+    print "These %s packages were found with vulnerability in the NVD database and reported above:"%(found_c,)
     print found 
     print "These %s packages were not found in the NVD database:"%(not_found_c,)
     print not_found
+    print "Detailed findings as follows:"
+    detailed_vuln_report (detailed_report)
     db_version = p.db_ver()
-    print "Version of vfeed database used in this report was %s, and the"%(db_version,),
+    print "Version of vfeed database used in this report was %s\nThe"%(db_version,),
     print "report was run on %s."%(time.strftime("%d/%m/%Y at %H:%M:%S"),)
 
 if __name__ == "__main__":
