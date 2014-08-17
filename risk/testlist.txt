@@ -1,0 +1,15 @@
+# list of packages that I had to derive the apple mavericks 
+# version by looking at the package on the system
+# Mark Menkhus, RedCup working group
+# menkhus@icloud.com
+apache:http_server:
+oscar
+mail:8.1
+perl:5.16.2
+md5:1.34
+patch:2.5.8
+python:2.7.5
+md5:1.34
+pr:2.5.8
+sed:1.39
+wc:1.21
