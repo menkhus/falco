@@ -30,14 +30,13 @@ You may obtain a copy of the License at
     limitations under the License.
 """
 
-__version__ = '0.2'
+__version__ = '0.3'
 __author__ = 'Mark Menkhus, menkhus@icloud.com'
 
 import argparse
 import time
 import re
 import sqlite3
-TESTLIST = 'testlist.txt'
 
 # enable a simple debug printout function
 DEBUG = False
@@ -47,7 +46,7 @@ class packageList():
         input: filename where the content is a packagenames
         one per line, comments with # sign
     """
-    def __init__ (self, packageFile=TESTLIST):
+    def __init__ (self, packageFile=''):
         """ get a file name when object is instantiated
         """
         self.packageFile = packageFile
@@ -195,19 +194,23 @@ class checknvd_by_package():
 def command_line():
     """process command line arguments
     Arguments: --debug, --packagelistfile --items_reported, --vfeed_database
+    --build_environment, --package_name, --package_version, --Version
     output: help, usage, and state variables for options on the command line
     """
-
-    DESC = """Checks a file list of software programs for known security
-    defects documented in the National Vulnerability Database.  Matches the
+    DESC = """Checks command line or, a file list of software programs for known security
+    defects documented in the National Vulnerability Database.  Matches a
     project name and version name to CPE vectors in the NVD database.
     """
     parser = argparse.ArgumentParser(description=DESC)
     #parser.add_argument('-c', '--cvss_minimum', help='minimum CVSS score to report', nargs='?', type=float, default=0.0)
-    parser.add_argument('--debug', help='turn on debug output', action = 'store_true')
-    parser.add_argument('-p', '--packagelistfile', help='file where the list of packages to evaluate is stored', nargs='?', default=TESTLIST)
-    parser.add_argument('-i', '--items_reported', help='number of items reported for NVD/CVE matches', nargs='?', type=int, default=1)    
-    parser.add_argument('-v', '--vfeed_database', help='location of vfeed.db sqlite database from vfeed project', nargs='?', type=str, default='vfeed.db')
+    parser.add_argument('-b', '--build_environment', help='for use in build environments, return fail if items found', action = 'store_true', default=False)
+    parser.add_argument('-d', '--vfeed_database', help='location of vfeed.db sqlite database from vfeed project', nargs='?', type=str, default='vfeed.db')
+    parser.add_argument('--debug', help='turn on debug output', action = 'store_true', default=False)
+    parser.add_argument('-f', '--packagelistfile', help='file where the list of packages to evaluate is stored', nargs='?', default=None)
+    parser.add_argument('-i', '--items_reported', help='number of items reported for NVD/CVE matches', nargs='?', type=int, default=1)
+    parser.add_argument('-n', '--package_name', help='package name to search for', nargs='?', type=str, default=None)
+    parser.add_argument('-v', '--package_version', help='package version to look for', nargs='?', type=str, default=None)
+    parser.add_argument('-V', '--Version', help='report the version of falco and exit', action = 'store_true', default=False)
     args = parser.parse_args()
     return args
 
@@ -219,51 +222,38 @@ def db_print (DEBUG, m='module', s='string'):
     if DEBUG == True:
         print "debug: module %s, \ndebug message: %s"%(m,s)
 
-def detailed_vuln_report(vuln_data={}):
-    """ print a detailed vulnerability report 
-    based on the collected vulnerability data
-
-    input: a dictionary of vulnerability information
-    output: print to std out
-    """
-    s = ''
-    for each in vuln_data.keys():
-        entry = vuln_data[each]
-        for cve in entry:
-            s += "\t\t*** Potential security defect found in %s\n"%(each,)
-            s += "CVE: %s\nCVSS Score: %s\nCPE id: %s\nPublished on: \
-            %s\nSummary Description: %s\n\n"%(cve[0],cve[1],\
-            cve[2],cve[3],cve[4])  
-    print s
-
-def main():
-    """  read a package inventory file in the form package:version
-        check the packages in the NVD database, and report to std out
-        depends on vfeed database, package.txt file
-
-    """
-    args = command_line()
-    if args.debug:
-        DEBUG = True
+def check_item_in_database(package_name='', package_version='', d='', i=1):
+    package = ''
+    if package_name == '' and package_version == '':
+        print "check_item_in_database: both package_name and package_version are null"
+        return False
+    if package_name == '':
+        package = ':' + package_version
     else:
-        DEBUG = False
-    if args.packagelistfile:
-        print "\tReport generated using %s as the package list."%(args.packagelistfile)
-        packages = packageList(args.packagelistfile)
-        packages = packages.getList()
+        package = package_name + ':'
+    try:
+        p = checknvd_by_package(package=package, database=d, items=i)
+        report = p.get_data()
+        detailed_report = {}
+        if len(p) > 0:
+            #db_print (DEBUG,m='main, packagelistfile',s=package)
+            #print p
+            detailed_report[package]=report
+            detailed_vuln_report (detailed_report)
+    except KeyboardInterrupt:
+        # if the user is impatient, report some output
+        db_version = p.db_ver()
+        print "The report was interupted with control-c"
+        exit(1)
+    except Exception, e:
+        print "check_item_in_database: %s"%(e,)
+        exit(1)
+    if len(p) > 0:
+        return True
     else:
-        packages = packageList(TESTLIST)
-        packages = packages.getList()        
-    if args.items_reported:
-        i = args.items_reported
-    if args.vfeed_database:
-        d = args.vfeed_database
-    # we need to put command line options
-    # age of the CVE's
-    # we need to characterize the attack surface, ports program names
-    # we need to characterize how to defend against these problems. Besides
-    # patching, what else can be done.
-    # variables used for reporting
+        return False
+
+def check_list_in_database(packages=[], d='', i=1):
     not_found = ''
     not_found_c = 0
     found = ''
@@ -309,6 +299,78 @@ def main():
     db_version = p.db_ver()
     print "Version of vfeed database used in this report was %s\nThe"%(db_version,),
     print "report was run on %s."%(time.strftime("%m-%d-%Y at %H:%M:%S"),)
-    exit(0)
+    if found_c == 0:
+        return False
+    else:
+        return True
+
+def detailed_vuln_report(vuln_data={}):
+    """ print a detailed vulnerability report 
+    based on the collected vulnerability data
+
+    input: a dictionary of vulnerability information
+    output: print to std out
+    """
+    s = ''
+    for each in vuln_data.keys():
+        entry = vuln_data[each]
+        for cve in entry:
+            s += "\t\t*** Potential security defect found in %s\n"%(each,)
+            s += "CVE: %s\nCVSS Score: %s\nCPE id: %s\nPublished on: \
+            %s\nSummary Description: %s\n\n"%(cve[0],cve[1],\
+            cve[2],cve[3],cve[4])  
+    print s
+
+def build_exit(return_value=False, build_return=0):
+    if build_return == 0:
+        exit(not return_value)
+    else:
+        exit(return_value)
+def main():
+    """  read a package inventory file in the form package:version
+        check the packages in the NVD database, and report to std out
+        depends on vfeed database, package.txt file
+
+    """
+    args = command_line()
+    if args.debug:
+        print args
+    if args.build_environment:
+        build_return=1
+    else:
+        build_return=0
+    if args.Version:
+        print "falco version: %s"%(__version__)
+        exit()
+    if args.debug:
+        DEBUG = True
+    if not (args.packagelistfile or args.package_name or args.package_version):
+        print "No work requested, requires either package list file, package name or package version"
+        build_exit(build_return)
+    if args.items_reported:
+        i = args.items_reported
+    else:
+        i=1
+    if args.vfeed_database:
+        d = args.vfeed_database
+    else:
+        d = 'vfeed.db'
+    # we need to put command line options
+    # age of the CVE's
+    # we need to characterize the attack surface, ports program names
+    # we need to characterize how to defend against these problems. Besides
+    # patching, what else can be done.
+    # variables used for reporting
+    if args.packagelistfile:
+        print "\tReport generated using %s as the package list."%(args.packagelistfile)
+        packages = packageList(args.packagelistfile)
+        packages = packages.getList()
+        build_exit(check_list_in_database(packages, d, i),build_return)
+    if args.package_name:
+        print "One Item being checked"
+        build_exit(check_item_in_database(args.package_name, args.package_version, d, i),build_return)
+    # we exit with true or false of the shell to support a build_environment
+    build_exit(build_return)
+
 if __name__ == "__main__":
     main()
