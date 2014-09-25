@@ -1,0 +1,3 @@
+#!/bin/sh
+
+../falco -f testlist.txt -d ../vfeed.db

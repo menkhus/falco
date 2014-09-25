@@ -1,0 +1,6 @@
+These tests exercise the features of falco
+
+Need to improve them so there is one test to rule them all, 
+test.sh does run all tests
+
+

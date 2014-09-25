@@ -9,7 +9,7 @@ July 11, 2014
 
 All rights reserved.
 
-Copyright 2014 Mark Menkhus, Glynn Mitchells
+Copyright 2014 Mark Menkhus, Glynn Mitchell
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

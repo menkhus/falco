@@ -1,0 +1,4 @@
+#!/bin/sh
+
+../falco -d ../vfeed.db -n postgres
+../falco -d ../vfeed.db -n postgresql

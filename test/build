@@ -1,0 +1,10 @@
+#!/bin/sh
+
+../falco -b -n skdjfhsdkjfhd -d ../vfeed.db
+echo $?
+
+make clean
+
+make all
+
+make clean

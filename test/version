@@ -1,0 +1,13 @@
+#!/bin/sh
+
+../falco -d ../vfeed.db -n postgresql -v 8
+../falco -d ../vfeed.db -n postgresql -v 8.0
+../falco -d ../vfeed.db -n postgresql -v 8.1
+../falco -d ../vfeed.db -n postgresql -v 8.2
+../falco -d ../vfeed.db -n postgresql -v 8.3
+../falco -d ../vfeed.db -n postgresql -v 8.4
+../falco -d ../vfeed.db -n postgresql -v 8.5:
+# using CPE knowledge, to override & test broken versioning
+../falco -d ../vfeed.db -n postgresql:8.4
+../falco -d ../vfeed.db -n postgresql:8.5:
+

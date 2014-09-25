@@ -47,23 +47,23 @@ class packageList():
         input: filename where the content is a packagenames
         one per line, comments with # sign
     """
-    def __init__ (self, packageFile=''):
+    def __init__(self, packageFile=''):
         """ get a file name when object is instantiated
         """
         self.packageFile = packageFile
         self.packageList = []
-    def getList (self):
-        """ getList is a generator, it gets the data from the file 
+    def getList(self):
+        """ getList is a generator, it gets the data from the file
             and yields the data as needed
         """
         try:
-            self.packageListInput = open (self.packageFile, 'r').readlines() 
+            self.packageListInput = open(self.packageFile, 'r').readlines()
         except Exception, e:
             print "packageList: Exception - %s"%(e,)
             exit(1)
         for each in self.packageListInput:
-            # eliminate commented lines and 
-            # lines without package colon major_version dot minor_version
+            # filter commented lines, lines without package colon 
+            # major_version dot minor_version
             if re.search(r'^#', each) or not re.search('\w\:(\d+\\.)?(\d+\\.)', each):
                 pass
             else:
@@ -78,20 +78,19 @@ class checknvd_by_package():
         data string is 'packagename:version'
         depends on the vfeed.db database from the vfeed application
     """
-    def __init__ (self, package=None, database='vfeed.db', items=99):
-        """ Setup class 
+    def __init__(self, package=None, database='vfeed.db', items=99):
+        """ Setup class
         """
-        self.package = package 
+        self.package = package
         self.database = database
         self.items = items
         self.db_version = None
     def get_data(self):
         """   Get the data from the database.
         """
-        if not re.search(":",self.package):
-            #print "checknvd_by_package, package has no version info: %s"%(self.package,)
+        if not re.search(":", self.package):
             self.data = None
-            return None 
+            return None
         try:
             """ open the database using Sqlite3, setup a connection
             and establish the SQL cursor
@@ -132,7 +131,7 @@ class checknvd_by_package():
         """
         if self.data:
             return len(self.data)
-        else: 
+        else:
             return 0
     def db_ver(self):
         """ return the db_version
@@ -147,7 +146,7 @@ class checknvd_by_package():
                 # note the fetchall gets multitple entries for a given CPE
                 # the cpe matching is regex rather than implementing the
                 # CPE v1.0 matching, less than or greater than logic.
-                self.conn.close()           
+                self.conn.close()        
             except Exception, e:
                 print "checknvd_by_package.db_ver: %s"%(e,)
                 exit()
@@ -155,7 +154,7 @@ class checknvd_by_package():
         else:
             return self.db_version[0]
     def __str__(self):
-        """ implement string output for object, embedded formatting and 
+        """ implement string output for object, embedded formatting and
         labeling for the data.
         """
         # accumulate all of the string data in s
@@ -163,9 +162,9 @@ class checknvd_by_package():
         if len(self.data) > 0:
                 self.s = ''
                 # accumulate CVE identifiers in cvelist, so that we don't repeat informing
-                # about a CVE in the s string, this accumulation may be dead code, since 
+                # about a CVE in the s string, this accumulation may be dead code, since
                 # the SQL seems to eliminate duplicates
-                # 
+                #
                 self.cvelist = []
                 for entry in self.data:
                     if entry[0] not in self.cvelist:
@@ -187,7 +186,7 @@ class checknvd_by_package():
                 return self.s
         else:
             return self.s
-    def __repr__ (self):
+    def __repr__(self):
         """ implement the string representation of the object
         """
         return __str__()
@@ -203,7 +202,6 @@ def command_line():
     project name and version name to CPE vectors in the NVD database.
     """
     parser = argparse.ArgumentParser(description=DESC)
-    #parser.add_argument('-c', '--cvss_minimum', help='minimum CVSS score to report', nargs='?', type=float, default=0.0)
     parser.add_argument('-b', '--build_environment', help='for use in build environments, return fail if items found', action = 'store_true', default=False)
     parser.add_argument('-d', '--vfeed_database', help='location of vfeed.db sqlite database from vfeed project', nargs='?', type=str, default='vfeed.db')
     parser.add_argument('--debug', help='turn on debug output', action = 'store_true', default=False)
@@ -224,6 +222,11 @@ def db_print (DEBUG, m='module', s='string'):
         print "debug: module %s, \ndebug message: %s"%(m,s)
 
 def check_item_in_database(package_name='', package_version='', d='', i=1):
+    """ check a string package name and version for matches in the
+    CPE content of the NVD
+
+    depends on the vfeed database 
+    """
     package = ''
     if package_name == '' and package_version == '':
         print "check_item_in_database: both package_name and package_version are null"
@@ -255,6 +258,11 @@ def check_item_in_database(package_name='', package_version='', d='', i=1):
         return False
 
 def check_list_in_database(packages=[], d='', i=1):
+    """ check a list of package names and versions for matches in the
+    CPE content of the NVD
+
+    depends on the vfeed database 
+    """
     not_found = ''
     not_found_c = 0
     found = ''
@@ -323,10 +331,15 @@ def detailed_vuln_report(vuln_data={}):
     print s
 
 def build_exit(return_value=False, build_return=0):
+    """ if the -b build_environment option is chosen, the return value 
+    if non zero so the build (make for example) will sense an error and 
+    exit.
+    """
     if build_return == 0:
         exit(not return_value)
     else:
         exit(return_value)
+
 def main():
     """  read a package inventory file in the form package:version
         check the packages in the NVD database, and report to std out
