@@ -9,13 +9,14 @@ dependencies:
     - software list formatting list being in name or name:version format
       1 package per line, comments start with #
 
-author: Mark Menkhus
+author: Mark Menkhus, Glynn Mitchell
+
 This is a RedCup research group project
 menkhus@icloud.com
 
 All rights reserved.
 
-Copyright 2014 Mark Menkhus, RedCup Research Group
+Copyright 2014 Mark Menkhus, Glynn Mitchell, RedCup Research Group
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
