@@ -1,13 +1,23 @@
-    o CRITCAL - If the vfeed.db does not exist, the file is created
-    o CRITCAL - CPE matching for -v is not working well:
-        ../falco -d ../vfeed.db -n postgresql -v 8.5 <- does not exist,
-        matches on v8.4
+
+    o CRITCAL - If the vfeed.db does not exist, the empty database file is created
+
+    o CRITICAL - README and other documentation is lacking, need to 
+    explain dependencies, install, use case, limitations , see:
+        http://stackoverflow.com/questions/2304863/how-to-write-a-good-readme
+    
+    o SERIOUS - No install utility or instructions
+
+    o SERIOUS - CPE matching is a simple match into the database.  PyPy has a fullimplementation of CPE implemented, which should be the best choice for CPE matches. However, name/version seems to be working for simple cases.
+
     o CPE matching takes name:version strings in -n
+    
     o for single test, does not announce what is being tested
+    
     o the database version out is not useful, need to report what 
     the last update was for the database
+    
     o need a database update feature in falco, don't depend on vfeed cli
+    
     o refactoring needs:
         variable names, long lines, indentation
         pylint is our friend
-        

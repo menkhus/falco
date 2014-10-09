@@ -115,7 +115,6 @@ class checknvd_by_package():
         self.sql += r' LIMIT ' + str(self.items)
         self.sql += r';'
         #print self.sql
-        # exit
         self.data = self.cursor.execute(self.sql)
         if self.data != None:
             self.data = self.data.fetchall()
@@ -225,16 +224,36 @@ def check_item_in_database(package_name='', package_version='', d='', i=1):
     """ check a string package name and version for matches in the
     CPE content of the NVD
 
-    depends on the vfeed database 
+    depends on the vfeed database
+
+    Desired outcome:
+    in package and version = output
+     x   ''     and ''   =   fail
+     x   ''     and  num  =   ':num'
+     x   pck    and ''   =   'pck:'
+     x   pck    and  num  =  'pck:num'
+
+    Note: this is not compliant with CPE matching, does not account for the version
+    comparison, less than, greater than etc. This depends on matching.
+
     """
     package = ''
+    if package_version == None:
+        package_version = ''
+    if package_name == None:
+        package_name == ''
     if package_name == '' and package_version == '':
         print "check_item_in_database: both package_name and package_version are null"
         return False
-    if package_name == '':
+    elif package_name == '' and package_version != '':
         package = ':' + package_version
-    else:
+    elif package_version == '' and package_name != '':
         package = package_name + ':'
+    else:
+        if package_name != '' and package_version != '':
+            package = package_name + ':' + package_version
+        else:
+            return False    
     try:
         p = checknvd_by_package(package=package, database=d, items=i)
         report = p.get_data()
@@ -348,6 +367,7 @@ def main():
     """
     args = command_line()
     if args.debug:
+        DEBUG = True
         print args
     if args.build_environment:
         build_return=1
@@ -356,8 +376,6 @@ def main():
     if args.Version:
         print "falco version: %s"%(__version__)
         exit()
-    if args.debug:
-        DEBUG = True
     if not (args.packagelistfile or args.package_name or args.package_version):
         print "No work requested, requires either package list file, package name or package version"
         build_exit(build_return)
