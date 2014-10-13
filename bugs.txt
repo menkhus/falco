@@ -1,4 +1,3 @@
-
     o CRITCAL - If the vfeed.db does not exist, the empty database file is created
 
     o CRITICAL - README and other documentation is lacking, need to 

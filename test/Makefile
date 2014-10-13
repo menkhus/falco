@@ -12,3 +12,4 @@ bash.build.out:
 clean:
 	rm sdjahf.build.out
 	rm bash.build.out
+	rm vfeed.db
