@@ -103,6 +103,7 @@ class checknvd_by_package():
         # setting up a SQL query for get CPE and CVE data from two tables
         # and match against a package name in the CPE identifiers.
         # match :packagename: or :packagename:n.n.n: packagename
+        # sort unique items, based on date first, then CVSS score
         self.sql = r"""SELECT DISTINCT c.cveid, n.cvss_base, c.cpeid, n.date_published, n.summary
         FROM nvd_db as n
         JOIN cve_cpe as c
@@ -110,8 +111,8 @@ class checknvd_by_package():
         self.sql += r' WHERE c.cveid = n.cveid AND'
         self.sql += r' c.cpeid LIKE "%:' + self.package + r'%"'
         self.sql += r' GROUP BY c.cveid '
-        self.sql += r' ORDER BY CAST(n.cvss_base AS REAL) DESC,'
-        self.sql += r' n.date_published DESC'
+        self.sql += r' ORDER BY n.date_published DESC,'
+        self.sql += r' CAST(n.cvss_base AS REAL) DESC'
         self.sql += r' LIMIT ' + str(self.items)
         self.sql += r';'
         #print self.sql
