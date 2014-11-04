@@ -20,3 +20,6 @@
     o refactoring needs:
         variable names, long lines, indentation
         pylint is our friend
+    
+    o the build fail message is not output when a fail occurs. Print
+    to stderr and then return the inverted return value.
