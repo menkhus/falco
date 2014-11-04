@@ -199,7 +199,7 @@ def command_line():
     """
     DESC = """Checks command line or, a file list of software programs for known security
     defects documented in the National Vulnerability Database.  Matches a
-    project name and version name to CPE vectors in the NVD database.
+    project name and version name to CPE URIs in the NVD database.
     """
     parser = argparse.ArgumentParser(description=DESC)
     parser.add_argument('-b', '--build_environment', help='for use in build environments, return fail if items found', action = 'store_true', default=False)
@@ -356,6 +356,11 @@ def build_exit(return_value=False, build_return=0):
     exit.
     """
     if build_return == 0:
+        print """\tSuggested action:
+        1) File a bug in the bug tracker\n2)change the makefile, remove -b\n
+        3) when the bug is fixed, update the makefile again to reflect\n 
+        the latest package number and reinstate the -b
+        """
         exit(not return_value)
     else:
         exit(return_value)
