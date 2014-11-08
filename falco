@@ -35,6 +35,7 @@ __version__ = '0.3'
 __author__ = 'Mark Menkhus, menkhus@icloud.com'
 
 import argparse
+import os
 import time
 import re
 import sqlite3
@@ -356,13 +357,15 @@ def build_exit(return_value=False, build_return=0):
     exit.
     """
     if build_return == 0:
-        print """\tSuggested action:
-        1) File a bug in the bug tracker\n2)change the makefile, remove -b\n
-        3) when the bug is fixed, update the makefile again to reflect\n 
-        the latest package number and reinstate the -b
+        """ advise software builder of next action for a build failure
         """
         exit(not return_value)
     else:
+        print """\tSuggested action:
+        1) File a bug in the bug tracker\n\t2)change the makefile, remove -b
+        3) when the bug is fixed, update the makefile again to reflect 
+        the latest package number and reinstate the -b
+        """
         exit(return_value)
 
 def main():
@@ -393,6 +396,8 @@ def main():
         d = args.vfeed_database
     else:
         d = 'vfeed.db'
+    if not os.path.exists(d):
+        raise IOError,"vfeed database does not exist: %s"%(d,)
     # we need to put command line options
     # age of the CVE's
     # we need to characterize the attack surface, ports program names
