@@ -1,5 +1,5 @@
 #!/bin/sh
 
-../falco -d ./vfeed.db -n sqlite
-
 ../falco -d ../vfeed.db -n sqlite
+
+../falco -d ../xxxxvfeed.db -n sqlite
