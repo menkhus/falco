@@ -26,33 +26,35 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-usage: falco [-h] [-b] [-d [VFEED_DATABASE]] [--debug] [-f [PACKAGELISTFILE]]
-             [-i [ITEMS_REPORTED]] [-n [PACKAGE_NAME]] [-v [PACKAGE_VERSION]]
-             [-V]
-
+usage: falco [-h] [-b] [-d [VFEED_DATABASE]] [--debug] [-f [PACKAGELISTFILE]]  
+             [-i [ITEMS_REPORTED]] [-n [PACKAGE_NAME]] [-o [OUTPUTFILE]]  
+             [-v [PACKAGE_VERSION]] [-V]  
+  
 Checks command line or, a file list of software programs for known security
 defects documented in the National Vulnerability Database. Matches a project
-name and version name to CPE URIs in the NVD database.
-
-optional arguments:
+name and version name to CPE URIs in the NVD database.  
+  
+optional arguments:  
   -h, --help            show this help message and exit  
-  -b, --build_environment
-                        for use in build environments, return fail if items
+  -b, --build_environment  
+                        for use in build environments, return fail if items  
                         found  
-  -d [VFEED_DATABASE], --vfeed_database [VFEED_DATABASE]
-                        location of vfeed.db sqlite database from vfeed
+  -d [VFEED_DATABASE], --vfeed_database [VFEED_DATABASE]  
+                        location of vfeed.db sqlite database from vfeed  
                         project  
   --debug               turn on debug output  
   -f [PACKAGELISTFILE], --packagelistfile [PACKAGELISTFILE]  
                         file where the list of packages to evaluate is stored  
-  -i [ITEMS_REPORTED], --items_reported [ITEMS_REPORTED]   
+  -i [ITEMS_REPORTED], --items_reported [ITEMS_REPORTED]  
                         number of items reported for NVD/CVE matches  
-  -n [PACKAGE_NAME], --package_name [PACKAGE_NAME]    
+  -n [PACKAGE_NAME], --package_name [PACKAGE_NAME]  
                         package name to search for  
+  -o [OUTPUTFILE], --outputfile [OUTPUTFILE]  
+                        name of output file  
   -v [PACKAGE_VERSION], --package_version [PACKAGE_VERSION]  
                         package version to look for  
   -V, --Version         report the version of falco and exit  
-
+  
 Examples:  
 Assumes vfeed.db is in the same directory as falco  
 
@@ -68,7 +70,7 @@ Summary Description: Python 2.7 before 3.4 only uses the last eight bits of the 
   
 Example 2, using falco in build situations:  
 check a package named 'python' version '2.7.3' for vulnerabilities in the NVD database and if any are found, return a non zero return value.  Placing this in a makefile will cause make to exit:  
-$ ./falco.py -b -n python -v 2.7.3 >> falcolog  
+$ ./falco.py -b -n python -v 2.7.3 -o falcolog  
 $ echo $?  
 1  
 $  
@@ -86,7 +88,7 @@ clean:
   
 Execution:  
 $ make  
-./falco.py -b -n bash  -v 1.14.7 -d ./vfeed.db > bash.build.out  
+./falco.py -b -n bash  -v 1.14.7 -d ./vfeed.db -o bash.build.out  
 make: *** [bash.build.out] Error 1  
   
 Explanation, -b cause falco to return fail if any information is returned from searching NVD for the package and version.  
