@@ -75,10 +75,10 @@ $
   
 Example 3, falco in a makefile, using the -b (break the build) flag:  
 Makefile:  
-# this will FAIL make because this version 1.14.7 bash is found in the NVD 
-# database.
-# Solution is twofold: to update bash to most recent code, and 
-# to change the # make entry to reflect that new version number:
+\# this will FAIL make because this version 1.14.7 bash is found in the NVD  
+\# database.  
+\# Solution is twofold: to update bash to most recent code, and  
+\# to change the # make entry to reflect that new version number:  
 bash.build.out:  
     ./falco.py -b -n bash  -v 1.14.7 -d ./vfeed.db > bash.build.out  
 clean:  
