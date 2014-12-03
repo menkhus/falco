@@ -356,22 +356,23 @@ def detailed_vuln_report(vuln_data={}, outputfile=sys.stdout):
             cve[2],cve[3],cve[4])  
     print (s, file = outputfile)
 
-def build_exit(return_value=False, build_return=0, outputfile=sys.stderr):
+def build_exit(return_value=False, build_return=False, outputfile=sys.stderr):
     """ if the -b build_environment option is chosen, the return value 
-    is could be non zero if a match in the NVD is made, so the build (make
-    for example) will sense an error and exit.
+    could be True if a match in the NVD is made, but we want the build
+    (make for example) will sense an error and exit before completion.
     """
-    if build_return != 0:
-        """ advise software builder of next action for a build failure
+    if build_return == True:
+        """ advise software builder of next action if a build failure
         """
-        print ("""\tSuggested action:
-        1) File a bug in the bug tracker\n\t2)change the makefile, remove -b in the make file.
-        3) when the bug is fixed, update the makefile again to reflect 
-        the latest package number and reinstate the -b.
-        """, file = outputfile)
-        exit(not return_value)
+        if return_value == True:
+            print ("""\tSuggested action:
+            1) File a bug in the bug tracker, with CVE information needed to determine what change is needed.
+            2) Change the makefile, remove -b in the make file to continue building.
+            3) When this potential bug is resolved, update the makefile again to reflect the latest package number and reinstate the -b.
+            """, file = outputfile)
+            return(not return_value)
     else:
-        exit(return_value)
+        return(return_value)
 
 def main():
     """  read a package inventory file in the form package:version
@@ -384,9 +385,9 @@ def main():
         DEBUG = True
         print (args, file=outputfile)
     if args.build_environment:
-        build_return=1
+        build_return=True
     else:
-        build_return=0
+        build_return=False
     if args.outputfile:
         outputfile = open(args.outputfile,'w')
     else:
@@ -421,8 +422,10 @@ def main():
     if args.package_name:
         print ("One Item being checked", file = outputfile)
         build_exit(check_item_in_database(args.package_name, args.package_version, d, i),build_return, outputfile)
-    # we exit with true or false of the shell to support a build_environment
-    build_exit(build_return)
+    # we exit with true or false of the shell environment to support a
+    # build_environment type of logic.  If there is a finding in the 
+    # CVE, then cause the build/script to exit with fail.
+    return (build_exit(build_return))
 
 if __name__ == "__main__":
     main()
