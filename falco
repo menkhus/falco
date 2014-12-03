@@ -332,8 +332,8 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout):
     print ("Detailed findings as follows:", file = outputfile)
     detailed_vuln_report (detailed_report, outputfile)
     db_version = p.db_ver()
-    print ("Version of vfeed database used in this report was %s\nThe"%(db_version,), file = outputfile),
-    print ("report was run on %s."%(time.strftime("%m-%d-%Y at %H:%M:%S"),), file = outputfile)
+    print ("Version of vfeed database used in this report was %s\n"%(db_version,), file = outputfile),
+    print ("The report was run on %s."%(time.strftime("%m-%d-%Y at %H:%M:%S"),), file = outputfile)
     if found_c == 0:
         return False
     else:
