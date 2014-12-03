@@ -356,21 +356,21 @@ def detailed_vuln_report(vuln_data={}, outputfile=sys.stdout):
             cve[2],cve[3],cve[4])  
     print (s, file = outputfile)
 
-def build_exit(return_value=False, build_return=0, outputfile=sys.stdout):
+def build_exit(return_value=False, build_return=0, outputfile=sys.stderr):
     """ if the -b build_environment option is chosen, the return value 
-    if non zero so the build (make for example) will sense an error and 
-    exit.
+    is could be non zero if a match in the NVD is made, so the build (make
+    for example) will sense an error and exit.
     """
-    if build_return == 0:
+    if build_return != 0:
         """ advise software builder of next action for a build failure
         """
+        print ("""\tSuggested action:
+        1) File a bug in the bug tracker\n\t2)change the makefile, remove -b in the make file.
+        3) when the bug is fixed, update the makefile again to reflect 
+        the latest package number and reinstate the -b.
+        """, file = outputfile)
         exit(not return_value)
     else:
-        print ("""\tSuggested action:
-        1) File a bug in the bug tracker\n\t2)change the makefile, remove -b
-        3) when the bug is fixed, update the makefile again to reflect 
-        the latest package number and reinstate the -b
-        """, file = outputfile)
         exit(return_value)
 
 def main():
