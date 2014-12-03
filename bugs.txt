@@ -1,5 +1,9 @@
     o SERIOUS - No install utility or instructions
 
+    o SERIOUS - the testlist.txt file in the test director is not 
+processed correctly.  It appears that the apache and oscar entries
+are not checked. To repreat the bug:
+cd test; ../falco -d ../vfeed.db -f testlist.txt 
     o SERIOUS - CPE matching is a simple match into the database.  PyPy has a fullimplementation of CPE implemented, which should be the best choice for CPE matches. However, name/version seems to be working for simple cases.
 
     o for single test, does not announce what is being tested
