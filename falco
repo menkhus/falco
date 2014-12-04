@@ -370,7 +370,8 @@ def build_exit(return_value=False, build_return=False, outputfile=sys.stderr):
             2) Change the makefile, remove -b in the make file to continue building.
             3) When this potential bug is resolved, update the makefile again to reflect the latest package number and reinstate the -b.
             """, file = outputfile)
-            return(not return_value)
+            return(False)
+        return(True)
     else:
         return(return_value)
 
@@ -381,23 +382,27 @@ def main():
 
     """
     args = command_line()
-    if args.debug:
-        DEBUG = True
-        print (args, file=outputfile)
-    if args.build_environment:
-        build_return=True
-    else:
-        build_return=False
     if args.outputfile:
         outputfile = open(args.outputfile,'w')
     else:
         outputfile = sys.stdout
+    if args.debug:
+        DEBUG = True
+        print (args, file=outputfile)
+        print ("expect F: %s"%(build_exit(False, False, outputfile),),)
+        print ("expect T: %s"%(build_exit(False, True, outputfile),),)
+        print ("expect F: %s"%(build_exit(True, True, outputfile),),)
+        print ("expect T: %s"%(build_exit(True, False, outputfile),),)
+    if args.build_environment:
+        build_return=True
+    else:
+        build_return=False
     if args.Version:
         print ("falco version: %s"%(__version__), file = outputfile)
         exit()
     if not (args.packagelistfile or args.package_name or args.package_version):
         print ("No work requested, requires either package list file, package name or package version", file = outputfile)
-        build_exit(build_return)
+        sys.exit(1)
     if args.items_reported:
         i = args.items_reported
     else:
@@ -418,14 +423,23 @@ def main():
         print ("\tReport generated using %s as the package list."%(args.packagelistfile), file = outputfile)
         packages = packageList(args.packagelistfile)
         packages = packages.getList()
-        build_exit(check_list_in_database(packages, d, i),build_return, outputfile)
+        if build_exit(check_list_in_database(packages, d, i),build_return, outputfile):
+            sys.exit(0)
+        else:
+            sys.exit(1)
     if args.package_name:
         print ("One Item being checked", file = outputfile)
-        build_exit(check_item_in_database(args.package_name, args.package_version, d, i),build_return, outputfile)
+        if build_exit(check_item_in_database(args.package_name, args.package_version, d, i),build_return, outputfile):
+            sys.exit(0)
+        else:
+            sys.exit(1)
     # we exit with true or false of the shell environment to support a
     # build_environment type of logic.  If there is a finding in the 
     # CVE, then cause the build/script to exit with fail.
-    return (build_exit(build_return))
+    if build_exit(build_return):
+        sys.exit(0)
+    else:
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
