@@ -1,15 +1,21 @@
 # test falco as if used in a software build
 
-all:	sdjahf.build.out bash.build.out
+all:	nonexist.build.out bash.build.out multi.build.out
 
 # this should pass since sdjahf is not found
-sdjahf.build.out:
-	../falco -b -d ../vfeed.db -n sdjahf -o sdjahf.build.out
+nonexist.build.out:
+	../falco -b -d ../vfeed.db -n nonexistant -o nonexist.build.out
 
 
 # this will FAIL make because bash is found:
 bash.build.out:
 	../falco -b -d ../vfeed.db -n bash -o bash.build.out
+
+# this will FAIL make because several packages are found:
+multi.build.out:
+	../falco -b -d ../vfeed.db -f testlist.txt -o multi.build.out
 clean:
-	rm sdjahf.build.out
+	rm nonexist.build.out
 	rm bash.build.out
+	rm multi.build.out
+
