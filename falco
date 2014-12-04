@@ -389,10 +389,6 @@ def main():
     if args.debug:
         DEBUG = True
         print (args, file=outputfile)
-        print ("expect F: %s"%(build_exit(False, False, outputfile),),)
-        print ("expect T: %s"%(build_exit(False, True, outputfile),),)
-        print ("expect F: %s"%(build_exit(True, True, outputfile),),)
-        print ("expect T: %s"%(build_exit(True, False, outputfile),),)
     if args.build_environment:
         build_return=True
     else:
