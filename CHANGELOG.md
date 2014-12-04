@@ -1,3 +1,5 @@
+version 0.5 - updated build logic, improved output, this is a release
+
 version 0.4 - added -o outputfile logic, fixed vfeed.db logic
 
 version 0.3 - added check for single package name, build fail logic

@@ -34,7 +34,7 @@ You may obtain a copy of the License at
     limitations under the License.
 """
 
-__version__ = '0.4'
+__version__ = '0.5'
 __author__ = 'Mark Menkhus, menkhus@icloud.com'
 import argparse
 import sys
@@ -289,6 +289,7 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout):
 
     depends on the vfeed database 
     """
+    #print (packages)
     not_found = ''
     not_found_c = 0
     found = ''
@@ -302,7 +303,7 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout):
                 found += "Package text: " + package + " found.\n"
                 found_c += 1
                 #db_print (DEBUG,m='main, packagelistfile',s=package)
-                #print p
+                #print (p)
                 detailed_report[package]=report
             else:
                 not_found_c += 1
