@@ -424,15 +424,15 @@ def main():
         packages = packageList(args.packagelistfile)
         packages = packages.getList()
         if build_exit(check_list_in_database(packages, d, i),build_return, outputfile):
-            sys.exit(0)
-        else:
             sys.exit(1)
+        else:
+            sys.exit(0)
     if args.package_name:
         print ("One Item being checked", file = outputfile)
-        if build_exit(check_item_in_database(args.package_name, args.package_version, d, i),build_return, outputfile):
-            sys.exit(0)
-        else:
+        if build_exit(check_item_in_database(args.package_name, args.package_version, d, i, outputfile),build_return, outputfile):
             sys.exit(1)
+        else:
+            sys.exit(0)
     # we exit with true or false of the shell environment to support a
     # build_environment type of logic.  If there is a finding in the 
     # CVE, then cause the build/script to exit with fail.
