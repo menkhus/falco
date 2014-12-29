@@ -10,7 +10,8 @@ dependencies:
     - for the packagelist software list formatting, requires that the list 
     be in name or name:version format
     1 package per line, comments start with #
-    -depends on a version of pytohn that has the __future__ feature, 2.6 and higher?
+    -depends on a version of pytohn that has the __future__ feature, 2.6 and 
+    higher?
     
 author: Mark Menkhus, Glynn Mitchell
 
@@ -71,7 +72,8 @@ class packageList():
         for each in self.packageListInput:
             # filter commented lines, lines without package colon 
             # major_version dot minor_version
-            if re.search(r'^#', each) or not re.search('\w\:(\d+\\.)?(\d+\\.)', each):
+            if re.search(r'^#', each) or not re.search(
+                '\w\:(\d+\\.)?(\d+\\.)', each):
                 pass
             else:
                 # remove newline
@@ -111,7 +113,8 @@ class checknvd_by_package():
         # and match against a package name in the CPE identifiers.
         # match :packagename: or :packagename:n.n.n: packagename
         # sort unique items, based on date first, then CVSS score
-        self.sql = r"""SELECT DISTINCT c.cveid, n.cvss_base, c.cpeid, n.date_published, n.summary
+        self.sql = r"""SELECT DISTINCT c.cveid, n.cvss_base, c.cpeid, 
+        n.date_published, n.summary 
         FROM nvd_db as n
         JOIN cve_cpe as c
         """
@@ -147,7 +150,8 @@ class checknvd_by_package():
             try:
                 self.conn = sqlite3.connect(self.database)
                 self.cursor = self.conn.cursor()
-                self.db_version = self.cursor.execute(r'select db_version from stat_vfeed_kpi;')
+                self.db_version = self.cursor.execute(
+                    r'select db_version from stat_vfeed_kpi;')
                 self.db_version = self.db_version.fetchall()
                 self.db_version = self.db_version[0]
                 # note the fetchall gets multitple entries for a given CPE
@@ -155,7 +159,8 @@ class checknvd_by_package():
                 # CPE v1.0 matching, less than or greater than logic.
                 self.conn.close()        
             except Exception, e:
-                print ("checknvd_by_package.db_ver: %s"%(e,), file = outputfile)
+                print ("checknvd_by_package.db_ver: %s"%(e,), \
+                    file = outputfile)
                 exit()
             return self.db_version[0]
         else:
@@ -168,18 +173,21 @@ class checknvd_by_package():
         self.s = ''
         if len(self.data) > 0:
                 self.s = ''
-                # accumulate CVE identifiers in cvelist, so that we don't repeat informing
-                # about a CVE in the s string, this accumulation may be dead code, since
-                # the SQL seems to eliminate duplicates
-                #
+                # accumulate CVE identifiers in cvelist, so that we don't 
+                # repeat informing about a CVE in the s string, this 
+                # accumulation may be dead code, since the SQL seems to
+                # eliminate duplicates
                 self.cvelist = []
                 for entry in self.data:
                     if entry[0] not in self.cvelist:
-                        self.s += "\t\t*** Potential security defect found in %s\n"%(self.package,)
-                        self.s += "CVE: %s\nCVSS Score: %s\nCPE id: %s\nPublished on: \
-%s\nSummary Description: %s\n\n"%(entry[0],entry[1],\
+                        self.s += "\t\t*** Potential security defect found \
+                        in %s\n"%(self.package,)
+                        self.s += "CVE: %s\nCVSS Score: %s\nCPE id: %s\n\
+                        Published on: \
+                        %s\nSummary Description: %s\n\n"%(entry[0],entry[1],\
                         entry[2],entry[3],entry[4])
-                        # record the CVE and don't report it again in the string output
+                        # record the CVE and don't report it again in the 
+                        # string output
                         self.cvelist.append(entry[0])
                         # can I print the CVSS identifier?
                         # can I print the CVSS identifier in such a way
@@ -201,12 +209,13 @@ class checknvd_by_package():
 def command_line():
     """process command line arguments
     Arguments: --debug, --packagelistfile --items_reported, --vfeed_database
-    --build_environment, --outputfile, --package_name, --package_version, --Version
+    --build_environment, --outputfile, --package_name, --package_version, 
+    --Version
     output: help, usage, and state variables for options on the command line
     """
-    DESC = """Checks command line or, a file list of software programs for known security
-    defects documented in the National Vulnerability Database.  Matches a
-    project name and version name to CPE URIs in the NVD database.
+    DESC = """Checks command line or, a file list of software programs for
+    known security defects documented in the National Vulnerability Database.
+    Matches a project name and version name to CPE URIs in the NVD database.
     """
     parser = argparse.ArgumentParser(description=DESC)
     parser.add_argument('-b', '--build_environment', help='for use in build environments, return fail if items found', action = 'store_true', default=False)
@@ -229,10 +238,10 @@ def db_print (DEBUG, m='module', s='string', outputfile = sys.stdout):
     if DEBUG == True:
         print ("debug: module %s, \ndebug message: %s"%(m,s), file = outputfile)
 
-def check_item_in_database(package_name='', package_version='', d='', i=1, outputfile=sys.stdout):
-    """ check a string package name and version for matches in the
-    CPE content of the NVD
-
+def check_item_in_database(package_name='', package_version='', d='', i=1, \
+    outputfile=sys.stdout):
+    """ check a string package name and version for matches in the CPE content\
+    of the NVD
     depends on the vfeed database
 
     Desired outcome:
@@ -242,9 +251,8 @@ def check_item_in_database(package_name='', package_version='', d='', i=1, outpu
      x   pck    and ''   =   'pck:'
      x   pck    and  num  =  'pck:num'
 
-    Note: this is not compliant with CPE matching, does not account for the version
-    comparison, less than, greater than etc. This depends on matching.
-
+    Note: this is not compliant with CPE matching, does not account for the 
+    version comparison, less than, greater than etc. This depends on matching.
     """
     package = ''
     if package_version == None:
@@ -252,7 +260,8 @@ def check_item_in_database(package_name='', package_version='', d='', i=1, outpu
     if package_name == None:
         package_name == ''
     if package_name == '' and package_version == '':
-        print ("check_item_in_database: both package_name and package_version are null", file=outputfile)
+        print ("check_item_in_database: both package_name and package_version\
+             are null", file=outputfile)
         return False
     elif package_name == '' and package_version != '':
         package = ':' + package_version
@@ -368,10 +377,14 @@ def build_exit(return_value=False, build_return=False, outputfile=sys.stderr):
         """ advise software builder of next action if a build failure
         """
         if return_value == True:
-            print ("""\tSuggested action:
-            1) File a bug in the bug tracker, with CVE information needed to determine what change is needed.
-            2) Change the makefile, remove -b in the make file to continue building.
-            3) When this potential bug is resolved, update the makefile again to reflect the latest package number and reinstate the -b.
+            print ("""\tSuggested action for 3rd party code vulnerability
+        management:
+            1) File a bug in the bug tracker, with CVE information needed to 
+            determine what change is needed.
+            2) Change the makefile, remove -b in the make file to continue 
+            building.
+            3) When this potential bug is resolved, update the makefile again 
+            to reflect the latest package number and reinstate the -b.
             """, file = outputfile)
             return(False)
         return(True)
@@ -400,7 +413,8 @@ def main():
         print ("falco version: %s"%(__version__), file = outputfile)
         exit()
     if not (args.packagelistfile or args.package_name or args.package_version):
-        print ("No work requested, requires either package list file, package name or package version", file = outputfile)
+        print ("No work requested, requires either package list file, package \
+            name or package version", file = outputfile)
         sys.exit(1)
     if args.items_reported:
         i = args.items_reported
@@ -419,16 +433,19 @@ def main():
     # patching, what else can be done.
     # variables used for reporting
     if args.packagelistfile:
-        print ("\tReport generated using %s as the package list."%(args.packagelistfile), file = outputfile)
+        print ("\tReport generated using %s as the package list."%(args.
+            packagelistfile), file = outputfile)
         packages = packageList(args.packagelistfile)
         packages = packages.getList()
-        if build_exit(check_list_in_database(packages, d, i, outputfile),build_return, outputfile):
+        if build_exit(check_list_in_database(packages, d, i, 
+            outputfile),build_return, outputfile):
             sys.exit(0)
         else:
             sys.exit(1)
     if args.package_name:
         #print ("One Item being checked", file = outputfile)
-        if build_exit(check_item_in_database(args.package_name, args.package_version, d, i, outputfile),build_return, outputfile):
+        if build_exit(check_item_in_database(args.package_name, 
+            args.package_version, d, i, outputfile),build_return, outputfile):
             sys.exit(0)
         else:
             sys.exit(1)
