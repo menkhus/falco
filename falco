@@ -2,15 +2,16 @@
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
 from __future__ import print_function
 """  falco is a software inventory vulnerability check search tool.  Falco
-searches a user provided list of program package names and versions against
+searches package names and versions against
 the NVD database, and reports security defects listed against that data.
 
 dependencies:
-    -vfeed database, and a package inventory list
-    - for the packagelist software list formatting, requires that the list
+    -Foremost falco depends on the vfeed database.  Please look closely at 
+    at https://github.com/toolswatch/vFeed/
+    -if testing using a packagelist file, requires that the list
     be in name or name:version format
     1 package per line, comments start with #
-    -depends on a version of pytohn that has the __future__ feature, 2.6 and
+    -depends on a version of python that has the __future__ feature, 2.6 and
     higher?
     
 author: Mark Menkhus, Glynn Mitchell
@@ -83,9 +84,13 @@ class packageList():
                     yield each
 
 class checknvd_by_package():
-    """ Check a package string for existence in the nvd cpe data
-        data string is 'packagename:version'
-        depends on the vfeed.db database from the vfeed application
+    """ Check a package string for existence in the nvd database.
+        searched string is 'packagename:version', compared against
+        CPE URI's like:
+        cpe:/a:microsoft:internet_explorer:8.0.6001:beta
+
+        depends on the vfeed.db database from the vfeed application:
+        https://github.com/toolswatch/vFeed/ 
     """
     def __init__(self, package=None, database='vfeed.db', items=99):
         """ Setup class
@@ -129,9 +134,9 @@ class checknvd_by_package():
         self.data = self.cursor.execute(self.sql)
         if self.data != None:
             self.data = self.data.fetchall()
-            # note the fetchall gets multitple entries for a given CPE
+            # note the fetchall gets multiple entries for a given CPE
             # the cpe matching is regex rather than implementing the
-            # CPE v1.0 matching, less than or greater than logic.
+            # CPE v1.0 / SCAP matching, less than or greater than logic.
             self.conn.close()
             return self.data
         else:
@@ -154,7 +159,7 @@ class checknvd_by_package():
                     r'select db_version from stat_vfeed_kpi;')
                 self.db_version = self.db_version.fetchall()
                 self.db_version = self.db_version[0]
-                # note the fetchall gets multitple entries for a given CPE
+                # note the fetchall gets multiple entries for a given CPE
                 # the cpe matching is regex rather than implementing the
                 # CPE v1.0 matching, less than or greater than logic.
                 self.conn.close()        
@@ -324,7 +329,7 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout):
             db_version = p.db_ver()
             print ("Version of vfeed database used in this report was %s, and the"%(db_version,),file=outputfile),
             print ("report was run on %s ."%(time.strftime("%m-%d-%Y at %H:%M:%S")),file=outputfile),
-            print ("The report was interuppted with control-c", file=outputfile)
+            print ("The report was interupted with control-c", file=outputfile)
             # print partial summary
             print ("\tThis is a PARTIAL report of findings:", file=outputfile)
             print ("These %s packages were found in the NVD database and reported above:"%(found_c,),file=outputfile)
@@ -392,9 +397,18 @@ def build_exit(return_value=False, build_return=False, outputfile=sys.stderr):
         return(return_value)
 
 def main():
-    """  read a package inventory file in the form package:version
-        check the packages in the NVD database, and report to std out
-        depends on vfeed database, package.txt file
+    """ 
+        falco tests package names and versions against a vulnerability 
+        database and reports if that packagename and version are found to be
+        known vulnerable.  
+
+        depends on matching a string the user provides against a database 
+        containing CPE URIs.
+
+        main() Implement falco main program logic, tests for command line 
+        functions and generates report output
+
+        depends on vfeed database
 
     """
     args = command_line()
@@ -443,7 +457,7 @@ def main():
         else:
             sys.exit(1)
     if args.package_name:
-        #print ("One Item being checked",file=outputfile)
+        #print ("One Item being checked", file=outputfile)
         if build_exit(check_item_in_database(args.package_name, 
             args.package_version, d, i, outputfile),build_return, outputfile):
             sys.exit(0)
