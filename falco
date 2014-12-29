@@ -7,10 +7,10 @@ the NVD database, and reports security defects listed against that data.
 
 dependencies:
     -vfeed database, and a package inventory list
-    - for the packagelist software list formatting, requires that the list 
+    - for the packagelist software list formatting, requires that the list
     be in name or name:version format
     1 package per line, comments start with #
-    -depends on a version of pytohn that has the __future__ feature, 2.6 and 
+    -depends on a version of pytohn that has the __future__ feature, 2.6 and
     higher?
     
 author: Mark Menkhus, Glynn Mitchell
@@ -54,7 +54,7 @@ class packageList():
         input: filename where the content is a packagenames
         one per line, comments with # sign
     """
-    def __init__(self, packageFile='', outputfile = sys.stdout):
+    def __init__(self, packageFile='', outputfile=sys.stdout):
         """ get a file name when object is instantiated
         """
         self.packageFile = packageFile
@@ -67,7 +67,7 @@ class packageList():
         try:
             self.packageListInput = open(self.packageFile, 'r').readlines()
         except Exception, e:
-            print ("packageList: Exception - %s"%(e,), file = self.outputfile)
+            print ("packageList: Exception - %s"%(e,), file=self.outputfile)
             exit(1)
         for each in self.packageListInput:
             # filter commented lines, lines without package colon 
@@ -107,7 +107,7 @@ class checknvd_by_package():
             self.conn = sqlite3.connect(self.database)
             self.cursor = self.conn.cursor()
         except Exception, e:
-            print ("checknvd_by_package.getdata: %s"%(e,), file = outputfile)
+            print ("checknvd_by_package.getdata: %s"%(e,), file=outputfile)
             exit()
         # setting up a SQL query for get CPE and CVE data from two tables
         # and match against a package name in the CPE identifiers.
@@ -143,7 +143,7 @@ class checknvd_by_package():
             return len(self.data)
         else:
             return 0
-    def db_ver(self, outputfile = sys.stdout):
+    def db_ver(self, outputfile=sys.stdout):
         """ return the db_version
         """
         if self.db_version == None:
@@ -160,7 +160,7 @@ class checknvd_by_package():
                 self.conn.close()        
             except Exception, e:
                 print ("checknvd_by_package.db_ver: %s"%(e,), \
-                    file = outputfile)
+                    file=outputfile)
                 exit()
             return self.db_version[0]
         else:
@@ -218,25 +218,25 @@ def command_line():
     Matches a project name and version name to CPE URIs in the NVD database.
     """
     parser = argparse.ArgumentParser(description=DESC)
-    parser.add_argument('-b', '--build_environment', help='for use in build environments, return fail if items found', action = 'store_true', default=False)
+    parser.add_argument('-b', '--build_environment', help='for use in build environments, return fail if items found', action='store_true', default=False)
     parser.add_argument('-d', '--vfeed_database', help='location of vfeed.db sqlite database from vfeed project', nargs='?', type=str, default='vfeed.db')
-    parser.add_argument('--debug', help='turn on debug output', action = 'store_true', default=False)
+    parser.add_argument('--debug', help='turn on debug output', action='store_true', default=False)
     parser.add_argument('-f', '--packagelistfile', help='file where the list of packages to evaluate is stored', nargs='?', default=None)
     parser.add_argument('-i', '--items_reported', help='number of items reported for NVD/CVE matches', nargs='?', type=int, default=1)
     parser.add_argument('-n', '--package_name', help='package name to search for', nargs='?', type=str, default=None)
     parser.add_argument('-o', '--outputfile', help='name of output file', nargs='?', default=None)
     parser.add_argument('-v', '--package_version', help='package version to look for', nargs='?', type=str, default=None)
-    parser.add_argument('-V', '--Version', help='report the version of falco and exit', action = 'store_true', default=False)
+    parser.add_argument('-V', '--Version', help='report the version of falco and exit', action='store_true', default=False)
     args = parser.parse_args()
     return args
 
-def db_print (DEBUG, m='module', s='string', outputfile = sys.stdout):
+def db_print (DEBUG, m='module', s='string', outputfile=sys.stdout):
     """ debug print:
     print what module, and then what string output
-    doh, why use this when python has logging?
+
     """
     if DEBUG == True:
-        print ("debug: module %s, \ndebug message: %s"%(m,s), file = outputfile)
+        print ("debug: module %s, \ndebug message: %s"%(m,s), file=outputfile)
 
 def check_item_in_database(package_name='', package_version='', d='', i=1, \
     outputfile=sys.stdout):
@@ -284,10 +284,10 @@ def check_item_in_database(package_name='', package_version='', d='', i=1, \
     except KeyboardInterrupt:
         # if the user is impatient, report some output
         db_version = p.db_ver()
-        print ("The report was interupted with control-c", file = outputfile)
+        print ("The report was interupted with control-c", file=outputfile)
         exit(1)
     except Exception, e:
-        print ("check_item_in_database: %s"%(e,), file = outputfile)
+        print ("check_item_in_database: %s"%(e,), file=outputfile)
         exit(1)
     if len(p) > 0:
         return True
@@ -322,30 +322,30 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout):
         except KeyboardInterrupt:
             # if the user is impatient, report some output
             db_version = p.db_ver()
-            print ("Version of vfeed database used in this report was %s, and the"%(db_version,), file = outputfile),
-            print ("report was run on %s ."%(time.strftime("%m-%d-%Y at %H:%M:%S")), file = outputfile),
-            print ("The report was interuppted with control-c", file = outputfile)
+            print ("Version of vfeed database used in this report was %s, and the"%(db_version,),file=outputfile),
+            print ("report was run on %s ."%(time.strftime("%m-%d-%Y at %H:%M:%S")),file=outputfile),
+            print ("The report was interuppted with control-c", file=outputfile)
             # print partial summary
-            print ("\tThis is a PARTIAL report of findings:", file = outputfile)
-            print ("These %s packages were found in the NVD database and reported above:"%(found_c,), file = outputfile)
-            print (found, file = outputfile)
-            print ("These %s packages were not found in the NVD database:"%(not_found_c,), file = outputfile)
-            print (not_found, file = outputfile)
-            print ("PARTIAL findings as follows:", file = outputfile)
+            print ("\tThis is a PARTIAL report of findings:", file=outputfile)
+            print ("These %s packages were found in the NVD database and reported above:"%(found_c,),file=outputfile)
+            print (found,file=outputfile)
+            print ("These %s packages were not found in the NVD database:"%(not_found_c,),file=outputfile)
+            print (not_found,file=outputfile)
+            print ("PARTIAL findings as follows:",file=outputfile)
             detailed_vuln_report (detailed_report,outputfile)
             # quit the application
             exit(1)
     # print a summary
     print ("\tReport of possible vulnerability findings, for %s packages requested:"%(found_c + not_found_c,), file=outputfile)
-    print ("These %s packages were found with vulnerability in the NVD database and reported above:"%(found_c,), file = outputfile)
-    print (found, file = outputfile) 
-    print ("These %s packages were not found in the NVD database:"%(not_found_c,), file = outputfile)
-    print (not_found, file = outputfile)
-    print ("Detailed findings as follows:", file = outputfile)
+    print ("These %s packages were found with vulnerability in the NVD database and reported above:"%(found_c,),file=outputfile)
+    print (found,file=outputfile) 
+    print ("These %s packages were not found in the NVD database:"%(not_found_c,),file=outputfile)
+    print (not_found,file=outputfile)
+    print ("Detailed findings as follows:",file=outputfile)
     detailed_vuln_report (detailed_report, outputfile)
     db_version = p.db_ver()
-    print ("Version of vfeed database used in this report was %s\n"%(db_version,), file = outputfile),
-    print ("The report was run on %s."%(time.strftime("%m-%d-%Y at %H:%M:%S"),), file = outputfile)
+    print ("Version of vfeed database used in this report was %s\n"%(db_version,),file=outputfile),
+    print ("The report was run on %s."%(time.strftime("%m-%d-%Y at %H:%M:%S"),),file=outputfile)
     if found_c == 0:
         return False
     else:
@@ -366,7 +366,7 @@ def detailed_vuln_report(vuln_data={}, outputfile=sys.stdout):
             s += "CVE: %s\nCVSS Score: %s\nCPE id: %s\nPublished on: \
             %s\nSummary Description: %s\n\n"%(cve[0],cve[1],\
             cve[2],cve[3],cve[4])  
-    print (s, file = outputfile)
+    print (s,file=outputfile)
 
 def build_exit(return_value=False, build_return=False, outputfile=sys.stderr):
     """ if the -b build_environment option is chosen, the return value 
@@ -385,7 +385,7 @@ def build_exit(return_value=False, build_return=False, outputfile=sys.stderr):
             building.
             3) When this potential bug is resolved, update the makefile again 
             to reflect the latest package number and reinstate the -b.
-            """, file = outputfile)
+            """,file=outputfile)
             return(False)
         return(True)
     else:
@@ -410,11 +410,11 @@ def main():
     else:
         build_return=False
     if args.Version:
-        print ("falco version: %s"%(__version__), file = outputfile)
+        print ("falco version: %s"%(__version__),file=outputfile)
         exit()
     if not (args.packagelistfile or args.package_name or args.package_version):
         print ("No work requested, requires either package list file, package \
-            name or package version", file = outputfile)
+            name or package version",file=outputfile)
         sys.exit(1)
     if args.items_reported:
         i = args.items_reported
@@ -434,7 +434,7 @@ def main():
     # variables used for reporting
     if args.packagelistfile:
         print ("\tReport generated using %s as the package list."%(args.
-            packagelistfile), file = outputfile)
+            packagelistfile),file=outputfile)
         packages = packageList(args.packagelistfile)
         packages = packages.getList()
         if build_exit(check_list_in_database(packages, d, i, 
@@ -443,7 +443,7 @@ def main():
         else:
             sys.exit(1)
     if args.package_name:
-        #print ("One Item being checked", file = outputfile)
+        #print ("One Item being checked",file=outputfile)
         if build_exit(check_item_in_database(args.package_name, 
             args.package_version, d, i, outputfile),build_return, outputfile):
             sys.exit(0)
