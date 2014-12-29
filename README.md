@@ -1,9 +1,30 @@
-Falco: security intelligence for software maintainers
+Falco: 3rd party code security intelligence for software maintainers
 
-Falco is a project to find known latent bugs in 3rd party software packages by
-refering to CVE CPE entries from the National Vulnerability Database(NVD). We wrote the tool because there were no accessible tools for developers and project maintainers to easily find known security vulnerabilities in software they use as part of a project.
+What is falco:
+Falco is a project to search and report latent security bugs in 3rd party software packages in your projects. By placing falco in your build or QA
+process, you can be alerted when new security defects are reported.  You can even make falco part of your architectural review process as you evaluate component choices.
 
-Falco does not test the software, it simply looks to see that the package and version you tell it are in a vulnerability database.  If they are in the database, you have a vulnerability in software you depend upon which you need to respond to by updating your software.
+Dependencies:
+Falco depends on the vfeed.db, a sqlite implementation of the NIST NVD vulnerability database - https://github.com/toolswatch/vFeed/ You must install
+and update the vfeed database and then point falco at the up-to-date database in order to have an effective vulnerability intelligence feature in your software workflow.  Further, that database must be updated periodically in 
+order to implement the notion that you are getting current threat knowledge. If you find falco useful, please give a shoutout to us, and the great folks who build and maintain vfeed.
+
+No free lunch:
+Users of falco are responsible for making sure the package names, and versions supplied to falco are current with the project being evaluated. There is no sophistication built into falco to survey your code for 3rd party dependencies.There are fine commercial products which can do this and so much more.  Falco users must obtain and manage their own configuration management data for their project. This knowledge is known to be difficult to acquire and maintain, please seem the commercial products listed below.  
+
+Commercial products known to be highly effective analysis tools include:
+Appcheck from codenomicon - http://appcheck.codenomicon.com/help/faq/
+Palamida - http://www.palamida.com/
+Blackduck - https://www.blackducksoftware.com/
+
+Why falco:
+We wrote the tool because there were no accessible tools for developers and project maintainers to easily find known security vulnerabilities in software they use as part of a project.  Falco is barebones simple, and implements a basic software security check mandated by many security maturity models such as OWASP: https://www.owasp.org/index.php/Top_10_2013-A9-Using_Components_with_Known_Vulnerabilities, OpenSAMM - http://www.opensamm.org/, BSIMM - http://www.bsimm.com/online/governance/cp/ 
+
+Not a code scanner:
+Falco does not test the software, it simply looks to see that the package and version you tell it are in a vulnerability database.  If a package and version are in the vulnerability database, you could have a vulnerability in software you depend upon which you need to respond to by updating your software.  Other ways to discover known exiting vulnerabilities are through code scanning tools (mentioned above) network security scanners (often used by customers) and using code analysis tools like HP Fortify.
+
+Do 3rd party code threat intelligence:
+If you are developing a security lifecycle for your project, then managing 3rd party code security bugs is just a small part of a very baseline behavior. We wish you luck and hope that falco helps in your journey.
 
 Mark Menkhus, RedCup working group
 menkhus@icloud.com
