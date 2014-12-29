@@ -45,6 +45,8 @@ import sqlite3
 
 # enable a simple debug printout function
 DEBUG = False
+# suppress .pyc creation
+sys.dont_write_bytecode
 
 class packageList():
     """ return a generator of list of packages to get tested.
