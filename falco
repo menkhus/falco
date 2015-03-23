@@ -448,18 +448,18 @@ def main():
     # patching, what else can be done.
     # variables used for reporting
     if args.packagelistfile:
-        print ("\tReport generated using %s as the package list."%(args.
-            packagelistfile),file=outputfile)
+        print ("\tReport generated using %s as the package list."%(
+            args.packagelistfile),file=outputfile)
         packages = packageList(args.packagelistfile)
         packages = packages.getList()
-        if build_exit(check_list_in_database(packages, d, i,
-            outputfile),build_return, outputfile):
+        if build_exit(check_list_in_database(packages, d, i,outputfile),\
+            build_return, outputfile):
             sys.exit(0)
         else:
             sys.exit(1)
     if args.package_name:
         #print ("One Item being checked", file=outputfile)
-        if build_exit(check_item_in_database(args.package_name,
+        if build_exit(check_item_in_database(args.package_name,\
             args.package_version, d, i, outputfile),build_return, outputfile):
             sys.exit(0)
         else:
