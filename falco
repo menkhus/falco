@@ -432,26 +432,26 @@ def main():
         DEBUG = True
         print (args, file=outputfile)
     if args.build_environment:
-        build_return=True
+        build_return = True
     else:
-        build_return=False
+        build_return = False
     if args.Version:
         print ("falco version: %s"%(__version__), file=outputfile)
         exit()
     if not (args.packagelistfile or args.package_name or args.package_version):
         print ("No work requested, requires either package list file, package \
-        name or package version",file=outputfile)
+        name or package version", file=outputfile)
         sys.exit(1)
     if args.items_reported:
         i = args.items_reported
     else:
-        i=1
+        i = 1
     if args.vfeed_database:
         d = args.vfeed_database
     else:
         d = 'vfeed.db'
     if not os.path.exists(d):
-        raise IOError,"vfeed database does not exist: %s"%(d,)
+        raise IOError, "vfeed database does not exist: %s"%(d,)
     # we need to put command line options
     # age of the CVE's
     # we need to characterize the attack surface, ports program names
@@ -460,10 +460,10 @@ def main():
     # variables used for reporting
     if args.packagelistfile:
         print ("\tReport generated using %s as the package list."%(
-            args.packagelistfile),file=outputfile)
+            args.packagelistfile), file=outputfile)
         packages = packageList(args.packagelistfile)
         packages = packages.getList()
-        if build_exit(check_list_in_database(packages, d, i,outputfile),\
+        if build_exit(check_list_in_database(packages, d, i, outputfile),\
             build_return, outputfile):
             sys.exit(0)
         else:
@@ -471,7 +471,7 @@ def main():
     if args.package_name:
         #print ("One Item being checked", file=outputfile)
         if build_exit(check_item_in_database(args.package_name,\
-            args.package_version, d, i, outputfile),build_return, outputfile):
+            args.package_version, d, i, outputfile), build_return, outputfile):
             sys.exit(0)
         else:
             sys.exit(1)
