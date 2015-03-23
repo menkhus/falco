@@ -6,14 +6,14 @@ searches package names and versions against
 the NVD database, and reports security defects listed against that data.
 
 dependencies:
-    -Foremost falco depends on the vfeed database.  Please look closely at 
+    -Foremost falco depends on the vfeed database.  Please look closely at
     at https://github.com/toolswatch/vFeed/
     -if testing using a packagelist file, requires that the list
     be in name or name:version format
     1 package per line, comments start with #
     -depends on a version of python that has the __future__ feature, 2.6 and
     higher?
-    
+
 author: Mark Menkhus, Glynn Mitchell
 
 This is a RedCup research group project
@@ -71,7 +71,7 @@ class packageList():
             print ("packageList: Exception - %s"%(e,), file=self.outputfile)
             exit(1)
         for each in self.packageListInput:
-            # filter commented lines, lines without package colon 
+            # filter commented lines, lines without package colon
             # major_version dot minor_version
             if re.search(r'^#', each) or not re.search(
                 '\w\:(\d+\\.)?(\d+\\.)', each):
@@ -90,7 +90,7 @@ class checknvd_by_package():
         cpe:/a:microsoft:internet_explorer:8.0.6001:beta
 
         depends on the vfeed.db database from the vfeed application:
-        https://github.com/toolswatch/vFeed/ 
+        https://github.com/toolswatch/vFeed/
     """
     def __init__(self, package=None, database='vfeed.db', items=99):
         """ Setup class
@@ -118,7 +118,7 @@ class checknvd_by_package():
         # and match against a package name in the CPE identifiers.
         # match :packagename: or :packagename:n.n.n: packagename
         # sort unique items, based on date first, then CVSS score
-        self.sql = r"""SELECT DISTINCT c.cveid, n.cvss_base, c.cpeid, 
+        self.sql = r"""SELECT DISTINCT c.cveid, n.cvss_base, c.cpeid,
         n.date_published, n.summary 
         FROM nvd_db as n
         JOIN cve_cpe as c
@@ -162,7 +162,7 @@ class checknvd_by_package():
                 # note the fetchall gets multiple entries for a given CPE
                 # the cpe matching is regex rather than implementing the
                 # CPE v1.0 matching, less than or greater than logic.
-                self.conn.close()        
+                self.conn.close()
             except Exception, e:
                 print ("checknvd_by_package.db_ver: %s"%(e,), \
                     file=outputfile)
@@ -178,8 +178,8 @@ class checknvd_by_package():
         self.s = ''
         if len(self.data) > 0:
                 self.s = ''
-                # accumulate CVE identifiers in cvelist, so that we don't 
-                # repeat informing about a CVE in the s string, this 
+                # accumulate CVE identifiers in cvelist, so that we don't
+                # repeat informing about a CVE in the s string, this
                 # accumulation may be dead code, since the SQL seems to
                 # eliminate duplicates
                 self.cvelist = []
@@ -191,16 +191,16 @@ class checknvd_by_package():
                         Published on: \
                         %s\nSummary Description: %s\n\n"%(entry[0],entry[1],\
                         entry[2],entry[3],entry[4])
-                        # record the CVE and don't report it again in the 
+                        # record the CVE and don't report it again in the
                         # string output
                         self.cvelist.append(entry[0])
                         # can I print the CVSS identifier?
                         # can I print the CVSS identifier in such a way
                         # that it represents a shape?
-                        # 
-                        # how can I model the attack surface?  What ports does 
-                        # this application use?  
-                        # What would a malicious attack file look like for this 
+                        #
+                        # how can I model the attack surface?  What ports does
+                        # this application use?
+                        # What would a malicious attack file look like for this
                         # cve / security defect?
                         # what does any attack file look like?
                 return self.s
@@ -214,7 +214,7 @@ class checknvd_by_package():
 def command_line():
     """process command line arguments
     Arguments: --debug, --packagelistfile --items_reported, --vfeed_database
-    --build_environment, --outputfile, --package_name, --package_version, 
+    --build_environment, --outputfile, --package_name, --package_version,
     --Version
     output: help, usage, and state variables for options on the command line
     """
@@ -256,7 +256,7 @@ def check_item_in_database(package_name='', package_version='', d='', i=1, \
      x   pck    and ''   =   'pck:'
      x   pck    and  num  =  'pck:num'
 
-    Note: this is not compliant with CPE matching, does not account for the 
+    Note: this is not compliant with CPE matching, does not account for the
     version comparison, less than, greater than etc. This depends on matching.
     """
     package = ''
@@ -276,7 +276,7 @@ def check_item_in_database(package_name='', package_version='', d='', i=1, \
         if package_name != '' and package_version != '':
             package = package_name + ':' + package_version
         else:
-            return False    
+            return False
     try:
         p = checknvd_by_package(package=package, database=d, items=i)
         report = p.get_data()
@@ -303,7 +303,7 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout):
     """ check a list of package names and versions for matches in the
     CPE content of the NVD
 
-    depends on the vfeed database 
+    depends on the vfeed database
     """
     #print (packages)
     not_found = ''
@@ -343,7 +343,7 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout):
     # print a summary
     print ("\tReport of possible vulnerability findings, for %s packages requested:"%(found_c + not_found_c,), file=outputfile)
     print ("These %s packages were found with vulnerability in the NVD database and reported above:"%(found_c,),file=outputfile)
-    print (found,file=outputfile) 
+    print (found,file=outputfile)
     print ("These %s packages were not found in the NVD database:"%(not_found_c,),file=outputfile)
     print (not_found,file=outputfile)
     print ("Detailed findings as follows:",file=outputfile)
@@ -357,7 +357,7 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout):
         return True
 
 def detailed_vuln_report(vuln_data={}, outputfile=sys.stdout):
-    """ print a detailed vulnerability report 
+    """ print a detailed vulnerability report
     based on the collected vulnerability data
 
     input: a dictionary of vulnerability information
@@ -370,11 +370,11 @@ def detailed_vuln_report(vuln_data={}, outputfile=sys.stdout):
             s += "\t\t*** Potential security defect found in %s\n"%(each,)
             s += "CVE: %s\nCVSS Score: %s\nCPE id: %s\nPublished on: \
             %s\nSummary Description: %s\n\n"%(cve[0],cve[1],\
-            cve[2],cve[3],cve[4])  
+            cve[2],cve[3],cve[4])
     print (s,file=outputfile)
 
 def build_exit(return_value=False, build_return=False, outputfile=sys.stderr):
-    """ if the -b build_environment option is chosen, the return value 
+    """ if the -b build_environment option is chosen, the return value
     could be True if a match in the NVD is made, but we want the build
     (make for example) will sense an error and exit before completion.
     """
@@ -397,15 +397,15 @@ def build_exit(return_value=False, build_return=False, outputfile=sys.stderr):
         return(return_value)
 
 def main():
-    """ 
-        falco tests package names and versions against a vulnerability 
+    """
+        falco tests package names and versions against a vulnerability
         database and reports if that packagename and version are found to be
-        known vulnerable.  
+        known vulnerable.
 
-        depends on matching a string the user provides against a database 
+        depends on matching a string the user provides against a database
         containing CPE URIs.
 
-        main() Implement falco main program logic, tests for command line 
+        main() Implement falco main program logic, tests for command line
         functions and generates report output
 
         depends on vfeed database
@@ -451,20 +451,20 @@ def main():
             packagelistfile),file=outputfile)
         packages = packageList(args.packagelistfile)
         packages = packages.getList()
-        if build_exit(check_list_in_database(packages, d, i, 
+        if build_exit(check_list_in_database(packages, d, i,
             outputfile),build_return, outputfile):
             sys.exit(0)
         else:
             sys.exit(1)
     if args.package_name:
         #print ("One Item being checked", file=outputfile)
-        if build_exit(check_item_in_database(args.package_name, 
+        if build_exit(check_item_in_database(args.package_name,
             args.package_version, d, i, outputfile),build_return, outputfile):
             sys.exit(0)
         else:
             sys.exit(1)
     # we exit with true or false of the shell environment to support a
-    # build_environment type of logic.  If there is a finding in the 
+    # build_environment type of logic.  If there is a finding in the
     # CVE, then cause the build/script to exit with fail.
     if build_exit(build_return):
         sys.exit(0)
