@@ -71,10 +71,11 @@ class packageList():
             print ("packageList: Exception - %s"%(e,), file=self.outputfile)
             exit(1)
         for each in self.packageListInput:
-            # filter commented lines, lines without package colon
-            # major_version dot minor_version
+            """filter commented lines, lines without package colon
+            major_version dot minor_version
+            """
             if re.search(r'^#', each) or not re.search(
-                '\w\:(\d+\\.)?(\d+\\.)', each):
+            '\w\:(\d+\\.)?(\d+\\.)', each):
                 pass
             else:
                 # remove newline
@@ -174,36 +175,36 @@ class checknvd_by_package():
         """ implement string output for object, embedded formatting and
         labeling for the data.
         """
-        # accumulate all of the string data in s
+        """ accumulate all of the string data in s """
         self.s = ''
         if len(self.data) > 0:
-                self.s = ''
-                # accumulate CVE identifiers in cvelist, so that we don't
-                # repeat informing about a CVE in the s string, this
-                # accumulation may be dead code, since the SQL seems to
-                # eliminate duplicates
-                self.cvelist = []
-                for entry in self.data:
-                    if entry[0] not in self.cvelist:
-                        self.s += "\t\t*** Potential security defect found \
-                        in %s\n"%(self.package,)
-                        self.s += "CVE: %s\nCVSS Score: %s\nCPE id: %s\n\
-                        Published on: \
-                        %s\nSummary Description: %s\n\n"%(entry[0],entry[1],\
-                        entry[2],entry[3],entry[4])
-                        # record the CVE and don't report it again in the
-                        # string output
-                        self.cvelist.append(entry[0])
-                        # can I print the CVSS identifier?
-                        # can I print the CVSS identifier in such a way
-                        # that it represents a shape?
-                        #
-                        # how can I model the attack surface?  What ports does
-                        # this application use?
-                        # What would a malicious attack file look like for this
-                        # cve / security defect?
-                        # what does any attack file look like?
-                return self.s
+            self.s = ''
+            # accumulate CVE identifiers in cvelist, so that we don't
+            # repeat informing about a CVE in the s string, this
+            # accumulation may be dead code, since the SQL seems to
+            # eliminate duplicates
+            self.cvelist = []
+            for entry in self.data:
+                if entry[0] not in self.cvelist:
+                    self.s += "\t\t*** Potential security defect found \
+                    in %s\n"%(self.package,)
+                    self.s += "CVE: %s\nCVSS Score: %s\nCPE id: %s\n\
+                    Published on: \
+                    %s\nSummary Description: %s\n\n"%(entry[0],entry[1],\
+                    entry[2],entry[3],entry[4])
+                    # record the CVE and don't report it again in the
+                    # string output
+                    self.cvelist.append(entry[0])
+                    # can I print the CVSS identifier?
+                    # can I print the CVSS identifier in such a way
+                    # that it represents a shape?
+                    #
+                    # how can I model the attack surface?  What ports does
+                    # this application use?
+                    # What would a malicious attack file look like for this
+                    # cve / security defect?
+                    # what does any attack file look like?
+            return self.s
         else:
             return self.s
     def __repr__(self):
