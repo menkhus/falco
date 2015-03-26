@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
-from __future__ import print_function
 """  falco is a software inventory vulnerability check search tool.  Falco
 searches package names and versions against
 the NVD database, and reports security defects listed against that data.
@@ -35,7 +34,7 @@ You may obtain a copy of the License at
     See the License for the specific language governing permissions and
     limitations under the License.
 """
-
+from __future__ import print_function
 __version__ = '0.5'
 __author__ = 'Mark Menkhus, menkhus@icloud.com'
 import argparse
@@ -50,7 +49,7 @@ DEBUG = False
 # suppress .pyc creation
 sys.dont_write_bytecode
 
-class packageList():
+class packageList(object):
     """ return a generator of list of packages to get tested.
         input: filename where the content is a packagenames
         one per line, comments with # sign
@@ -72,10 +71,10 @@ class packageList():
             exit(1)
         for each in self.packageListInput:
             """filter commented lines, lines without package colon
-            major_version dot minor_version
+               major_version dot minor_version
             """
-            if re.search(r'^#', each) or not re.search(
-            '\w\:(\d+\\.)?(\d+\\.)', each):
+            if re.search(r'^#', each) or not re.search(r'\w\:(\d+\\.)?(\d+\\.)'\
+                , each):
                 pass
             else:
                 # remove newline
@@ -317,7 +316,6 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout):
 
     depends on the vfeed database
     """
-    #print (packages)
     not_found = ''
     not_found_c = 0
     found = ''
@@ -339,30 +337,42 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout):
         except KeyboardInterrupt:
             # if the user is impatient, report some output
             db_version = p.db_ver()
-            print ("Version of vfeed database used in this report was %s, and the"%(db_version,), file=outputfile),
-            print ("report was run on %s ."%(time.strftime("%m-%d-%Y at %H:%M:%S")), file=outputfile),
+            print ("Version of vfeed database used in this report was \
+%s, and the"%(db_version,), file=outputfile),
+            print ("report was run on %s."%(time.strftime(
+                "%m-%d-%Y at %H:%M:%S")), file=outputfile),
             print ("The report was interupted with control-c", file=outputfile)
             # print partial summary
             print ("\tThis is a PARTIAL report of findings:", file=outputfile)
-            print ("These %s packages were found in the NVD database and reported above:"%(found_c,), file=outputfile)
+            print ("These %s packages were found in the NVD database and \
+reported above:"%(found_c,), file=outputfile)
             print (found, file=outputfile)
-            print ("These %s packages were not found in the NVD database:"%(not_found_c,), file=outputfile)
+            print ("These %s packages were not found in the NVD database:\
+                   "%(not_found_c,), file=outputfile)
             print (not_found, file=outputfile)
             print ("PARTIAL findings as follows:", file=outputfile)
             detailed_vuln_report(detailed_report, outputfile)
             # quit the application
             exit(1)
     # print a summary
-    print ("\tReport of possible vulnerability findings, for %s packages requested:"%(found_c + not_found_c,), file=outputfile)
-    print ("These %s packages were found with vulnerability in the NVD database and reported above:"%(found_c,), file=outputfile)
+    print ("\tReport of possible vulnerability findings, for %s packages \
+requested:"%(found_c + not_found_c,), file=outputfile)
+    print ("These %s packages were found with vulnerability in the NVD \
+database and reported above:"%(found_c,), file=outputfile)
     print (found, file=outputfile)
-    print ("These %s packages were not found in the NVD database:"%(not_found_c,), file=outputfile)
+    print ("These %s packages were not found in the NVD database:"\
+%(not_found_c,), file=outputfile)
     print (not_found, file=outputfile)
     print ("Detailed findings as follows:", file=outputfile)
     detailed_vuln_report(detailed_report, outputfile)
-    db_version = p.db_ver()
-    print ("Version of vfeed database used in this report was %s\n"%(db_version,), file=outputfile),
-    print ("The report was run on %s."%(time.strftime("%m-%d-%Y at %H:%M:%S"),), file=outputfile)
+    if 'p' in locals():
+        db_version = p.db_ver()
+    else:
+        return None
+    print ("Version of vfeed database used in this report was %s\n"%(\
+db_version,), file=outputfile),
+    print ("The report was run on %s."%(time.strftime("%m-%d-%Y at %H:%M:%S")\
+,), file=outputfile)
     if found_c == 0:
         return False
     else:
@@ -380,8 +390,8 @@ def detailed_vuln_report(vuln_data={}, outputfile=sys.stdout):
         entry = vuln_data[each]
         for cve in entry:
             s += "\t\t*** Potential security defect found in %s\n"%(each,)
-            s += "CVE: %s\nCVSS Score: %s\nCPE id: %s\nPublished on: \
-            %s\nSummary Description: %s\n\n"%(cve[0], cve[1], \
+            s += "CVE: %s\nCVSS Score: %s\nCPE id: %s\nPublished on: %s\n\
+Summary Description: %s\n\n"%(cve[0], cve[1], \
             cve[2], cve[3], cve[4])
     print (s, file=outputfile)
 
@@ -451,12 +461,8 @@ def main():
     else:
         d = 'vfeed.db'
     if not os.path.exists(d):
-        raise IOError, "vfeed database does not exist: %s"%(d,)
-    # we need to put command line options
-    # age of the CVE's
-    # we need to characterize the attack surface, ports program names
-    # we need to characterize how to defend against these problems. Besides
-    # patching, what else can be done.
+        print ("IOError: vfeed database does not exist: %s"%(d,))
+        sys.exit(2)
     # variables used for reporting
     if args.packagelistfile:
         print ("\tReport generated using %s as the package list."%(
@@ -476,8 +482,8 @@ def main():
         else:
             sys.exit(1)
     # we exit with true or false of the shell environment to support a
-    # build_environment type of logic.  If there is a finding in the
-    # CVE, then cause the build/script to exit with fail.
+    # build_environment type of logic. If there is a finding in the
+    # CVE, then cause the make/build/script to exit with fail.
     if build_exit(build_return):
         sys.exit(0)
     else:
