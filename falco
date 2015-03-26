@@ -35,7 +35,7 @@ You may obtain a copy of the License at
     limitations under the License.
 """
 from __future__ import print_function
-__version__ = '0.5'
+__version__ = '0.5.1'
 __author__ = 'Mark Menkhus, menkhus@icloud.com'
 import argparse
 import sys
@@ -268,7 +268,7 @@ def check_item_in_database(package_name='', package_version='', d='', i=1, \
      x   pck    and  num  =  'pck:num'
 
     Note: this is not compliant with CPE matching, does not account for the
-    version comparison, less than, greater than etc. This depends on matching.
+    version comparison, less than, greater than etc.
     """
     package = ''
     if package_version == None:
