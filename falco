@@ -112,7 +112,7 @@ class checknvd_by_package():
             self.conn = sqlite3.connect(self.database)
             self.cursor = self.conn.cursor()
         except Exception, e:
-            print ("checknvd_by_package.getdata: %s"%(e,), file=outputfile)
+            print ("checknvd_by_package.getdata: %s"%(e,), file=sys.stderr)
             exit()
         # setting up a SQL query for get CPE and CVE data from two tables
         # and match against a package name in the CPE identifiers.
@@ -209,7 +209,7 @@ class checknvd_by_package():
     def __repr__(self):
         """ implement the string representation of the object
         """
-        return __str__()
+        return self.__str__()
 
 def command_line():
     """process command line arguments
