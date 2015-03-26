@@ -73,7 +73,7 @@ class packageList(object):
             """filter commented lines, lines without package colon
                major_version dot minor_version
             """
-            if re.search(r'^#', each) or not re.search(r'\w\:(\d+\\.)?(\d+\\.)'\
+            if re.search(r'^#', each) or not re.search('\w\:(\d+\\.)?(\d+\\.)'\
                 , each):
                 pass
             else:
@@ -89,7 +89,7 @@ class checknvd_by_package():
         CPE URI's like:
         cpe:/a:microsoft:internet_explorer:8.0.6001:beta
 
-        depends on the vfeed.db database from the vfeed application:
+        depifends on the vfeed.db database from the vfeed application:
         https://github.com/toolswatch/vFeed/
     """
     def __init__(self, package=None, database='vfeed.db', items=99):
@@ -345,7 +345,7 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout):
             # print partial summary
             print ("\tThis is a PARTIAL report of findings:", file=outputfile)
             print ("These %s packages were found in the NVD database and \
-reported above:"%(found_c,), file=outputfile)
+reported below:"%(found_c,), file=outputfile)
             print (found, file=outputfile)
             print ("These %s packages were not found in the NVD database:\
                    "%(not_found_c,), file=outputfile)
@@ -358,7 +358,7 @@ reported above:"%(found_c,), file=outputfile)
     print ("\tReport of possible vulnerability findings, for %s packages \
 requested:"%(found_c + not_found_c,), file=outputfile)
     print ("These %s packages were found with vulnerability in the NVD \
-database and reported above:"%(found_c,), file=outputfile)
+database and reported below:"%(found_c,), file=outputfile)
     print (found, file=outputfile)
     print ("These %s packages were not found in the NVD database:"\
 %(not_found_c,), file=outputfile)
