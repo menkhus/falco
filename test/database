@@ -1,5 +1,22 @@
 #!/bin/sh
 
-../falco -d ../vfeed.db -n sqlite
+../falco -d ../vfeed.db -n sqlite > /dev/null
+if [ "$?" -eq 0 ]
+then
+    echo "database existance test, PASS found database at ../vfeed.db"
+else
+    echo "database test, FAILED, did not find database at ../vfeed.db"
+    exit
+fi
 
-../falco -d ../xxxxvfeed.db -n sqlite
+# test for the non existance of the database xxxxvfeed.db does not exist
+../falco -d ../xxxxvfeed.db -n sqlite 2>&1 > /dev/null
+if [ "$?" -gt 0 ]
+then
+    echo "database test, PASS, logic failed to find database at xxxxvfeed.db"
+else
+    echo "database test, FAILED, did not alarm for nonexistent database xxxxvfeed.db"
+    exit
+fi
+
+

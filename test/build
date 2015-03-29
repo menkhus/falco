@@ -1,10 +1,35 @@
 #!/bin/sh
 
-../falco -b -n skdjfhsdkjfhd -d ../vfeed.db
-echo $?
+state=0
+make clean > /dev/null
 
-make clean
-
-make all
-
-make clean
+# test for pass
+make nonexist.build.out
+if [ "$?" -gt 0 ]
+then
+    echo "build test: check for non existant package build test failed"
+    exit
+fi
+# test for fail
+make bash.build.out > /dev/null
+if [ "$?" -eq 0 ]
+then
+    echo "build test: check for known vulnerability in bash test failed"
+    exit
+fi
+#test for fail
+make multi.build.out > /dev/null
+if [ "$?" -eq 0 ]
+then
+    echo "build test: multi package build test failed"
+    exit
+fi
+# clean fails because the multipackage check file is not there
+make clean 
+if [ "$?" -eq 0 ]
+then
+    echo "      build test: all build feature tests succeeded"
+else
+    echo "build test: clean test failed"
+fi
+exit

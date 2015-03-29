@@ -1,13 +1,30 @@
 #!/bin/sh
 
+echo "test for version 8"
 ../falco -d ../vfeed.db -n postgresql -v 8
+echo $?
+echo "test for version 8.0"
 ../falco -d ../vfeed.db -n postgresql -v 8.0
+echo $?
+echo "test for version 8.1"
 ../falco -d ../vfeed.db -n postgresql -v 8.1
+echo $?
+echo "test for version 8.2"
 ../falco -d ../vfeed.db -n postgresql -v 8.2
+echo $?
+echo "test for version 8.3"
 ../falco -d ../vfeed.db -n postgresql -v 8.3
+echo $?
+echo "test for version 8.4"
 ../falco -d ../vfeed.db -n postgresql -v 8.4
+echo $?
+echo "test for version 8.5:"
 ../falco -d ../vfeed.db -n postgresql -v 8.5:
+echo $?
 # using CPE knowledge, to override & test broken versioning
+echo "test for version 8.4"
 ../falco -d ../vfeed.db -n postgresql:8.4
+echo $?
+echo "test for version 8.5:"
 ../falco -d ../vfeed.db -n postgresql:8.5:
-
+echo  $?
