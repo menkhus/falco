@@ -1,5 +1,17 @@
 These tests exercise the features of falco
 
-test.sh does run all tests
+test.sh runns all the tests.
+
+Each test demonstrates features of falco:
+Makefile - how to use falco in a makefile, this is a build example
+build - test the different positive and ngative outcomes
+database - test for the existance of the database 
+help - make sure the help works
+items - test the -i items feature
+packagename - the packagename has some subtlties that are demonstrated 
+test.sh - the test harness for all thse tests
+testlist.txt - an example of how to use a list of package and versions 
+version - test the version logic in falco
+workfile - test the workfile logic 
 
 
