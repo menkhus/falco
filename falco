@@ -50,7 +50,7 @@ DEBUG = False
 sys.dont_write_bytecode
 
 class packageList(object):
-    """ return a generator of list of packages to get tested.
+    """ a generator of list of packages to get tested.
         input: filename where the content is a packagenames
         one per line, comments with # sign
     """
@@ -77,13 +77,12 @@ class packageList(object):
                 , each):
                 pass
             else:
-                # remove newline
                 each = each.strip('\n')
                 if each != '':
                     self.packageList.append(each)
                     yield each
 
-class checknvd_by_package():
+class checknvd_by_package(object):
     """ Check a package string for existence in the nvd database.
         searched string is 'packagename:version', compared against
         CPE URI's like:
@@ -100,7 +99,7 @@ class checknvd_by_package():
         self.items = items
         self.db_version = None
     def get_data(self):
-        """   Get the data from the database.
+        """   Get the data from the vfeed database.
         """
         if not re.search(":", self.package):
             self.data = None
@@ -135,21 +134,20 @@ class checknvd_by_package():
         if self.data != None:
             self.data = self.data.fetchall()
             # note the fetchall gets multiple entries for a given CPE
-            # the cpe matching is regex rather than implementing the
-            # CPE v1.0 / SCAP matching, less than or greater than logic.
+            # the cpe matching is a regex match of the package,version.
             self.conn.close()
             return self.data
         else:
             return None
     def __len__(self):
-        """ enable len operations on this object's data
+        """ implement len operations on this object's data
         """
         if self.data:
             return len(self.data)
         else:
             return 0
     def db_ver(self, outputfile=sys.stdout):
-        """ return the db_version
+        """ return the db_version of the vfeed database?
         """
         if self.db_version == None:
             try:
@@ -159,9 +157,6 @@ class checknvd_by_package():
                     r'select db_version from stat_vfeed_kpi;')
                 self.db_version = self.db_version.fetchall()
                 self.db_version = self.db_version[0]
-                # note the fetchall gets multiple entries for a given CPE
-                # the cpe matching is regex rather than implementing the
-                # CPE v1.0 matching, less than or greater than logic.
                 self.conn.close()
             except Exception, e:
                 print ("checknvd_by_package.db_ver: %s"%(e,), \
@@ -179,9 +174,7 @@ class checknvd_by_package():
         if len(self.data) > 0:
             self.s = ''
             # accumulate CVE identifiers in cvelist, so that we don't
-            # repeat informing about a CVE in the s string, this
-            # accumulation may be dead code, since the SQL seems to
-            # eliminate duplicates
+            # repeat informing about a CVE
             self.cvelist = []
             for entry in self.data:
                 if entry[0] not in self.cvelist:
@@ -191,18 +184,8 @@ class checknvd_by_package():
                     Published on: \
                     %s\nSummary Description: %s\n\n"%(entry[0], entry[1], \
                     entry[2], entry[3], entry[4])
-                    # record the CVE and don't report it again in the
-                    # string output
+                    # record the CVE and don't report it again
                     self.cvelist.append(entry[0])
-                    # can I print the CVSS identifier?
-                    # can I print the CVSS identifier in such a way
-                    # that it represents a shape?
-                    #
-                    # how can I model the attack surface?  What ports does
-                    # this application use?
-                    # What would a malicious attack file look like for this
-                    # cve / security defect?
-                    # what does any attack file look like?
             return self.s
         else:
             return self.s
@@ -219,8 +202,8 @@ def command_line():
     output: help, usage, and state variables for options on the command line
     """
     DESC = """Checks command line or, a file list of software programs for
-    known security defects documented in the National Vulnerability Database.
-    Matches a project name and version name to CPE URIs in the NVD database.
+known security defects documented in the National Vulnerability Database.
+Matches a project name and version name to CPE URIs in the NVD database.
     """
     parser = argparse.ArgumentParser(description=DESC)
     parser.add_argument('-b', '--build_environment', help='for use in build \
@@ -267,8 +250,8 @@ def check_item_in_database(package_name='', package_version='', d='', i=1, \
      x   pck    and ''   =   'pck:'
      x   pck    and  num  =  'pck:num'
 
-    Note: this is not compliant with CPE matching, does not account for the
-    version comparison, less than, greater than etc.
+    Note: this is regex CPE matching, does not account for the
+    less than or greater than version comparison.
     """
     package = ''
     if package_version == None:
@@ -329,13 +312,12 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout):
                 found += "Package text: " + package + " found.\n"
                 found_c += 1
                 #db_print (DEBUG,m='main, packagelistfile',s=package)
-                #print (p)
                 detailed_report[package] = report
             else:
                 not_found_c += 1
                 not_found += "Package text: " + package + " not found.\n"
         except KeyboardInterrupt:
-            # if the user is impatient, report some output
+            # if the user is impatient, report some output after abort
             db_version = p.db_ver()
             print ("Version of vfeed database used in this report was \
 %s, and the"%(db_version,), file=outputfile),
@@ -397,8 +379,9 @@ Summary Description: %s\n\n"%(cve[0], cve[1], \
 
 def build_exit(return_value=False, build_return=False, outputfile=sys.stderr):
     """ if the -b build_environment option is chosen, the return value
-    could be True if a match in the NVD is made, but we want the build
-    (make for example) will sense an error and exit before completion.
+    is True if a match in the NVD is made, but we want the build
+    (for example this gnu make) to sense an error and exit before 
+    completion.  This could break or abort a build.
     """
     if build_return == True:
         """ advise software builder of next action if a build failure
@@ -406,12 +389,12 @@ def build_exit(return_value=False, build_return=False, outputfile=sys.stderr):
         if return_value == True:
             print ("""\tSuggested action for 3rd party code vulnerability
         management:
-            1) File a bug in the bug tracker, with CVE information needed to 
-            determine what change is needed.
-            2) Change the makefile, remove -b in the make file to continue 
-            building.
-            3) When this potential bug is resolved, update the makefile again 
-            to reflect the latest package number and reinstate the -b.
+1) File a bug in the bug tracker, with CVE information needed to 
+determine what change is needed.
+2) Change the makefile, remove -b in the make file to continue 
+building.
+3) When this potential bug is resolved, update the makefile again 
+to reflect the latest package number and reinstate the -b.
             """, file=outputfile)
             return False
         return True
@@ -450,7 +433,7 @@ def main():
         exit()
     if not (args.packagelistfile or args.package_name or args.package_version):
         print ("No work requested, requires either package list file, package \
-        name or package version", file=outputfile)
+name or package version", file=outputfile)
         sys.exit(1)
     if args.items_reported:
         i = args.items_reported
