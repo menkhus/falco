@@ -5,12 +5,12 @@ searches package names and versions against
 the NVD database, and reports security defects listed against that data.
 
 dependencies:
-    -Foremost falco depends on the vfeed database.  Please look closely at
+    * Foremost falco depends on the vfeed database.  Please look closely at
     at https://github.com/toolswatch/vFeed/
-    -if testing using a packagelist file, requires that the list
-    be in name or name:version format
-    1 package per line, comments start with #
-    -depends on a version of python that has the __future__ feature, 2.6 and
+    * if testing using a packagelist file, requires that the list
+    be in name or name:version format ,1 package per line, comments 
+    start with #
+    * depends on a version of python that has the __future__ feature, 2.6 and
     higher?
 
 author: Mark Menkhus, Glynn Mitchell
