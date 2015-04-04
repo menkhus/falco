@@ -1,4 +1,14 @@
 #!/bin/sh
+# test for the a non existant package (postgres) and one that 
+# exists, postgresql
+if [ "`../falco -d ../vfeed.db -n postgres | wc -l`" -gt 0 ]
+then
+    echo "packagename test failed, tested for postgres should not exist"
+    exit 1
+fi
+if [ "`../falco -d ../vfeed.db -n postgresql | wc -l`" -eq 0 ]
+then
+    echo "packagename test failed, tested for postgresql, should exist"
+    exit 1
+fi
 
-../falco -d ../vfeed.db -n postgres
-../falco -d ../vfeed.db -n postgresql

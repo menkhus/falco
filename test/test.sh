@@ -1,7 +1,7 @@
 #!/bin/sh
 
 echo "*********** test help:"
-./help > /dev/null
+./help 2>&1 > /dev/null
 if [ "$?" -eq 0 ]
 then
     echo "falco help command line logic test succeeded"
@@ -10,7 +10,7 @@ else
     exit
 fi
 echo "********** database:"
-./database > /dev/null
+./database 2>&1 > /dev/null
 if [ "$?" -eq 0 ]
 then
     echo "falco database argument command line logic test succeeded"
@@ -19,7 +19,7 @@ else
     exit
 fi
 echo "********** workfile:"
-./workfile > /dev/null
+./workfile 2>&1 > /dev/null
 if [ "$?" -eq 0 ]
 then
     echo "falco workfile logic test succeeded"
@@ -28,7 +28,7 @@ else
     exit
 fi
 echo "********* items:"
-./items > /dev/null
+./items  2>&1 > /dev/null
 if [ "$?" -eq 0 ]
 then
     echo "falco number of items test logic succeeded"
@@ -36,7 +36,7 @@ else
     echo "falco number of items test logic test FAILED"
     exit
 fi
-./packagename > /dev/null
+./packagename 2>&1 > /dev/null
 echo "********* packagename:"
 if [ "$?" -eq 0 ]
 then
@@ -46,7 +46,7 @@ else
     exit
 fi
 echo "********* version:"
-./version > /dev/null
+./version 2>&1 > /dev/null
 if [ "$?" -eq 0 ]
 then
     echo "falco package version logic test succeeded"
@@ -55,7 +55,7 @@ else
     exit
 fi
 echo "********* build:"
-./build  > /dev/null
+./build  2>&1 > /dev/null
 if [ "$?" -eq 0 ]
 then
     echo "all tests succeeded"
