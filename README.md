@@ -13,7 +13,9 @@ You must install and update the vfeed database and then point falco at the up-to
 
 No free lunch
 ------------------
-Users of falco are responsible for making sure the package names, and versions supplied to falco are current with the project being evaluated. There is no sophistication built into falco to survey your code for 3rd party dependencies.There are fine commercial products which can do this and so much more.  Falco users must obtain and manage their own configuration management data for their project. This knowledge is known to be difficult to acquire and maintain, please seem the commercial products listed below.  Recently, Jeremy Long gave me a heads up regarding other FOSS projects that also provide 3rd party code dependencies.
+Users of falco are responsible for making sure the package names, and versions supplied to falco are current with the project being evaluated. There is no sophistication built into falco to survey your code for 3rd party dependencies.There are fine commercial products which can do this and so much more.  Falco users must obtain and manage their own configuration management data for their project. This knowledge is known to be difficult to acquire and maintain, please see both the commercial and FOSS products listed below. 
+
+Recently, Jeremy Long, of OWASP dependency-check gave me a heads up regarding other FOSS projects that also provide 3rd party code dependencies.
 
 Commercial products known to be highly effective analysis tools include
 -----------------------------------------------------------------------------------------------
@@ -25,15 +27,15 @@ Other open source software dependency apps
 --------------------------------------------------------------
 * Victims - https://github.com/victims
 * OWASP dependency-check - https://jeremylong.github.io/DependencyCheck/ 
-* JavaScript retire.js - https://github.com/victims/victims-enforcer 
+* JavaScript retire.js - https://github.com/victims/victims-enforcer
 
 Why falco
 --------------
-We wrote the tool because (at the time we looked) there were no accessible tools for developers and project maintainers to easily find known security vulnerabilities in software they use as part of a project.  Falco is barebones simple, and implements a basic software security check mandated by many security maturity models such as OWASP: https://www.owasp.org/index.php/Top_10_2013-A9-Using_Components_with_Known_Vulnerabilities, OpenSAMM - http://www.opensamm.org/, BSIMM - http://www.bsimm.com/online/governance/cp/ 
+We wrote the tool because (at the time we looked) there were no accessible tools for developers and project maintainers to easily find known security vulnerabilities in software they use as part of a project.  Falco is barebones simple, and implements a basic software security check mandated by many security maturity models such as the one in OWASP: https://www.owasp.org/index.php/Top_10_2013-A9-Using_Components_with_Known_Vulnerabilities, OpenSAMM - http://www.opensamm.org/, or BSIMM - http://www.bsimm.com/online/governance/cp/ 
 
 Falco is not a code scanner
 ---------------------------
-Falco does not test the software, it simply looks to see that the package and version you tell it are in a vulnerability database.  If a package and version are in the vulnerability database, you could have a vulnerability in software you depend upon which you need to respond to by updating your software.  Other ways to discover known exiting vulnerabilities are through code scanning tools (mentioned above) network security scanners (often used by customers) and using code analysis tools like HP Fortify.
+Falco does not test the software, it simply looks to see that the package and version you tell it are in a vulnerability database.  If a package and version are in the vulnerability database, you could have a vulnerability in software you depend upon. You need to respond to by validating that vulnerability assertion, and then update the package as needed.  Other ways to discover known exiting vulnerabilities are through code scanning tools (mentioned above) network security scanners like OpenVAS or nessus  (often used by commercial customers) and using code analysis tools like HP Fortify or Coverity.
 
 Do 3rd party code threat intelligence
 -------------------------------------------------
