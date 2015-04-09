@@ -13,9 +13,9 @@ You must install and update the vfeed database and then point falco at the up-to
 
 No free lunch
 ------------------
-Users of falco are responsible for making sure the package names, and versions supplied to falco are current with the project being evaluated. There is no sophistication built into falco to survey your code for 3rd party dependencies.There are fine commercial products which can do this and so much more.  Falco users must obtain and manage their own configuration management data for their project. This knowledge is known to be difficult to acquire and maintain, please see both the commercial and FOSS products listed below. 
+Users of falco are responsible for making sure the package names, and versions supplied to falco are current with the project being evaluated. There is no sophistication built into falco to survey your code for 3rd party dependencies.There are fine commercial products which can do this and so much more. Falco users must obtain and manage their own configuration management data for their project.  
 
-Recently, Jeremy Long, of OWASP dependency-check gave me a heads up regarding other FOSS projects that also provide 3rd party code dependencies.
+Recently, Jeremy Long, of OWASP dependency-check gave me a heads up regarding other FOSS projects that also provide 3rd party code dependency security checks. 
 
 Commercial products known to be highly effective analysis tools include
 -----------------------------------------------------------------------------------------------
@@ -28,6 +28,7 @@ Other open source software dependency apps
 * Victims - https://github.com/victims
 * OWASP dependency-check - https://jeremylong.github.io/DependencyCheck/ 
 * JavaScript retire.js - https://github.com/victims/victims-enforcer
+* fossology - http://www.fossology.org/projects/fossology 
 
 Why falco
 --------------
