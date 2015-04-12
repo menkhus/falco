@@ -64,22 +64,31 @@ Vagrant.configure(2) do |config|
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
+  # Basic vagrantfile setup to create a VM for falco.  
 config.vm.provision "shell", inline: <<-SHELL
-sudo apt-get update
-  #   sudo apt-get install -y apache2
+    sudo apt-get update
+    # setup some stuff used for python developement
     sudo apt-get install -y python-setuptools
     sudo apt-get install -y python-pip 
     sudo apt-get install -y python-virtualenv
+    # we need git to pull in falco from github
     sudo apt-get install -y git 
+    # we need make to test the make tests
     sudo apt-get install -y make
+    # sqlite3 is handy for testing and useing the database
     sudo apt-get install -y sqlite3
+    # clone falco
     git clone https://github.com/menkhus/falco
     cd falco
+    # pull down vfeed database 
     git clone https://github.com/toolswatch/vfeed
     cd vfeed
+    # update the vfeed database from the internet
     python vfeedcli.py update
     cd ..
+    # link the database in the falco directory for easier default use
     ln -s ./vfeed/vfeed.db
+    # run the falco tests
     cd test
     ./test.sh
 SHELL
