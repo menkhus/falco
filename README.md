@@ -13,22 +13,22 @@ You must install and update the vfeed database and then point falco at the up-to
 
 No free lunch
 ------------------
-Users of falco are responsible for making sure the package names, and versions supplied to falco are current with the project being evaluated. There is no sophistication built into falco to survey your code for 3rd party dependencies.There are fine commercial products which can do this and so much more. Falco users must obtain and manage their own configuration management data for their project.  
+Users of falco are responsible for making sure the package names, and versions supplied to falco are current with the project being evaluated. There is no sophistication built into falco to survey your code for 3rd party dependencies.There are commercial products which can do this and so much more. Falco users must obtain and manage their own configuration management data for their project.  
 
-Recently, Jeremy Long, of OWASP dependency-check gave me a heads up regarding other FOSS projects that also provide 3rd party code dependency security checks. 
+Recently, Jeremy Long, of OWASP dependency-check gave me a heads up regarding other FOSS projects that also provide 3rd party code dependency security checks. See the list below for some other 3rd party code dependency check apps. 
 
-Commercial products known to be highly effective analysis tools include
------------------------------------------------------------------------------------------------
-* Appcheck from codenomicon - http://appcheck.codenomicon.com/help/faq/
-* Palamida - http://www.palamida.com/
-* Blackduck - https://www.blackducksoftware.com/
-
-Other open source software dependency apps
---------------------------------------------------------------
+Open source 3rd party software dependency apps
+----------------------------------------------------
 * Victims - https://github.com/victims
 * OWASP dependency-check - https://jeremylong.github.io/DependencyCheck/ 
 * JavaScript retire.js - https://github.com/victims/victims-enforcer
-* fossology - http://www.fossology.org/projects/fossology 
+* fossology - http://www.fossology.org/projects/fossology (license checking)
+
+Commercial products that do dependency checks
+---------------------------------------------
+* Appcheck from codenomicon - http://appcheck.codenomicon.com/help/faq/
+* Palamida - http://www.palamida.com/
+* Blackduck - https://www.blackducksoftware.com/
 
 Why falco
 --------------
@@ -39,7 +39,7 @@ Falco is not a code scanner
 Falco does not test the software, it simply looks to see that the package and version you tell it are in a vulnerability database.  If a package and version are in the vulnerability database, you could have a vulnerability in software you depend upon. You need to respond to by validating that vulnerability assertion, and then update the package as needed.  Other ways to discover known exiting vulnerabilities are through code scanning tools (mentioned above) network security scanners like OpenVAS or nessus  (often used by commercial customers) and using code analysis tools like HP Fortify or Coverity.
 
 Do 3rd party code threat intelligence
--------------------------------------------------
+-------------------------------------
 If you are developing a security lifecycle for your project, then managing 3rd party code security bugs is just a small part of a very baseline behavior. We wish you luck and hope that falco helps in your journey.
 
 Mark Menkhus, RedCup working group
@@ -142,13 +142,13 @@ make: *** [bash.build.out] Error 1
 File a bug in the bug tracker, change the makefile, remove -b, and when the bug is fixed, update the makefile again to reflect the latest package number and reinstate the -b   
   
 Dependencies
--------------------
+------------
 Falco uses the NVD database from the vfeed project:   https://github.com/toolswatch/vFeed  
 1) Download the vfeed package and use the update to gather the nvd database in sqlite3 form.   
     Ex: /vfeedcli.py update  
 2) write down where you put the vfeed.db file, and store that for future use, falco uses that database as an argument.   
 3) Note it would be a good idea to put this "vfeedcli.py update" in a cron job, since falco counts on using updated NVD data to see when new vulnerabilities exist. This database is updated every few weeks.
-  
+ 
 bug reports
-----------------
+-----------
 send bug reports to menkhus@icloud.com  
