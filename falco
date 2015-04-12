@@ -82,15 +82,17 @@ class packageList(object):
                     self.packageList.append(each)
                     yield each
 
+
 class checknvd_by_package(object):
     """ Check a package string for existence in the nvd database.
         searched string is 'packagename:version', compared against
         CPE URI's like:
         cpe:/a:microsoft:internet_explorer:8.0.6001:beta
 
-        depifends on the vfeed.db database from the vfeed application:
+        depends on the vfeed.db database from the vfeed application:
         https://github.com/toolswatch/vFeed/
     """
+
     def __init__(self, package=None, database='vfeed.db', items=99):
         """ Setup class
         """
@@ -98,6 +100,7 @@ class checknvd_by_package(object):
         self.database = database
         self.items = items
         self.db_version = None
+
     def get_data(self):
         """   Get the data from the vfeed database.
         """
@@ -113,9 +116,9 @@ class checknvd_by_package(object):
         except Exception, e:
             print ("checknvd_by_package.getdata: %s"%(e,), file=sys.stderr)
             exit()
-        # setting up a SQL query for get CPE and CVE data from two tables
-        # and match against a package name in the CPE identifiers.
-        # match :packagename: or :packagename:n.n.n: packagename
+        # Setting up the SQL query for get CPE and CVE data from two tables
+        # and then match against a package name in the CPE identifiers.
+        # Match :packagename: or :packagename:n.n.n: packagename
         # sort unique items, based on date first, then CVSS score
         self.sql = r"""SELECT DISTINCT c.cveid, n.cvss_base, c.cpeid,
         n.date_published, n.summary 
@@ -129,16 +132,16 @@ class checknvd_by_package(object):
         self.sql += r' CAST(n.cvss_base AS REAL) DESC'
         self.sql += r' LIMIT ' + str(self.items)
         self.sql += r';'
-        #print self.sql
         self.data = self.cursor.execute(self.sql)
         if self.data != None:
-            self.data = self.data.fetchall()
-            # note the fetchall gets multiple entries for a given CPE
+            # The fetchall gets multiple entries for a given CPE
             # the cpe matching is a regex match of the package,version.
+            self.data = self.data.fetchall()
             self.conn.close()
             return self.data
         else:
             return None
+
     def __len__(self):
         """ implement len operations on this object's data
         """
@@ -146,6 +149,7 @@ class checknvd_by_package(object):
             return len(self.data)
         else:
             return 0
+
     def db_ver(self, outputfile=sys.stdout):
         """ return the db_version of the vfeed database?
         """
@@ -165,6 +169,7 @@ class checknvd_by_package(object):
             return self.db_version[0]
         else:
             return self.db_version[0]
+
     def __str__(self):
         """ implement string output for object, embedded formatting and
         labeling for the data.
@@ -189,10 +194,12 @@ class checknvd_by_package(object):
             return self.s
         else:
             return self.s
+
     def __repr__(self):
         """ implement the string representation of the object
         """
         return self.__str__()
+
 
 def command_line():
     """process command line arguments
@@ -239,12 +246,15 @@ def db_print(DEBUG, m='module', s='string', outputfile=sys.stdout):
 
 def check_item_in_database(package_name='', package_version='', d='', i=1, \
     outputfile=sys.stdout):
-    """ check a string package name and version for matches in the CPE content\
+    """ Check a string package name and version for matches in the CPE content\
     of the NVD
-    depends on the vfeed database
+
+    Depends on the vfeed database
 
     Desired outcome:
+    ----------------
     in package and version = output
+    -------------------------------
      x   ''     and ''   =   fail
      x   ''     and  num  =   ':num'
      x   pck    and ''   =   'pck:'

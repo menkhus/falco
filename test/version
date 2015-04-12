@@ -1,38 +1,29 @@
-#!/bin/sh
+#!/bin/bash
 
 function vtest {
-if [ "`../falco -d ../vfeed.db -n $1 -v $2 | wc -l`" -eq $3 ]
-then
-    echo "version: package $1, version $2 failed"
-    exit 1
+	if [ "`../falco -d ../vfeed.db -n $1 -v $2 | wc -l`" -eq $3 ]
+	then
+    		echo "version: package $1, version $2 failed"
+    		exit 1
 fi
 }
 echo "test for version 8"
-#../falco -d ../vfeed.db -n postgresql -v 8
 vtest postgresql 8 1
-echo $?
 echo "test for version 8.0"
-../falco -d ../vfeed.db -n postgresql -v 8.0
-echo $?
+#../falco -d ../vfeed.db -n postgresql -v 8.0
 echo "test for version 8.1"
-../falco -d ../vfeed.db -n postgresql -v 8.1
-echo $?
+vtest postgresql 8.0 0 
+vtest postgresql 8.1 1 
 echo "test for version 8.2"
-../falco -d ../vfeed.db -n postgresql -v 8.2
-echo $?
+vtest postgresql 8.2 1 
 echo "test for version 8.3"
-../falco -d ../vfeed.db -n postgresql -v 8.3
-echo $?
+vtest postgresql 8.3 0 
 echo "test for version 8.4"
-../falco -d ../vfeed.db -n postgresql -v 8.4
-echo $?
+vtest postgresql 8.4 0
 echo "test for version 8.5:"
-../falco -d ../vfeed.db -n postgresql -v 8.5:
-echo $?
+vtest postgresql 8.5: 0
 # using CPE knowledge, to override & test broken versioning
 echo "test for version 8.4"
-../falco -d ../vfeed.db -n postgresql:8.4
-echo $?
+vtest postgresql:8.4 '' 1
 echo "test for version 8.5:"
-../falco -d ../vfeed.db -n postgresql:8.5:
-echo  $?
+vtest postgresql:8.5: '' 1
