@@ -1,6 +1,8 @@
-## version 0.5.1 cleaned up code, fixed minor bugs, made peace with pylint, updated docs. ##
+# version 0.5.1 cleaned up code, fixed minor bugs, made peace with pylint, updated docs.
+# added a vagrantfile, setup support for install in a VM manageed by vagrant, setup database
+# loading and tests before install is completed.
 
-#version 0.5 - updated build logic, improved output, this is a release
+##version 0.5 - updated build logic, improved output, this is a release
 
 ##version 0.4 - added -o outputfile logic, fixed vfeed.db logic
 
