@@ -58,6 +58,14 @@ BUGS
     Searching for package names and versions can lead to both false positives and false negatives. The CPE matching documentation specifies greater than and less than logic. falco and other tools use regex matches and the fact that the NVD data provides an intended comprehensive list of impacted versions for each CVE number.
 
 AUTHOR
-    Mark Menkhus <mark.menkhus@gmail.com>
+    Mark Menkhus <mark.menkhus@gmail.com> 
+
+LICENSE
+    (c) Copyright 2014 Mark Menkhus, Glynn Mitchell   
+
+    Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
 VERSION
     0.5.1
