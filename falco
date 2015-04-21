@@ -214,15 +214,15 @@ Matches a project name and version name to CPE URIs in the NVD database.
     """
     parser = argparse.ArgumentParser(description=DESC)
     parser.add_argument('-b', '--build_environment', help='for use in build \
-        environments, return fail if items found', action='store_true', \
+        environments. Returns fail if items found in NVD', action='store_true', \
         default=False)
-    parser.add_argument('-d', '--vfeed_database', help='location of vfeed.db \
-        sqlite database from vfeed project', nargs='?', type=str, \
+    parser.add_argument('-d', '--vfeed_database', help='location of toolswatch/vfeed.db \
+        sqlite database', nargs='?', type=str, \
         default='vfeed.db')
     parser.add_argument('--debug', help='turn on debug output', \
         action='store_true', default=False)
-    parser.add_argument('-f', '--packagelistfile', help='file where the list \
-        of packages to evaluate is stored', nargs='?', default=None)
+    parser.add_argument('-f', '--packagelistfile', help='file containing \
+        the list of packages to evaluate', nargs='?', default=None)
     parser.add_argument('-i', '--items_reported', help='number of items \
         reported for NVD/CVE matches', nargs='?', type=int, default=1)
     parser.add_argument('-n', '--package_name', help='package name to search \
