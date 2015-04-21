@@ -81,11 +81,10 @@ optional arguments:
                         for use in build environments, return fail if items  
                         found  
   -d [VFEED_DATABASE], --vfeed_database [VFEED_DATABASE]  
-                        location of vfeed.db sqlite database from vfeed  
-                        project  
+                        location of toolswatch/vfeed.db sqlite database
   --debug               turn on debug output  
   -f [PACKAGELISTFILE], --packagelistfile [PACKAGELISTFILE]  
-                        file where the list of packages to evaluate is stored  
+                        file containing the list of packages to evaluate
   -i [ITEMS_REPORTED], --items_reported [ITEMS_REPORTED]  
                         number of items reported for NVD/CVE matches  
   -n [PACKAGE_NAME], --package_name [PACKAGE_NAME]  
