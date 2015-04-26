@@ -49,6 +49,7 @@ import os
 import time
 import re
 import sqlite3
+import vfeed.vfeed as vfeed
 
 # suppress .pyc creation
 sys.dont_write_bytecode
@@ -106,18 +107,14 @@ class checknvd_by_package(object):
         self.db_version = None
 
     def config (self):
-        """ config the database with the falco specific information
-        and database characteristics.
+        """ open the database using Sqlite3, setup a connection
+            and add the cpe virtual table.
         """
         try:
-            """ open the database using Sqlite3, setup a connection
-            and establish the SQL cursor
-            """
             self.conn = sqlite3.connect(self.database)
             self.cursor = self.conn.cursor()
-            print ("still need to add SQL for virtual table and indexes", file=sys.stderr)
             self.sql = "CREATE VIRTUAL TABLE cpe USING \
-                fts3(cpeid, cveid references nvd_db(cveid));"
+            fts3(cpeid, cveid references nvd_db(cveid));"
             self.data = self.cursor.execute(self.sql)
             print ("Adding cpe data to virtual table, this takes a minute or two.", file=sys.stdout)
             self.sql = "INSERT INTO cpe (cpeid,cveid) SELECT * FROM cve_cpe;"
@@ -126,7 +123,19 @@ class checknvd_by_package(object):
             self.conn.close()
             return True
         except Exception, e:
-            print ("checknvd_by_package.setup: %s"%(e,), file=sys.stderr)
+            print ("checknvd_by_package.config: %s"%(e,), file=sys.stderr)
+            return False
+
+    def update (self):
+        """ load or update the database with the falco specific information
+        and database characteristics.
+        """
+        try:
+            # pull in the database for 1st time, or update.
+            db = vfeed.vFeedUpdate()
+            db.update()
+        except Exception, e:
+            print ("checknvd_by_package.update: %s"%(e,), file=sys.stderr)
             return False
 
     def get_data(self):
@@ -237,7 +246,7 @@ def command_line():
     """process command line arguments
     Arguments: --config, --packagelistfile --items_reported, 
     --vfeed_database --build_environment, --outputfile, --package_name, 
-    --package_version, --Version
+    --package_version, --update, --Version
 
     output: help, usage, and state variables for options on the command line
     """
@@ -252,8 +261,8 @@ cross-linked local vulnerability database by NJ OUCHN, Toolswatch.org
     parser.add_argument('-b', '--build_environment', help='for use in build \
         environments, return fail if items found', action='store_true', \
         default=False)
-    parser.add_argument('-c', '--config', help='download database and setup for 1st \
-        use', action='store_true', default=False)
+    parser.add_argument('-c', '--config', help='update database and setup for \
+        use. Do this after downloading a new database', action='store_true', default=False)
     parser.add_argument('-d', '--vfeed_database', help='location of the toolswatch \
         vfeed.db sqlite database from toolswatch vfeed project', nargs='?', type=str, \
         default='vfeed.db')
@@ -265,6 +274,8 @@ cross-linked local vulnerability database by NJ OUCHN, Toolswatch.org
         for', nargs='?', type=str, default=None)
     parser.add_argument('-o', '--outputfile', help='name of output file', \
         nargs='?', default=None)
+    parser.add_argument('-u', '--update', help='download database. Do this \
+        about once a week', action='store_true', default=False)
     parser.add_argument('-v', '--package_version', help='package version to \
         look for', nargs='?', type=str, default=None)
     parser.add_argument('-V', '--Version', help='report the version of falco \
@@ -319,7 +330,7 @@ def check_item_in_database(package_name='', package_version='', d='', i=1, \
     except KeyboardInterrupt:
         # if the user is impatient, report some output
         db_version = p.db_ver()
-        print ("The report was interupted with control-c", file=outputfile)
+        print ("The report was interrupted with control-c", file=outputfile)
         exit(1)
     except Exception, e:
         print ("check_item_in_database: %s"%(e,), file=outputfile)
@@ -364,7 +375,7 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout):
 used in this report was %s, and the"%(db_version,), file=outputfile),
             print ("report was run on %s."%(time.strftime(
                 "%m-%d-%Y at %H:%M:%S")), file=outputfile),
-            print ("The report was interupted with control-c", file=outputfile)
+            print ("The report was interrupted with control-c", file=outputfile)
             # print partial summary
             print ("\tThis is a PARTIAL report of findings:", file=outputfile)
             print ("These %s packages were found in the NVD database and \
@@ -473,6 +484,14 @@ def main():
             sys.exit()
         else:
             print ('falco failed to initialize vfeed.db', file=outputfile)
+            sys.exit(1)
+    if args.update:
+        d = checknvd_by_package()
+        if d.update():
+            print ('falco is ready to use.', file=outputfile)
+            sys.exit()
+        else:
+            print ('falco failed to load vfeed.db from toolswatch service', file=outputfile)
             sys.exit(1)
     if args.build_environment:
         build_return = True
