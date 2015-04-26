@@ -1,0 +1,10 @@
+# Setup vfeed for use as an importable library in falco
+# 
+# The toolswatch/vfeed package is a set of tools that 
+# download and provide API features for a database called
+# vfeed. 
+#
+# The vfeed database is known as "vFeed/vFeedApi, the
+# open source correlated & cross-linked local vulnerability
+# database by NJ OUCHN, Toolswatch.org"
+#
