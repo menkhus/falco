@@ -12,12 +12,13 @@ Falco depends on the vfeed.db, a sqlite implementation of the NIST NVD vulnerabi
 
 You must install and update the vfeed database and then point falco at the up-to-date database in order to have an effective vulnerability intelligence feature in your software workflow. The vfeed database must be updated periodically in order to implement the notion that you are getting current threat knowledge.
 
-Setup for first use from the falco directory:
-'''sh
+Setup for first use from the falco directory:  
+
+```bash
 $ bin/get_vfeed.sh
 $ falco -u 
 $ falco -c
-'''
+```  
 
 If you find falco useful, please give a shoutout to us, and the great folks who build and maintain vfeed.
 
@@ -111,9 +112,10 @@ Usage Examples
 Assumes vfeed.db is in the same directory as falco  
 
 ### Example 1, check a package named 'python' version '2.7.3' for vulnerabilities in the NVD database ###
-'''sh
+
+```sh
 $ ./falco.py -n python -v 2.7.3
-'''  
+```    
 One Item being checked  
         *** Potential security defect found in python:2.7.3  
 CVE: CVE-2013-7040  
@@ -125,12 +127,14 @@ Summary Description: Python 2.7 before 3.4 only uses the last eight bits of the 
 ### Example 2, using falco in build situations ###
 
 Assume the feed database is in the vfeed subdirectory. Check a package named 'python' version '2.7.3' for vulnerabilities in the NVD database and if any are found, return a non zero return value.  Placing this in a makefile will cause make to exit when a vulnerability matches.  
-'''sh
+
+```bash
 $ ./falco.py -d ./vfeed/vfeed.db -b -n python -v 2.7.3 -o falcolog  
 $ echo $?  
 1  
 $  
-'''  
+```  
+
 ### Example 3, falco in a makefile, using the -b (break the build) flag ###
 
 #### Makefile: ####
@@ -144,11 +148,12 @@ clean:
     rm bash.build.out  
   
 #### Execution ####
-'''sh
+
+```bash
 $ make  
 ./falco.py -b -n bash  -v 1.14.7 -d ./vfeed.db -o bash.build.out  
 make: *** [bash.build.out] Error 1  
-'''  
+```  
 #### Explanation ####
  -b cause falco to return fail if any there are CVE findings returned from searching NVD for the package and version.
   
@@ -160,11 +165,11 @@ Dependencies
 Falco uses the NVD database from the vfeed project:   https://github.com/toolswatch/vFeed  
 Download the vfeed package and use the configure feature to gather the nvd database in sqlite3 form. Setup for first use from the falco directory:  
 
-'''bash
+```bash
 $ bin/get_vfeed.sh
 $ falco -u 
 $ falco -c
-'''  
+```  
 
 2) Write down where you put the vfeed.db file, and store that for future use, falco uses that database as an argument.   
 3) Note it would be a good idea to put this "falco -u;falco -c" in a cron job, since falco counts on using updated NVD data to see when new vulnerabilities exist. This database is updated every few weeks.
