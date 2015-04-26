@@ -1,8 +1,3 @@
-    o SERIOUS - No install utility or instructions
-
     o SERIOUS - Enabled full text search in falco, and now there are false postive CPE matches.  Need to post match filter the findings for eliminate false matches from greedy fts3. 
 
     o for single test, does not announce what is being tested
-    
-    o need a database update feature in falco, depend on vfeed python code 
-    
