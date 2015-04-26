@@ -159,11 +159,13 @@ Dependencies
 ------------
 Falco uses the NVD database from the vfeed project:   https://github.com/toolswatch/vFeed  
 Download the vfeed package and use the configure feature to gather the nvd database in sqlite3 form. Setup for first use from the falco directory:  
-'''sh
+
+'''bash
 $ bin/get_vfeed.sh
 $ falco -u 
 $ falco -c
 '''  
+
 2) Write down where you put the vfeed.db file, and store that for future use, falco uses that database as an argument.   
 3) Note it would be a good idea to put this "falco -u;falco -c" in a cron job, since falco counts on using updated NVD data to see when new vulnerabilities exist. This database is updated every few weeks.
  
