@@ -67,7 +67,7 @@ limitations under the License.
 
 Falco help
 --------------
-usage: falco [-h] [-b] [-d [VFEED_DATABASE]] [--debug] [-f [PACKAGELISTFILE]]  
+usage: falco [-h] [-b] [-c] [-d [VFEED_DATABASE]] [-f [PACKAGELISTFILE]]  
              [-i [ITEMS_REPORTED]] [-n [PACKAGE_NAME]] [-o [OUTPUTFILE]]  
              [-v [PACKAGE_VERSION]] [-V]  
   
@@ -80,9 +80,9 @@ optional arguments:
   -b, --build_environment  
                         for use in build environments, return fail if items  
                         found  
+  -c config     download database and setup for 1st use  
   -d [VFEED_DATABASE], --vfeed_database [VFEED_DATABASE]  
                         location of toolswatch/vfeed.db sqlite database
-  --debug               turn on debug output  
   -f [PACKAGELISTFILE], --packagelistfile [PACKAGELISTFILE]  
                         file containing the list of packages to evaluate
   -i [ITEMS_REPORTED], --items_reported [ITEMS_REPORTED]  

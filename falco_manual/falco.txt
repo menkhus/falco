@@ -1,18 +1,18 @@
 NAME
-    falco - 3rd party code security intelligence for software maintainers
+falco - 3rd party code security intelligence for software maintainers
 
 SYNOPSIS
-    falco [-h] [-b] [-d [VFEED_DATABASE]] [--debug] [-f [PACKAGELISTFILE]] [-i [ITEMS_REPORTED]] [-n [PACKAGE_NAME]] [-o [OUTPUTFILE]] [-v [PACKAGE_VERSION]] [-V]  
+falco [-h] [-b] [-c] [-d[VFEED_DATABASE]] [-f[PACKAGELISTFILE]] [-i[ITEMS_REPORTED]] [-n[PACKAGE_NAME]] [-o[OUTPUTFILE]] [-v[PACKAGE_VERSION]] [-V]  
 
 DESCRIPTION
-    Checks via command line arguments or, a file list of software programs for known security defects documented in the National Vulnerability Database. Matches these 3rd party code project names and version names to CPE URIs in the NVD database.  
+Checks via command line arguments or, a file list of software programs for known security defects documented in the National Vulnerability Database. Matches these 3rd party code project names and version names to CPE URIs in 
+the NVD database.
 
 OPTIONS  
   -h, --help  show this help message and exit  
   -b, --build_environment  for use in build environments, return fail if items found  
-  -d [VFEED_DATABASE], --vfeed_database [VFEED_DATABASE]  location of toolswatch/vfeed.db sqlite database
-  --debug       turn on debug output  
-
+  -c  download database and setup for 1st use  
+  -d [VFEED_DATABASE], --vfeed_database [VFEED_DATABASE]  location of toolswatch/vfeed.db sqlite database  
   -f [PACKAGELISTFILE], --packagelistfile [PACKAGELISTFILE]
     file containing the list of packages to evaluate
   -i [ITEMS_REPORTED], --items_reported [ITEMS_REPORTED]  
@@ -57,8 +57,9 @@ SEE ALSO
 BUGS
     Searching for package names and versions can lead to both false positives and false negatives. The CPE matching documentation specifies greater than and less than logic. falco and other tools use regex matches and the fact that the NVD data provides an intended comprehensive list of impacted versions for each CVE number.
 
-AUTHOR
-    Mark Menkhus <mark.menkhus@gmail.com> 
+AUTHORS
+    Mark Menkhus <mark.menkhus@gmail.com>
+    toolswatch vfeed is Copyright NJ OUCHN, used under license. 
 
 LICENSE
     (c) Copyright 2014 Mark Menkhus, Glynn Mitchell   

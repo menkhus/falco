@@ -1,3 +1,6 @@
+# version 0.5.2 added full text search to speed up searches by ~1000 times, updated docs,
+cleaned up code, removed debug.
+
 # version 0.5.1 cleaned up code, fixed minor bugs, made peace with pylint, updated docs.
 # added a vagrantfile, setup support for install in a VM manageed by vagrant, setup database
 # loading and tests before install is completed.

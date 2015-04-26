@@ -1,18 +1,8 @@
     o SERIOUS - No install utility or instructions
 
-    o SERIOUS - the testlist.txt file in the test directory is not 
-processed correctly.  It appears that the apache and oscar entries
-are not checked. To reproduce the bug:
-cd test; ../falco -d ../vfeed.db -f testlist.txt 
-    o SERIOUS - CPE matching is a simple match into the database.  PyPy has a fullimplementation of CPE implemented, which should be the best choice for CPE matches. However, name/version seems to be working for simple cases.
+    o SERIOUS - Enabled full text search in falco, and now there are false postive CPE matches.  Need to post match filter the findings for eliminate false matches from greedy fts3. 
 
     o for single test, does not announce what is being tested
     
-    o the database version out is not useful, need to report what 
-    the last update was for the database
+    o need a database update feature in falco, depend on vfeed python code 
     
-    o need a database update feature in falco, don't depend on vfeed cli
-    
-    o refactoring needs:
-        variable names, long lines, indentation
-        pylint is our friend
