@@ -97,7 +97,6 @@ class checknvd_by_package(object):
         depends on the vfeed.db database from the vfeed application:
         https://github.com/toolswatch/vFeed/
     """
-
     def __init__(self, package=None, database='vfeed.db', items=99):
         """ Setup class
         """
@@ -106,7 +105,6 @@ class checknvd_by_package(object):
         self.items = items
         self.db_version = None
         self.json = {}
-
     def config (self):
         """ open the database using Sqlite3, setup a connection
             and add the cpe virtual table.
@@ -126,7 +124,6 @@ class checknvd_by_package(object):
         except Exception, e:
             print ("checknvd_by_package.config: %s"%(e,), file=sys.stderr)
             return False
-
     def update (self):
         """ load or update the database with the falco specific information
         and database characteristics.
@@ -138,7 +135,6 @@ class checknvd_by_package(object):
         except Exception, e:
             print ("checknvd_by_package.update: %s"%(e,), file=sys.stderr)
             return False
-
     def get_data(self):
         """   Get the data from the vfeed database.
         """
@@ -175,15 +171,33 @@ class checknvd_by_package(object):
 	    # SQL like. So post process all the returned values with a secondary 
 	    # regex search.
         self.data = self.cursor.execute(self.sql)
+        def clean_data():
+            """ remove duplicate CVEs, remove matches that are
+            incorrect due to greed match in full text search.
+            """
+            self.d = []
+            if len(self.data) > 0:
+                # accumulate CVE identifiers in cvelist, so that we don't
+                # repeat informing about a CVE
+                self.cvelist = []
+                for entry in self.data:
+                    # don't repeat a CVE
+                    if entry[0] not in self.cvelist:
+                        self.cvelist.append(entry[0])
+                        if re.search(self.package, entry[2], re.IGNORECASE):
+                            self.d.append(entry)
+                return self.d
+            else:
+                return self.data
         if self.data != None:
             # The fetchall gets multiple entries for a given CPE
             # the cpe matching is a regex match of the package,version.
             self.data = self.data.fetchall()
             self.conn.close()
+            self.data = clean_data()
             return self.data
         else:
-            return None
-
+            return None            
     def __len__(self):
         """ implement len operations on this object's data
         """
@@ -191,7 +205,6 @@ class checknvd_by_package(object):
             return len(self.data)
         else:
             return 0
-
     def db_ver(self, outputfile=sys.stdout):
         """ return the db_version of the vfeed database?
         """
@@ -211,13 +224,13 @@ class checknvd_by_package(object):
             return self.db_version[0]
         else:
             return self.db_version[0]
-
     def __str__(self):
         """ implement string output for object, embedded formatting and
         labeling for the data.
         """
         """ accumulate all of the string data in s """
         self.s = ''
+        print("in the string method",file=sys.stdout)
         if len(self.data) > 0:
             self.s = ''
             # accumulate CVE identifiers in cvelist, so that we don't
@@ -226,8 +239,8 @@ class checknvd_by_package(object):
             for entry in self.data:
                 if entry[0] not in self.cvelist:
                     self.cvelist.append(entry[0])
-                    print (r':'+str(self.package), entry[2])
-                    if re.search(r':'+self.package, entry[2], re.IGNORECASE):
+                    print ("debug:%s"%str(self.package), entry[2])
+                    if re.search(self.package, entry[2]):
                         self.s += "\t\t*** Potential security defect found \
                         in %s\n"%(self.package,)
                         self.s += "CVE: %s\nCVSS Score: %s\nCPE id: %s\n\
@@ -237,11 +250,10 @@ class checknvd_by_package(object):
             return self.s
         else:
             return self.s
-
     def __json__(self):
         """ implement JSON output for object.
+            accumulate and return all of the uniq data in json
         """
-        """ accumulate and return all of the uniq data in json """
         self.json = {}
         print (self.package)
         if len(self.data) > 0:
@@ -258,18 +270,16 @@ class checknvd_by_package(object):
                     self.j['cpe']=entry[2]
                     self.j['date_published']=entry[3]
                     self.j['summary']=entry[4]
-                    if re.search(r':'+self.package,entry[2],re.IGNORECASE):
+                    if re.search(self.package,entry[2]):
                         self.json[entry[0]]=self.j    
             print (self.json)
             return self.json
         else:
             return self.s
-
     def __repr__(self):
         """ implement the string representation of the object
         """
         return self.__str__()
-
 
 def command_line():
     """process command line arguments

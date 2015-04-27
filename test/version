@@ -11,21 +11,21 @@ echo "test for version 8"
 vtest postgresql 8 1
 echo "test for version 8.0"
 #../falco -d ../vfeed.db -n postgresql -v 8.0
-vtest postgresql 8.0 0 
+vtest postgresql 8.0 1 
 echo "test for version 8.1"
 vtest postgresql 8.1 1 
 echo "test for version 8.2"
 vtest postgresql 8.2 1 
 echo "test for version 8.3"
-vtest postgresql 8.3 0 
+vtest postgresql 8.3 1 
 echo "test for version 8.4"
 vtest postgresql 8.4 0
 echo "test for version 8.5:"
-vtest postgresql 8.5: 0
+vtest postgresql 8.5: 1
 # using CPE knowledge, to override & test broken versioning
 echo "test for version 8.4"
 vtest postgresql:8.4 '' 1
 echo "test for version 8.5:"
 vtest postgresql:8.5: '' 1
 echo "test for version 8.5:alpha2"
-vtest postgresql 8.5:alpha2: 1
+vtest postgresql 8.5:alpha2 1 
