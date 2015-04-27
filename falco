@@ -105,6 +105,7 @@ class checknvd_by_package(object):
         self.database = database
         self.items = items
         self.db_version = None
+        self.json = {}
 
     def config (self):
         """ open the database using Sqlite3, setup a connection
@@ -151,7 +152,7 @@ class checknvd_by_package(object):
             self.conn = sqlite3.connect(self.database)
             self.cursor = self.conn.cursor()
         except Exception, e:
-            print ("checknvd_by_package.getdata: %s"%(e,), file=sys.stderr)
+            print ("checknvd_by_package.get_data: %s"%(e,), file=sys.stderr)
             exit()
         # Setting up the SQL query for get CPE and CVE data from two tables
         # and then match against a package name in the CPE identifiers.
@@ -162,7 +163,7 @@ class checknvd_by_package(object):
         FROM nvd_db as n
         JOIN cpe as c
         """
-	# this MATCH is a feature using full text search, from config()
+	    # this MATCH is a feature using full text search, from config()
         self.sql += r' WHERE c.cveid = n.cveid AND'
         self.sql += r' c.cpeid MATCH ":' + self.package + r'"'
         self.sql += r' GROUP BY c.cveid '
@@ -170,9 +171,9 @@ class checknvd_by_package(object):
         self.sql += r' CAST(n.cvss_base AS REAL) DESC'
         self.sql += r' LIMIT ' + str(self.items)
         self.sql += r';'
-	# TODO: these matches are much more greedy that what I previously had with 
-	# SQL like. So post process all the returned values with a secondary 
-	# regex search.
+	    # TODO: these matches are much more greedy that what I previously had with 
+	    # SQL like. So post process all the returned values with a secondary 
+	    # regex search.
         self.data = self.cursor.execute(self.sql)
         if self.data != None:
             # The fetchall gets multiple entries for a given CPE
@@ -224,15 +225,43 @@ class checknvd_by_package(object):
             self.cvelist = []
             for entry in self.data:
                 if entry[0] not in self.cvelist:
-                    self.s += "\t\t*** Potential security defect found \
-                    in %s\n"%(self.package,)
-                    self.s += "CVE: %s\nCVSS Score: %s\nCPE id: %s\n\
-                    Published on: \
-                    %s\nSummary Description: %s\n\n"%(entry[0], entry[1], \
-                    entry[2], entry[3], entry[4])
-                    # record the CVE and don't report it again
                     self.cvelist.append(entry[0])
+                    print (r':'+str(self.package), entry[2])
+                    if re.search(r':'+self.package, entry[2], re.IGNORECASE):
+                        self.s += "\t\t*** Potential security defect found \
+                        in %s\n"%(self.package,)
+                        self.s += "CVE: %s\nCVSS Score: %s\nCPE id: %s\n\
+                        Published on: \
+                        %s\nSummary Description: %s\n\n"%(entry[0], entry[1], \
+                        entry[2], entry[3], entry[4])
             return self.s
+        else:
+            return self.s
+
+    def __json__(self):
+        """ implement JSON output for object.
+        """
+        """ accumulate and return all of the uniq data in json """
+        self.json = {}
+        print (self.package)
+        if len(self.data) > 0:
+            # accumulate CVE identifiers in cvelist, so that we don't
+            # repeat informing about a CVE
+            self.cvelist = []
+            self.j = {}
+            for entry in self.data:
+                # don't repeat a CVE
+                if entry[0] not in self.cvelist:
+                    self.cvelist.append(entry[0])
+                    self.j['cve']=entry[0]
+                    self.j['cvss_base']=entry[1]
+                    self.j['cpe']=entry[2]
+                    self.j['date_published']=entry[3]
+                    self.j['summary']=entry[4]
+                    if re.search(r':'+self.package,entry[2],re.IGNORECASE):
+                        self.json[entry[0]]=self.j    
+            print (self.json)
+            return self.json
         else:
             return self.s
 
@@ -317,13 +346,14 @@ def check_item_in_database(package_name='', package_version='', d='', i=1, \
         package = package_name + ':'
     else:
         if package_name != '' and package_version != '':
-            package = package_name + ':' + package_version
+            package = ":" + package_name + ':' + package_version
         else:
             return False
     try:
         p = checknvd_by_package(package=package, database=d, items=i)
         report = p.get_data()
         detailed_report = {}
+        #p.__json__()
         if len(p) > 0:
             detailed_report[package] = report
             detailed_vuln_report(detailed_report, outputfile)
