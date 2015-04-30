@@ -1,0 +1,18 @@
+#!/bin/sh
+
+echo "testing -t, type output, -t text:"
+../falco -t text -d ../vfeed.db -n python -v 2.7.3
+if [ "$?" -gt "0" ]
+then
+    echo "format test: failed -t text test" -o /dev/null
+    exit 1
+fi
+
+echo "testing -t, type output, -t json:"
+../falco -t json -d ../vfeed.db -n python -v 2.7.3 -o /dev/null
+if [ "$?" -gt "0" ]
+then
+    echo "format test: failed -t json test"
+    exit 1
+fi
+

@@ -412,7 +412,7 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout):
             db_version = p.db_ver()
             print ("Version of https://github.com/toolswatch/vFeed/ database \
 used in this report was %s, and the"%(db_version,), file=outputfile),
-            print ("report was run on %s."%(time.strftime(
+            print ("report was run on %s."%(time.strftime(\
                 "%m-%d-%Y at %H:%M:%S")), file=outputfile),
             print ("The report was interrupted with control-c", file=outputfile)
             # print partial summary
@@ -558,7 +558,7 @@ name or package version", file=outputfile)
     if args.packagelistfile:
         if args.type:
             if args.type == 'text':
-                print ("\tReport generated using %s as the package list."%(
+                print ("\tReport generated using %s as the package list."%(\
                 args.packagelistfile), file=outputfile)
                 packages = PackageList(args.packagelistfile)
                 packages = packages.getList()

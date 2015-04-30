@@ -9,6 +9,14 @@ else
     echo "falco help command line logic test FAILED"
     exit
 fi
+echo "*********** test format:"
+./format 2>&1 > /dev/null
+if [ "$?" -eq 0 ]
+then
+    echo "falco -t format test succeeded"
+else
+    echo "falco -t format test FAILED"
+    exit
 echo "********** database:"
 ./database 2>&1 > /dev/null
 if [ "$?" -eq 0 ]
