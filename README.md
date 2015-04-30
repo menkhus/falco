@@ -2,11 +2,11 @@ Falco: 3rd party code security intelligence for software maintainers
 ==================================================
 
 What is falco?
-------------------
+--------------
 Falco is a simple tool to search the NIST NVD and report latent security bugs in 3rd party software packages in your projects. By placing falco in your build or QA process, you can be alerted when new security defects are reported.  You could make falco part of your architectural review process as you evaluate component choices.
 
 Falco Dependencies
-----------------------------
+------------------
 Falco depends on the vfeed.db, a sqlite implementation of the NIST NVD vulnerability database - vFeed/vFeedApi, the open source correlated & cross-linked local vulnerability database by NJ OUCHN, Toolswatch.org 
 (cloned from https://github.com/toolswatch/vFeed/) 
 
@@ -20,16 +20,16 @@ $ falco -u
 $ falco -c
 ```  
 
-If you find falco useful, please give a shoutout to us, and the great folks who build and maintain vfeed.
+If you find falco useful, please give a shoutout to us, and the great folks who build and maintain toolswatch vfeed.
 
 No free lunch
-------------------
+-------------
 Users of falco are responsible for making sure the package names, and versions supplied to falco are current with the project being evaluated. There is no sophistication built into falco to survey your code for 3rd party dependencies.There are commercial products which can do this and so much more. Falco users must obtain and manage their own configuration management data for their project.  
 
 Recently, Jeremy Long, of OWASP dependency-check gave me a heads up regarding other FOSS projects that also provide 3rd party code dependency security checks. See the list below for some other 3rd party code dependency check apps. 
 
 Open source 3rd party software dependency apps
-----------------------------------------------------
+----------------------------------------------
 * Victims - https://github.com/victims
 * OWASP dependency-check - https://jeremylong.github.io/DependencyCheck/ 
 * JavaScript retire.js - https://github.com/victims/victims-enforcer
@@ -42,8 +42,8 @@ Commercial products that do dependency checks
 * Blackduck - https://www.blackducksoftware.com/
 
 Why falco
---------------
-We wrote the tool because (at the time we looked) there were no accessible tools for developers and project maintainers to easily find known security vulnerabilities in software they use as part of a project.  Falco is barebones simple, and implements a basic software security check mandated by many security maturity models such as the one in OWASP: https://www.owasp.org/index.php/Top_10_2013-A9-Using_Components_with_Known_Vulnerabilities, OpenSAMM - http://www.opensamm.org/, or BSIMM - http://www.bsimm.com/online/governance/cp/ 
+---------
+We wrote the tool because (at the time we looked) there were no accessible tools for developers and project maintainers to easily find known security vulnerabilities in software they use as part of a project.  Falco is bare-bones simple, and implements a basic software security check mandated by many security maturity models such as the one in OWASP: https://www.owasp.org/index.php/Top_10_2013-A9-Using_Components_with_Known_Vulnerabilities, OpenSAMM - http://www.opensamm.org/, or BSIMM - http://www.bsimm.com/online/governance/cp/ 
 
 Falco is not a code scanner
 ---------------------------
@@ -63,7 +63,7 @@ All rights reserved.
 Copyright 2014 Mark Menkhus, Glynn Mitchell
 
 License
-----------
+-------
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -77,7 +77,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 Falco help
---------------
+----------
 usage: falco [-h] [-b] [-c] [-d [VFEED_DATABASE]] [-f [PACKAGELISTFILE]]  
              [-i [ITEMS_REPORTED]] [-n [PACKAGE_NAME]] [-o [OUTPUTFILE]]  
              [-u] [-v [PACKAGE_VERSION]] [-V]  
