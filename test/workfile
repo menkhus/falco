@@ -1,3 +1,5 @@
 #!/bin/sh
 
 ../falco -f testlist.txt -d ../vfeed.db
+../falco -t text -f testlist.txt -d ../vfeed.db
+../falco -t json -f testlist.txt -d ../vfeed.db

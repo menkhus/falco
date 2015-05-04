@@ -49,6 +49,7 @@ import os
 import time
 import re
 import sqlite3
+import json
 import vfeed.vfeed as vfeed
 
 # suppress .pyc creation
@@ -249,28 +250,6 @@ or two.", file=sys.stdout)
             return self.s
         else:
             return self.s
-    def json_data(self):
-        """ implement JSON output for object.
-            accumulate and return all of the uniq data in json
-        """
-        self.matches['package'] = self.package
-        if len(self.data) > 0:
-            # accumulate CVE identifiers in cvelist, so that we don't
-            # repeat informing about a CVE
-            self.cvelist = []
-            for entry in self.data:
-                # don't repeat a CVE
-                if entry[0] not in self.cvelist:
-                    self.cvelist.append(entry[0])
-                    self.json['cvss_base'] = entry[1]
-                    self.json['cpe'] = entry[2]
-                    self.json['date_published'] = entry[3]
-                    self.json['summary'] = entry[4]
-                    if re.search(self.package, entry[2]):
-                        self.matches[entry[0]] = self.json
-            return self.matches
-        else:
-            return self.matches
     def __repr__(self):
         """ implement the string representation of the object
         """
@@ -322,7 +301,7 @@ cross-linked local vulnerability database by NJ OUCHN, Toolswatch.org
     return args
 
 def check_item_in_database(package_name='', package_version='', d='', i=1, \
-    outputfile=sys.stdout):
+    outputfile=sys.stdout, output_type='text'):
     """ Check a string package name and version for matches in the CPE content\
     of the NVD
 
@@ -361,15 +340,23 @@ def check_item_in_database(package_name='', package_version='', d='', i=1, \
     try:
         p = CheckNVDByPackage(package=package, database=d, items=i)
         report = p.get_data()
+        j_data = []
+        if output_type == 'json':
+            j = {}
+            for each in report:
+                j['cve'] = each[0]
+                j['cvss_base_score'] = each[1]
+                j['cpe'] = each[2]
+                j['date'] = each[3]
+                j['summary'] = each[4]
+                j_data.append(j)
+            #print (json, outputfile)
+            print (json.dumps(j_data), file=outputfile)
         detailed_report = {}
-        if len(p) > 0:
-            detailed_report[package] = report
-            detailed_vuln_report(detailed_report, outputfile)
-    except KeyboardInterrupt:
-        # if the user is impatient, report some output
-        db_version = p.db_ver()
-        print ("The report was interrupted with control-c", file=outputfile)
-        exit(1)
+        if output_type == 'text':
+            if len(p) > 0:
+                detailed_report[package] = report
+                detailed_vuln_report(detailed_report, outputfile)
     except Exception, e:
         print ("check_item_in_database: %s"%(e,), file=outputfile)
         if re.search(r'no such table', str(e)):
@@ -385,7 +372,8 @@ def check_item_in_database(package_name='', package_version='', d='', i=1, \
     else:
         return False
 
-def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout):
+def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
+        output_type='text'):
     """ check a list of package names and versions for matches in the
     CPE content of the NVD
 
@@ -400,25 +388,38 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout):
         try:
             p = CheckNVDByPackage(package=package, database=d, items=i)
             report = p.get_data()
-            if len(p) > 0:
-                found += "Package text: " + package + " found.\n"
-                found_c += 1
-                detailed_report[package] = report
-            else:
-                not_found_c += 1
-                not_found += "Package text: " + package + " not found.\n"
+            j_data = []
+            if output_type == 'json':
+                j = {}
+                for each in report:
+                    j['cve'] = each[0]
+                    j['cvss_base_score'] = each[1]
+                    j['cpe'] = each[2]
+                    j['date'] = each[3]
+                    j['summary'] = each[4]
+                    j_data.append(j)
+                if j_data:
+                    print (json.dumps(j_data), file=outputfile)
+            if output_type == 'text':
+                if len(p) > 0:
+                    found += "Package text: " + package + " found.\n"
+                    found_c += 1
+                    detailed_report[package] = report
+                else:
+                    not_found_c += 1
+                    not_found += "Package text: " + package + " not found.\n"
         except KeyboardInterrupt:
             # if the user is impatient, report some output after abort
             db_version = p.db_ver()
             print ("Version of https://github.com/toolswatch/vFeed/ database \
-used in this report was %s, and the"%(db_version,), file=outputfile),
+    used in this report was %s, and the"%(db_version,), file=outputfile),
             print ("report was run on %s."%(time.strftime(\
                 "%m-%d-%Y at %H:%M:%S")), file=outputfile),
             print ("The report was interrupted with control-c", file=outputfile)
             # print partial summary
             print ("\tThis is a PARTIAL report of findings:", file=outputfile)
             print ("These %s packages were found in the NVD database and \
-reported below:"%(found_c,), file=outputfile)
+    reported below:"%(found_c,), file=outputfile)
             print (found, file=outputfile)
             print ("These %s packages were not found in the NVD database:\
                    "%(not_found_c,), file=outputfile)
@@ -428,24 +429,25 @@ reported below:"%(found_c,), file=outputfile)
             # quit the application
             exit(1)
     # print a summary
-    print ("\tReport of possible vulnerability findings, for %s packages \
-requested:"%(found_c + not_found_c,), file=outputfile)
-    print ("These %s packages were found with vulnerability in the NVD \
-database and reported below:"%(found_c,), file=outputfile)
-    print (found, file=outputfile)
-    print ("These %s packages were not found in the NVD database:"\
-%(not_found_c,), file=outputfile)
-    print (not_found, file=outputfile)
-    print ("Detailed findings as follows:", file=outputfile)
-    detailed_vuln_report(detailed_report, outputfile)
-    if 'p' in locals():
-        db_version = p.db_ver()
-    else:
-        return None
-    print ("Version of https://github.com/toolswatch/vFeed/ database used \
-in this report was %s\n"%(db_version,), file=outputfile),
-    print ("The report was run on %s."%(time.strftime("%m-%d-%Y at %H:%M:%S")\
-,), file=outputfile)
+    if output_type == 'text':
+        print ("\tReport of possible vulnerability findings, for %s packages \
+    requested:"%(found_c + not_found_c,), file=outputfile)
+        print ("These %s packages were found with vulnerability in the NVD \
+    database and reported below:"%(found_c,), file=outputfile)
+        print (found, file=outputfile)
+        print ("These %s packages were not found in the NVD database:"\
+    %(not_found_c,), file=outputfile)
+        print (not_found, file=outputfile)
+        print ("Detailed findings as follows:", file=outputfile)
+        detailed_vuln_report(detailed_report, outputfile)
+        if 'p' in locals():
+            db_version = p.db_ver()
+        else:
+            return None
+        print ("Version of https://github.com/toolswatch/vFeed/ database used \
+    in this report was %s\n"%(db_version,), file=outputfile),
+        print ("The report was run on %s."%(time.strftime("%m-%d-%Y at %H:%M:%S")\
+    ,), file=outputfile)
     if found_c == 0:
         return False
     else:
@@ -468,7 +470,8 @@ Summary Description: %s\n\n"%(cve[0], cve[1], \
             cve[2], cve[3], cve[4])
     print (s, file=outputfile)
 
-def build_exit(return_value=False, build_return=False, outputfile=sys.stderr):
+def build_exit(return_value=False, build_return=False, outputfile=sys.stderr,
+               output_type='text'):
     """ if the -b build_environment option is chosen, the return value
     is True if a match in the NVD is made, but we want the build
     (for example this gnu make) to sense an error and exit before
@@ -478,7 +481,8 @@ def build_exit(return_value=False, build_return=False, outputfile=sys.stderr):
         """ advise software builder of next action if a build failure
         """
         if return_value == True:
-            print ("""\tSuggested action for 3rd party code vulnerability
+            if output_type == 'text':
+                print ("""\tSuggested action for 3rd party code vulnerability
         management:
 1) File a bug in the bug tracker, with CVE information needed to 
 determine what change is needed.
@@ -486,7 +490,7 @@ determine what change is needed.
 building.
 3) When this potential bug is resolved, update the makefile again 
 to reflect the latest package number and reinstate the -b.
-            """, file=outputfile)
+                """, file=outputfile)
             return False
         return True
     else:
@@ -556,29 +560,25 @@ name or package version", file=outputfile)
         print ("IOError: vfeed database does not exist: %s"%(d,))
         sys.exit(2)
     if args.packagelistfile:
-        if args.type:
-            if args.type == 'text':
-                print ("\tReport generated using %s as the package list."%(\
+        if args.type == 'text':
+            print ("\tReport generated using %s as the package list."%(\
                 args.packagelistfile), file=outputfile)
-                packages = PackageList(args.packagelistfile)
-                packages = packages.getList()
-            if build_exit(check_list_in_database(packages, d, i, outputfile),\
-                build_return, outputfile):
-                sys.exit(0)
+        packages = PackageList(args.packagelistfile)
+        packages = packages.getList()
+        if build_exit(check_list_in_database(packages, d, i, outputfile, \
+            args.type), build_return, outputfile, args.type):
+            sys.exit(0)
         else:
             sys.exit(1)
     if args.package_name:
         if args.type:
-            if args.type == 'text':
-                if build_exit(check_item_in_database(args.package_name,\
-                    args.package_version, d, i, outputfile), build_return, outputfile):
-                    sys.exit(0)
-    if args.type:
-        if args.type == 'json':
-            p = check_item_in_database(args.package_name,\
-            args.package_version, d, i, outputfile)
-            p.get_data
-            print (p.json_data, file=outputfile)
+            if args.type not in "text html json":
+                print ("-t argument must be text, json or html")
+                sys.exit(1)
+            output_type = args.type
+        if build_exit(check_item_in_database(args.package_name,\
+            args.package_version, d, i, outputfile, output_type), \
+            build_return, outputfile):
             sys.exit(0)
     # we exit with true or false of the shell environment to support a
     # build_environment type of logic. If there is a finding in the
