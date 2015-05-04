@@ -47,7 +47,7 @@ We wrote the tool because (at the time we looked) there were no accessible tools
 
 Falco is not a code scanner
 ---------------------------
-Falco does not test the software, it simply looks to see that the package and version you tell it are in a vulnerability database.  If a package and version are in the vulnerability database, you could have a vulnerability in software you depend upon. You need to respond to by validating that vulnerability assertion, and then update the package as needed.  Other ways to discover known exiting vulnerabilities are through code scanning tools (mentioned above) network security scanners like OpenVAS or nessus  (often used by commercial customers) and using code analysis tools like HP Fortify or Coverity.
+Falco does not test the software, it simply looks to see that the package and version you tell it are in a vulnerability database.  If a package and version are in the vulnerability database, you could have a vulnerability in software you depend upon. You need to respond to by validating that vulnerability assertion, and then update the package as needed.  Other ways to discover known exiting vulnerabilities are through code scanning tools (mentioned above) network security scanners like OpenVAS or Nessus  (often used by commercial customers) and using code analysis tools like HP Fortify or Coverity.
 
 Do 3rd party code threat intelligence
 -------------------------------------
@@ -80,7 +80,7 @@ Falco help
 ----------
 usage: falco [-h] [-b] [-c] [-d [VFEED_DATABASE]] [-f [PACKAGELISTFILE]]  
              [-i [ITEMS_REPORTED]] [-n [PACKAGE_NAME]] [-o [OUTPUTFILE]]  
-             [-u] [-v [PACKAGE_VERSION]] [-V]  
+             [-t [text|json]][-u] [-v [PACKAGE_VERSION]] [-V]  
   
 Checks command line or, a file list of software programs for known security
 defects documented in the National Vulnerability Database. Matches a project
@@ -102,6 +102,8 @@ optional arguments:
                         package name to search for  
   -o [OUTPUTFILE], --outputfile [OUTPUTFILE]  
                         name of output file
+  -t [TYPE], --type [TYPE]
+                        format of output, options are text, json  
   -u --update     update or load the vfeed database.  Run this about once per week.  use $ falco -c to complete the database configuration. 
   -v [PACKAGE_VERSION], --package_version [PACKAGE_VERSION]  
                         package version to look for  

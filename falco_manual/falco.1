@@ -6,7 +6,7 @@ NNAAMMEE
        ffaallccoo - 3rd party code security intelligence for software maintainers
 
 SSYYNNOOPPSSIISS
-       ffaallccoo [[--hh]] [[--bb]] [[--cc]] [[--dd[[VVFFEEEEDD__DDAATTAABBAASSEE]]]] [[--ff[[PPAACCKKAAGGEELLIISSTTFFIILLEE]]]] [[--ii[[IITTEEMMSS__RREEPPOORRTTEEDD]]]] [[--nn[[PPAACCKKAAGGEE__NNAAMMEE]]]] [[--oo[[OOUUTTPPUUTTFFIILLEE]]]] [[--vv[[PPAACCKKAAGGEE__VVEERRSSIIOONN]]]] [[--VV]]
+       ffaallccoo [[--hh]] [[--bb]] [[--cc]] [[--dd[[VVFFEEEEDD__DDAATTAABBAASSEE]]]] [[--ff[[PPAACCKKAAGGEELLIISSTTFFIILLEE]]]] [[--ii[[IITTEEMMSS__RREEPPOORRTTEEDD]]]] [[--nn[[PPAACCKKAAGGEE__NNAAMMEE]]]] [[--oo[[OOUUTTPPUUTTFFIILLEE]]]] [[--tt [[tteexxtt||jjssoonn]]]][[--uu]][[--vv[[PPAACCKKAAGGEE__VVEERRSSIIOONN]]]] [[--VV]]
 
 DDEESSCCRRIIPPTTIIOONN
        Checks  via command line arguments or, a file list of software programs
@@ -21,7 +21,7 @@ OOPPTTIIOONNSS
        --bb,, ----bbuuiilldd__eennvviirroonnmmeenntt
               for use in build environments, return fail if items found
 
-       --cc     download database and setup for 1st use
+       --cc     setup database for use after the database has been updated
 
        --dd [[VVFFEEEEDD__DDAATTAABBAASSEE]],, ----vvffeeeedd__ddaattaabbaassee [[VVFFEEEEDD__DDAATTAABBAASSEE]]
               location of toolswatch/vfeed.db sqlite database --ff [PACKAGELIST-
@@ -39,6 +39,12 @@ OOPPTTIIOONNSS
        --oo [[OOUUTTPPUUTTFFIILLEE]],, ----oouuttppuuttffiillee [[OOUUTTPPUUTTFFIILLEE]]
 
               nnaammee ooff oouuttppuutt ffiillee
+
+       --tt [[TTYYPPEE]],, ----ttyyppee [[TTYYPPEE]]
+
+              ffoorrmmaatt ooff oouuttppuutt,, ooppttiioonnss aarree tteexxtt,, jjssoonn
+
+       --uu     update the toolswatch vfeed database
 
        --vv [[PPAACCKKAAGGEE__VVEERRSSIIOONN]],, ----ppaacckkaaggee__vveerrssiioonn [[PPAACCKKAAGGEE__VVEERRSSIIOONN]]
 
@@ -125,8 +131,8 @@ LLIICCEENNSSEE
        limitations under the License.
 
 VVEERRSSIIOONN
-       0.5.1
+       0.5.3
 
 
 
-falco_manual                    April 26, 2015                        falco(1)
+falco_manual                     May 03, 2015                         falco(1)
