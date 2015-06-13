@@ -60,6 +60,34 @@ import pdb
 sys.dont_write_bytecode
 
 
+class collect_json():
+    """ the json data collection used to store, and emit a collection of
+        JSON data
+    """
+    def __init__(self,):
+        """ collect the json input into json items
+        """
+        self.json_items = []
+        return None
+    def append(self, json_item=None):
+        """ collect a json item
+        """
+        if json_item:
+            self.json_items.append(json_item)
+        return True
+    def __str__(self,):
+        """ a stirng of the object's data
+        """
+        my_string = ''
+        for each in self.json_items:
+            my_string += " " + each
+        return my_string
+    def get_json_data(self):
+        """ return the json data collected
+        """
+        return self.json_items
+
+
 class PackageList(object):
     """ a generator of list of packages to get tested.
         input: filename where the content is a packagename
@@ -355,7 +383,8 @@ def check_item_in_database(package_name='', package_version='', d='', i=1,
     try:
         p = CheckNVDByPackage(package=package, database=d, items=i)
         report = p.get_data()
-        j_data = []
+        j_data = collect_json
+        j_data = j_data()
         if output_type == 'json' or output_type == 'html':
             j = {}
             for each in report:
@@ -367,10 +396,10 @@ def check_item_in_database(package_name='', package_version='', d='', i=1,
                 j_data.append(j)
             #print (json, outputfile)
             if output_type == 'json':
-                j_data = json.dumps(j_data)
+                j_data = json.dumps(j_data.get_json_data())
                 print (j_data, file=outputfile)
             if output_type == 'html':
-                html = html_out.cve_table_content(j_data)
+                html = html_out.cve_table_content(j_data.get_json_data())
                 print (html, file=outputfile)
         detailed_report = {}
         if output_type == 'text':

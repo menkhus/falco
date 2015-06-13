@@ -9,6 +9,7 @@ else
     echo "falco help command line logic test FAILED"
     exit 1
 fi
+
 echo "*********** test format:"
 ./format 2>&1 > /dev/null
 if [ "$?" -eq 0 ]
@@ -18,6 +19,7 @@ else
     echo "falco -t format test FAILED"
     exit 1
 fi
+
 echo "********** database:"
 ./database 2>&1 > /dev/null
 if [ "$?" -eq 0 ]
@@ -27,6 +29,7 @@ else
     echo "falco database argument command line logic test FAILED"
     exit 1
 fi
+
 echo "********** workfile:"
 ./workfile 2>&1 > /dev/null
 if [ "$?" -eq 0 ]
@@ -36,6 +39,7 @@ else
     echo "falco workfile logic test FAILED"
     exit 1
 fi
+
 echo "********* items:"
 ./items  2>&1 > /dev/null
 if [ "$?" -eq 0 ]
@@ -45,6 +49,7 @@ else
     echo "falco number of items test logic test FAILED"
     exit 1
 fi
+
 ./packagename 2>&1 > /dev/null
 echo "********* packagename:"
 if [ "$?" -eq 0 ]
@@ -54,6 +59,7 @@ else
     echo "falco packagename logic test FAILED"
     exit 1
 fi
+
 echo "********* version:"
 ./version 2>&1 > /dev/null
 if [ "$?" -eq 0 ]
@@ -63,6 +69,7 @@ else
     echo "falco package version logic test FAILED"
     exit 1
 fi
+
 echo "********* build:"
 ./build  2>&1 > /dev/null
 if [ "$?" -eq 0 ]
