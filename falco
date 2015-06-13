@@ -141,6 +141,7 @@ class CheckNVDByPackage(object):
         self.db_version = None
         self.json = {}
         self.matches = {}
+        self.data = None
 
     def config(self):
         """ open the database using Sqlite3, setup a connection
@@ -256,9 +257,8 @@ or two.", file=sys.stdout)
                 self.db_version = self.db_version[0]
                 self.conn.close()
             except Exception, e:
-                print ("CheckNVDByPackage.db_ver: %s" % (e,),
-                       file=outputfile)
-                exit()
+                print ("CheckNVDByPackage.db_ver: %s" % (e,), file=sys.stderr)
+                exit(False)
             return self.db_version[0]
         else:
             return self.db_version[0]
@@ -382,6 +382,10 @@ def check_item_in_database(package_name='', package_version='', d='', i=1,
             return False
     try:
         p = CheckNVDByPackage(package=package, database=d, items=i)
+#    except Exception, error:
+#        print ("check_item_in_database: failed CheckNVDByPackage, %s" % (error,), 
+#               outputfile)
+#        return False
         report = p.get_data()
         j_data = collect_json
         j_data = j_data()
@@ -394,19 +398,19 @@ def check_item_in_database(package_name='', package_version='', d='', i=1,
                 j['date'] = each[3]
                 j['summary'] = each[4]
                 j_data.append(j)
-            #print (json, outputfile)
             if output_type == 'json':
                 j_data = json.dumps(j_data.get_json_data())
                 print (j_data, file=outputfile)
+                return True
             if output_type == 'html':
                 html = html_out.cve_table_content(j_data.get_json_data())
                 print (html, file=outputfile)
+                return True
         detailed_report = {}
         if output_type == 'text':
             if len(p) > 0:
                 detailed_report[package] = report
                 detailed_vuln_report(detailed_report, outputfile)
-
     except Exception, e:
         print ("check_item_in_database: %s" % (e,), file=outputfile)
         if re.search(r'no such table', str(e)):
@@ -608,7 +612,7 @@ def main():
 name or package version", file=outputfile)
         sys.exit(1)
     if args.items_reported:
-        i = args.items_reported
+        i = abs(args.items_reported)
     else:
         i = 1
     if args.vfeed_database:
@@ -622,6 +626,13 @@ name or package version", file=outputfile)
         if args.type == 'text':
             print ("\tReport generated using %s as the package list." % (
                 args.packagelistfile), file=outputfile)
+        else:
+            if args.type == 'json':
+                print ("json not implemented for package list file", file=outputfile)
+                sys.exit(0)
+            if args.type == 'html':
+                print ("html not implemented for package list file", file=outputfile)
+                sys.exit(0)
         packages = PackageList(args.packagelistfile)
         packages = packages.getList()
         #pdb.set_trace()
