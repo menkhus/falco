@@ -1,18 +1,32 @@
 #!/bin/sh
 
 echo "testing -t, type output, -t text:"
-../falco -t text -d ../vfeed.db -n python -v 2.7.3
-if [ "$?" -gt "0" ]
+../falco -t text -d ../vfeed.db -n python -v 2.7.3 
+if [ "$?" -gt 0 ]
 then
-    echo "format test: failed -t text test" -o /dev/null
+    echo "format test: failed -t text test"
     exit 1
+else:
+    echo "format test: passed -t text test"
 fi
 
 echo "testing -t, type output, -t json:"
-../falco -t json -d ../vfeed.db -n python -v 2.7.3 -o /dev/null
-if [ "$?" -gt "0" ]
+../falco -t json -d ../vfeed.db -n python -v 2.7.3
+if [ "$?" -gt 0 ]
 then
     echo "format test: failed -t json test"
     exit 1
+else:
+    echo "format test: passed -t json test"
+fi
+
+echo "testing -t, type output, -t html:"
+../falco -t html -d ../vfeed.db -n python -v 2.7.3
+if [ "$?" -gt 0 ]
+then
+    echo "format test: failed -t html test"
+    exit 1
+else:
+    echo "format test: passed -t html test"
 fi
 

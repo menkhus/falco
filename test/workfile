@@ -1,5 +1,38 @@
 #!/bin/sh
 
-../falco -f testlist.txt -d ../vfeed.db
-../falco -t text -f testlist.txt -d ../vfeed.db
-../falco -t json -f testlist.txt -d ../vfeed.db
+echo "testing using -f testlist.txt"
+../falco -f testlist.txt -d ../vfeed.db > /dev/null
+if [ "$?" -gt 0 ]
+then
+    echo "\t-f textlist.txt failed"
+    exit 1
+else:
+    echo "\t-f textlist.txt passed"
+fi
+echo "testing using -t text -f testlist.txt"
+../falco -t text -f testlist.txt -d ../vfeed.db > /dev/null
+if [ "$?" -gt 0 ]
+then
+    echo "\t-t text failed"
+    exit 1
+else:
+    echo "\t-t text textlist.txt passed"
+fi
+echo "testing using -t json -f testlist.txt"
+../falco -t json -f testlist.txt -d ../vfeed.db -o /dev/null
+if [ "$?" -gt 0 ]
+then
+    echo "\t-t json failed"
+    exit 1
+else:
+    echo "\t-t json textlist.txt passed"
+fi
+echo "testing using -t html -f testlist.txt"
+../falco -t html -f testlist.txt -d ../vfeed.db > /dev/null
+if [ "$?" -gt 0 ]
+then
+    echo "-t html failed"
+    exit 1
+else:
+    echo "\t-t html textlist.txt passed"
+fi

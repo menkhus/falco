@@ -10,9 +10,11 @@ security defects listed against that data.
     * Copyright 2013, vFeed/vFeed Api, the open source correlated & cross-
     linked local vulnerability database by NJ OUCHN, Toolswatch.org
 
+Code dependencies: html_out.py
+
 Syntactic subtleties:
     * if testing using a packagelist file, requires that the list
-    be in name or name:version format ,1 package per line, comments
+    be in name or name:version format,1 package per line, comments
     start with #
     * depends on a version of python that has the __future__ feature, 2.6 and
     higher?
@@ -41,7 +43,7 @@ You may obtain a copy of the License at
 """
 
 from __future__ import print_function
-__version__ = '0.5.3'
+__version__ = '0.5.4'
 __author__ = 'Mark Menkhus, menkhus@icloud.com'
 import argparse
 import sys
@@ -51,13 +53,16 @@ import re
 import sqlite3
 import json
 import vfeed.vfeed as vfeed
+import html_out
+import pdb
 
 # suppress .pyc creation
 sys.dont_write_bytecode
 
+
 class PackageList(object):
     """ a generator of list of packages to get tested.
-        input: filename where the content is a packagenames
+        input: filename where the content is a packagename
         one per line, comments with # sign
     """
     def __init__(self, packageFile='', outputfile=sys.stdout):
@@ -66,6 +71,7 @@ class PackageList(object):
         self.packageFile = packageFile
         self.outputfile = outputfile
         self.packageList = []
+
     def getList(self):
         """ getList is a generator, it gets the data from the file
             and yields the data as needed
@@ -73,14 +79,14 @@ class PackageList(object):
         try:
             self.packageListInput = open(self.packageFile, 'r').readlines()
         except Exception, e:
-            print ("packageList: Exception - %s"%(e,), file=self.outputfile)
+            print ("packageList: Exception - %s" % (e,), file=self.outputfile)
             exit(1)
         for each in self.packageListInput:
             """filter commented lines, lines without package colon
                major_version dot minor_version
             """
-            if re.search(r'^#', each) or not re.search('\w\:(\d+\\.)?(\d+\\.)'\
-                , each):
+            if re.search(r'^#', each) or not \
+                    re.search('\w\:(\d+\\.)?(\d+\\.)', each):
                 pass
             else:
                 each = each.strip('\n')
@@ -107,6 +113,7 @@ class CheckNVDByPackage(object):
         self.db_version = None
         self.json = {}
         self.matches = {}
+
     def config(self):
         """ open the database using Sqlite3, setup a connection
             and add the cpe virtual table.
@@ -125,8 +132,9 @@ or two.", file=sys.stdout)
             self.conn.close()
             return True
         except Exception, e:
-            print ("CheckNVDByPackage.config: %s"%(e,), file=sys.stderr)
+            print ("CheckNVDByPackage.config: %s" % (e,), file=sys.stderr)
             return False
+
     def update(self):
         """ load or update the database with the falco specific information
         and database characteristics.
@@ -136,8 +144,9 @@ or two.", file=sys.stdout)
             db = vfeed.vFeedUpdate()
             db.update()
         except Exception, e:
-            print ("CheckNVDByPackage.update: %s"%(e,), file=sys.stderr)
+            print ("CheckNVDByPackage.update: %s" % (e,), file=sys.stderr)
             return False
+
     def get_data(self):
         """   Get the data from the vfeed database.
         """
@@ -151,18 +160,18 @@ or two.", file=sys.stdout)
             self.conn = sqlite3.connect(self.database)
             self.cursor = self.conn.cursor()
         except Exception, e:
-            print ("CheckNVDByPackage.get_data: %s"%(e,), file=sys.stderr)
+            print ("CheckNVDByPackage.get_data: %s" % (e,), file=sys.stderr)
             exit()
         # Setting up the SQL query for get CPE and CVE data from two tables
         # and then match against a package name in the CPE identifiers.
         # Match :packagename: or :packagename:n.n.n: packagename
         # sort unique items, based on date first, then CVSS score
         self.sql = r"""SELECT DISTINCT c.cveid, n.cvss_base, c.cpeid,
-        n.date_published, n.summary 
+        n.date_published, n.summary
         FROM nvd_db as n
-        JOIN cpe as c
+        JOIN cpe as c 
         """
-	    # this MATCH is a feature using full text search, from config()
+        # this MATCH is a feature using full text search, from config()
         self.sql += r' WHERE c.cveid = n.cveid AND'
         self.sql += r' c.cpeid MATCH ":' + self.package + r'"'
         self.sql += r' GROUP BY c.cveid '
@@ -171,6 +180,7 @@ or two.", file=sys.stdout)
         self.sql += r' LIMIT ' + str(self.items)
         self.sql += r';'
         self.data = self.cursor.execute(self.sql)
+
         def clean_data():
             """ Remove duplicate CVEs, remove matches that are
                 incorrect due to greedy match in full text search.
@@ -189,15 +199,14 @@ or two.", file=sys.stdout)
                 return self.d
             else:
                 return self.data
-        if self.data != None:
-            # The fetchall gets multiple entries for a given CPE
-            # the cpe matching is a regex match of the package,version.
+        if self.data is not None:
             self.data = self.data.fetchall()
             self.conn.close()
             self.data = clean_data()
             return self.data
         else:
             return None
+
     def __len__(self):
         """ implement len operations on this object's data
         """
@@ -205,10 +214,11 @@ or two.", file=sys.stdout)
             return len(self.data)
         else:
             return 0
+
     def db_ver(self, outputfile=sys.stdout):
-        """ return the db_version of the vfeed database?
+        """ return the db_version of the vfeed database
         """
-        if self.db_version == None:
+        if self.db_version is None:
             try:
                 self.conn = sqlite3.connect(self.database)
                 self.cursor = self.conn.cursor()
@@ -218,12 +228,13 @@ or two.", file=sys.stdout)
                 self.db_version = self.db_version[0]
                 self.conn.close()
             except Exception, e:
-                print ("CheckNVDByPackage.db_ver: %s"%(e,), \
-                    file=outputfile)
+                print ("CheckNVDByPackage.db_ver: %s" % (e,),
+                       file=outputfile)
                 exit()
             return self.db_version[0]
         else:
             return self.db_version[0]
+
     def __str__(self):
         """ implement string output for object, embedded formatting and
         labeling for the data.
@@ -239,21 +250,24 @@ or two.", file=sys.stdout)
             for entry in self.data:
                 if entry[0] not in self.cvelist:
                     self.cvelist.append(entry[0])
-                    print ("debug:%s"%str(self.package), entry[2])
+                    print ("debug:%s" % str(self.package), entry[2])
                     if re.search(self.package, entry[2]):
                         self.s += "\t\t*** Potential security defect found \
-                        in %s\n"%(self.package,)
+                        in %s\n" % (self.package,)
                         self.s += "CVE: %s\nCVSS Score: %s\nCPE id: %s\n\
                         Published on: \
-                        %s\nSummary Description: %s\n\n"%(entry[0], entry[1], \
-                        entry[2], entry[3], entry[4])
+                        %s\nSummary Description: %s\n\n" % (entry[0], entry[1],
+                                                            entry[2], entry[3],
+                                                            entry[4])
             return self.s
         else:
             return self.s
+
     def __repr__(self):
         """ implement the string representation of the object
         """
         return self.__str__()
+
 
 def command_line():
     """process command line arguments
@@ -267,28 +281,28 @@ def command_line():
 known security defects documented in the National Vulnerability Database.
 Matches a project name and version name to CPE URIs in the NVD database.
 
-Uses the Copyright 2013, vFeed/vFeedApi, the open source correlated & 
+Uses the Copyright 2013, vFeed/vFeedApi, the open source correlated &
 cross-linked local vulnerability database by NJ OUCHN, Toolswatch.org
     """
     parser = argparse.ArgumentParser(description=DESC)
     parser.add_argument('-b', '--build_environment', help='for use in build \
-        environments, return fail if items found', action='store_true', \
-        default=False)
+        environments, return fail if items found', action='store_true',
+                        default=False)
     parser.add_argument('-c', '--config', help='update database and setup for \
-        use. Do this after downloading a new database', action='store_true', \
-        default=False)
+        use. Do this after downloading a new database', action='store_true',
+                        default=False)
     parser.add_argument('-d', '--vfeed_database', help='location of the \
         toolswatch \
-        vfeed.db sqlite database from toolswatch vfeed project', nargs='?', \
-        type=str, default='vfeed.db')
+        vfeed.db sqlite database from toolswatch vfeed project', nargs='?',
+                        type=str, default='vfeed.db')
     parser.add_argument('-f', '--packagelistfile', help='file where the list \
         of packages to evaluate is stored', nargs='?', default=None)
     parser.add_argument('-i', '--items_reported', help='number of items \
         reported for NVD/CVE matches', nargs='?', type=int, default=1)
     parser.add_argument('-n', '--package_name', help='package name to search \
         for', nargs='?', type=str, default=None)
-    parser.add_argument('-o', '--outputfile', help='name of output file', \
-        nargs='?', default=None)
+    parser.add_argument('-o', '--outputfile', help='name of output file',
+                        nargs='?', default=None)
     parser.add_argument('-t', '--type', help='format of output, options are \
         text, html, json', nargs='?', default='text')
     parser.add_argument('-u', '--update', help='download database. Do this \
@@ -300,8 +314,9 @@ cross-linked local vulnerability database by NJ OUCHN, Toolswatch.org
     args = parser.parse_args()
     return args
 
-def check_item_in_database(package_name='', package_version='', d='', i=1, \
-    outputfile=sys.stdout, output_type='text'):
+
+def check_item_in_database(package_name='', package_version='', d='', i=1,
+                           outputfile=sys.stdout, output_type='text'):
     """ Check a string package name and version for matches in the CPE content\
     of the NVD
 
@@ -320,9 +335,9 @@ def check_item_in_database(package_name='', package_version='', d='', i=1, \
     less than or greater than version comparison.
     """
     package = ''
-    if package_version == None:
+    if package_version is None:
         package_version = ''
-    if package_name == None:
+    if package_name is None:
         package_name == ''
     if package_name == '' and package_version == '':
         print ("check_item_in_database: both package_name and package_version\
@@ -341,7 +356,7 @@ def check_item_in_database(package_name='', package_version='', d='', i=1, \
         p = CheckNVDByPackage(package=package, database=d, items=i)
         report = p.get_data()
         j_data = []
-        if output_type == 'json':
+        if output_type == 'json' or output_type == 'html':
             j = {}
             for each in report:
                 j['cve'] = each[0]
@@ -351,19 +366,25 @@ def check_item_in_database(package_name='', package_version='', d='', i=1, \
                 j['summary'] = each[4]
                 j_data.append(j)
             #print (json, outputfile)
-            print (json.dumps(j_data), file=outputfile)
+            if output_type == 'json':
+                j_data = json.dumps(j_data)
+                print (j_data, file=outputfile)
+            if output_type == 'html':
+                html = html_out.cve_table_content(j_data)
+                print (html, file=outputfile)
         detailed_report = {}
         if output_type == 'text':
             if len(p) > 0:
                 detailed_report[package] = report
                 detailed_vuln_report(detailed_report, outputfile)
+
     except Exception, e:
-        print ("check_item_in_database: %s"%(e,), file=outputfile)
+        print ("check_item_in_database: %s" % (e,), file=outputfile)
         if re.search(r'no such table', str(e)):
             print ("\tFalco requires copying the cpe into", file=outputfile)
             print ("\ta cpe fts3 virtual table, after the", file=outputfile)
-            print ("\thttps://github.com/toolswatch/vFeed/ database", \
-            file=outputfile)
+            print ("\thttps://github.com/toolswatch/vFeed/ database",
+                   file=outputfile)
             print ("\tis setup. Run $ falco -c", file=outputfile)
             print ("\tand then try again.", file=outputfile)
         exit(1)
@@ -372,8 +393,9 @@ def check_item_in_database(package_name='', package_version='', d='', i=1, \
     else:
         return False
 
+
 def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
-        output_type='text'):
+                           output_type='text'):
     """ check a list of package names and versions for matches in the
     CPE content of the NVD
 
@@ -389,7 +411,7 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
             p = CheckNVDByPackage(package=package, database=d, items=i)
             report = p.get_data()
             j_data = []
-            if output_type == 'json':
+            if output_type == 'json' or output_type == 'html':
                 j = {}
                 for each in report:
                     j['cve'] = each[0]
@@ -399,7 +421,11 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
                     j['summary'] = each[4]
                     j_data.append(j)
                 if j_data:
-                    print (json.dumps(j_data), file=outputfile)
+                    if output_type == 'json':
+                        print (json.dumps(j_data), file=outputfile)
+                    if output_type == 'html':
+                        html = html_out.cve_table_content(j_data)
+                        print (html, file=outputfile)
             if output_type == 'text':
                 if len(p) > 0:
                     found += "Package text: " + package + " found.\n"
@@ -412,17 +438,17 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
             # if the user is impatient, report some output after abort
             db_version = p.db_ver()
             print ("Version of https://github.com/toolswatch/vFeed/ database \
-    used in this report was %s, and the"%(db_version,), file=outputfile),
-            print ("report was run on %s."%(time.strftime(\
+                   used in this report was %s, and the" % (db_version,), file=outputfile),
+            print ("report was run on %s." % (time.strftime(
                 "%m-%d-%Y at %H:%M:%S")), file=outputfile),
             print ("The report was interrupted with control-c", file=outputfile)
             # print partial summary
             print ("\tThis is a PARTIAL report of findings:", file=outputfile)
             print ("These %s packages were found in the NVD database and \
-    reported below:"%(found_c,), file=outputfile)
+    reported below:" % (found_c,), file=outputfile)
             print (found, file=outputfile)
             print ("These %s packages were not found in the NVD database:\
-                   "%(not_found_c,), file=outputfile)
+                   " % (not_found_c,), file=outputfile)
             print (not_found, file=outputfile)
             print ("PARTIAL findings as follows:", file=outputfile)
             detailed_vuln_report(detailed_report, outputfile)
@@ -431,12 +457,12 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
     # print a summary
     if output_type == 'text':
         print ("\tReport of possible vulnerability findings, for %s packages \
-    requested:"%(found_c + not_found_c,), file=outputfile)
+    requested:" % (found_c + not_found_c,), file=outputfile)
         print ("These %s packages were found with vulnerability in the NVD \
-    database and reported below:"%(found_c,), file=outputfile)
+    database and reported below:" % (found_c,), file=outputfile)
         print (found, file=outputfile)
-        print ("These %s packages were not found in the NVD database:"\
-    %(not_found_c,), file=outputfile)
+        print ("These %s packages were not found in the NVD database:"
+               % (not_found_c,), file=outputfile)
         print (not_found, file=outputfile)
         print ("Detailed findings as follows:", file=outputfile)
         detailed_vuln_report(detailed_report, outputfile)
@@ -445,13 +471,14 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
         else:
             return None
         print ("Version of https://github.com/toolswatch/vFeed/ database used \
-    in this report was %s\n"%(db_version,), file=outputfile),
-        print ("The report was run on %s."%(time.strftime("%m-%d-%Y at %H:%M:%S")\
-    ,), file=outputfile)
+in this report was %s\n" % (db_version,), file=outputfile),
+        print ("The report was run on %s." % (time.strftime("%m-%d-%Y at %H:%M:%S"),),
+               file=outputfile)
     if found_c == 0:
         return False
     else:
         return True
+
 
 def detailed_vuln_report(vuln_data={}, outputfile=sys.stdout):
     """ print a detailed vulnerability report
@@ -464,37 +491,40 @@ def detailed_vuln_report(vuln_data={}, outputfile=sys.stdout):
     for each in vuln_data.keys():
         entry = vuln_data[each]
         for cve in entry:
-            s += "\t\t*** Potential security defect found in %s\n"%(each,)
+            s += "\t\t*** Potential security defect found in %s\n" % (each,)
             s += "CVE: %s\nCVSS Score: %s\nCPE id: %s\nPublished on: %s\n\
-Summary Description: %s\n\n"%(cve[0], cve[1], \
-            cve[2], cve[3], cve[4])
+Summary Description: %s\n\n" % (cve[0], cve[1],
+                                cve[2], cve[3],
+                                cve[4])
     print (s, file=outputfile)
+
 
 def build_exit(return_value=False, build_return=False, outputfile=sys.stderr,
                output_type='text'):
     """ if the -b build_environment option is chosen, the return value
     is True if a match in the NVD is made, but we want the build
     (for example this gnu make) to sense an error and exit before
-    completion.  This could break or abort a build.
+    completion.  This should break or abort a build.
     """
-    if build_return == True:
+    if build_return is True:
         """ advise software builder of next action if a build failure
         """
-        if return_value == True:
+        if return_value is not False:
             if output_type == 'text':
                 print ("""\tSuggested action for 3rd party code vulnerability
         management:
-1) File a bug in the bug tracker, with CVE information needed to 
-determine what change is needed.
-2) Change the makefile, remove -b in the make file to continue 
-building.
-3) When this potential bug is resolved, update the makefile again 
-to reflect the latest package number and reinstate the -b.
+1) File a bug in the bug tracker, with CVE information needed to
+ determine what change is needed.
+2) Change the makefile, remove -b in the make file to continue
+ building.
+3) When this potential bug is resolved, update the makefile again
+ to reflect the latest package number and reinstate the -b.
                 """, file=outputfile)
-            return False
+            return True
         return True
     else:
         return return_value
+
 
 def main():
     """
@@ -542,7 +572,7 @@ def main():
     else:
         build_return = False
     if args.Version:
-        print ("falco version: %s"%(__version__), file=outputfile)
+        print ("falco version: %s" % (__version__), file=outputfile)
         exit()
     if not (args.packagelistfile or args.package_name or args.package_version):
         print ("No work requested, requires either package list file, package \
@@ -557,16 +587,17 @@ name or package version", file=outputfile)
     else:
         d = 'vfeed.db'
     if not os.path.exists(d):
-        print ("IOError: vfeed database does not exist: %s"%(d,))
+        print ("IOError: vfeed database does not exist: %s" % (d,))
         sys.exit(2)
     if args.packagelistfile:
         if args.type == 'text':
-            print ("\tReport generated using %s as the package list."%(\
+            print ("\tReport generated using %s as the package list." % (
                 args.packagelistfile), file=outputfile)
         packages = PackageList(args.packagelistfile)
         packages = packages.getList()
-        if build_exit(check_list_in_database(packages, d, i, outputfile, \
-            args.type), build_return, outputfile, args.type):
+        #pdb.set_trace()
+        if build_exit(check_list_in_database(packages, d, i, outputfile,
+                      args.type), build_return, outputfile, args.type):
             sys.exit(0)
         else:
             sys.exit(1)
@@ -576,9 +607,9 @@ name or package version", file=outputfile)
                 print ("-t argument must be text, json or html")
                 sys.exit(1)
             output_type = args.type
-        if build_exit(check_item_in_database(args.package_name,\
-            args.package_version, d, i, outputfile, output_type), \
-            build_return, outputfile):
+        if build_exit(check_item_in_database(args.package_name,
+                      args.package_version, d, i, outputfile, output_type),
+                      build_return, outputfile):
             sys.exit(0)
     # we exit with true or false of the shell environment to support a
     # build_environment type of logic. If there is a finding in the
