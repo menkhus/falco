@@ -70,18 +70,26 @@ class collect_json():
         self.json_items = []
         return None
     def append(self, json_item=None):
-        """ collect a json item
+        """ collect a json item, ignore repeat entries
         """
         if json_item:
-            self.json_items.append(json_item)
+            if json_item not in self.json_items:
+                self.json_items.append(json_item)
         return True
     def __str__(self,):
-        """ a stirng of the object's data
+        """ a string of the object's data
         """
         my_string = ''
         for each in self.json_items:
             my_string += " " + each
         return my_string
+    def __len__(self):
+        """ implement len operations on this object's data
+        """
+        if self.json_items:
+            return len(self.json_items)
+        else:
+            return 0
     def get_json_data(self):
         """ return the json data collected
         """
