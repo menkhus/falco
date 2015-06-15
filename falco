@@ -94,6 +94,10 @@ class collect_json():
         """ return the json data collected
         """
         return self.json_items
+    def __repr__(self):
+        """ implement the string representation of the collection
+        """
+        return self.__str__()
 
 
 class PackageList(object):
@@ -390,10 +394,6 @@ def check_item_in_database(package_name='', package_version='', d='', i=1,
             return False
     try:
         p = CheckNVDByPackage(package=package, database=d, items=i)
-#    except Exception, error:
-#        print ("check_item_in_database: failed CheckNVDByPackage, %s" % (error,), 
-#               outputfile)
-#        return False
         report = p.get_data()
         j_data = collect_json
         j_data = j_data()
