@@ -54,7 +54,6 @@ import sqlite3
 import json
 import vfeed.vfeed as vfeed
 import html_out
-import pdb
 
 # suppress .pyc creation
 sys.dont_write_bytecode
@@ -401,7 +400,7 @@ def check_item_in_database(package_name='', package_version='', d='', i=1,
         if output_type == 'json' or output_type == 'html':
             j = {}
             # pull the items out of the report, and stuff them
-            # in  dictionary
+            # in a collection of json
             for item in report:
                 j['cve'] = item[0]
                 j['cvss_base_score'] = item[1]
@@ -467,11 +466,12 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
                     j['date'] = each[3]
                     j['summary'] = each[4]
                     j_data.append(j)
+                    j = {}
                 if j_data:
                     if output_type == 'json':
                         print (json.dumps(j_data), file=outputfile)
                     if output_type == 'html':
-                        html = html_out.cve_table_content(j_data)
+                        html = html_out.cve_table_content(package, j_data)
                         print (html, file=outputfile)
             if output_type == 'text':
                 if len(p) > 0:
@@ -637,19 +637,16 @@ name or package version", file=outputfile)
         print ("IOError: vfeed database does not exist: %s" % (d,))
         sys.exit(2)
     if args.packagelistfile:
+        packages = PackageList(args.packagelistfile)
+        packages = packages.getList()
         if args.type == 'text':
             print ("\tReport generated using %s as the package list." % (
                 args.packagelistfile), file=outputfile)
         else:
-            if args.type == 'json':
-                print ("json not implemented for package list file", file=outputfile)
+            if args.type == 'json' or args.type == 'html':
+                (check_list_in_database(packages, d, i, outputfile,
+                args.type), build_return, outputfile, args.type)
                 sys.exit(0)
-            if args.type == 'html':
-                print ("html not implemented for package list file", file=outputfile)
-                sys.exit(0)
-        packages = PackageList(args.packagelistfile)
-        packages = packages.getList()
-        #pdb.set_trace()
         if build_exit(check_list_in_database(packages, d, i, outputfile,
                       args.type), build_return, outputfile, args.type):
             sys.exit(0)
