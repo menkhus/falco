@@ -417,7 +417,7 @@ def check_item_in_database(package_name='', package_version='', d='', i=1,
                 print (j_data, file=outputfile)
                 return True
             if output_type == 'html':
-                html = html_out.cve_table_content(j_data.get_json_data())
+                html = html_out.cve_table_content(package, j_data.get_json_data())
                 print (html, file=outputfile)
                 return True
         detailed_report = {}
