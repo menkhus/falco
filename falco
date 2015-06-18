@@ -394,18 +394,24 @@ def check_item_in_database(package_name='', package_version='', d='', i=1,
             return False
     try:
         p = CheckNVDByPackage(package=package, database=d, items=i)
+        # report is a list of ordered tuples containing CVE findings
         report = p.get_data()
         j_data = collect_json
         j_data = j_data()
         if output_type == 'json' or output_type == 'html':
             j = {}
-            for each in report:
-                j['cve'] = each[0]
-                j['cvss_base_score'] = each[1]
-                j['cpe'] = each[2]
-                j['date'] = each[3]
-                j['summary'] = each[4]
+            # pull the items out of the report, and stuff them
+            # in  dictionary
+            for item in report:
+                j['cve'] = item[0]
+                j['cvss_base_score'] = item[1]
+                j['cpe'] = item[2]
+                j['date'] = item[3]
+                j['summary'] = item[4]
                 j_data.append(j)
+                # I have no idea why j needed to be 'nulled' out,
+                # but this fixed a problem with not getting all items
+                j = {}
             if output_type == 'json':
                 j_data = json.dumps(j_data.get_json_data())
                 print (j_data, file=outputfile)
