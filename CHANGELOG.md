@@ -1,3 +1,5 @@
+#### version 0.6 added JSON and HTML output report types
+
 ### version 0.5.2 added full text search to speed up searches by ~1000 times, updated docs, cleaned up code, added secondary filter for post full text search.
 
 #### version 0.5.1 cleaned up code, fixed minor bugs, made peace with pylint, updated docs.

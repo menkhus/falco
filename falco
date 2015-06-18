@@ -43,7 +43,7 @@ You may obtain a copy of the License at
 """
 
 from __future__ import print_function
-__version__ = '0.5.4'
+__version__ = '0.6'
 __author__ = 'Mark Menkhus, menkhus@icloud.com'
 import argparse
 import sys
