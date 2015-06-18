@@ -210,7 +210,7 @@ or two.", file=sys.stdout)
         self.sql = r"""SELECT DISTINCT c.cveid, n.cvss_base, c.cpeid,
         n.date_published, n.summary
         FROM nvd_db as n
-        JOIN cpe as c 
+        JOIN cpe as c  
         """
         # this MATCH is a feature using full text search, from config()
         self.sql += r' WHERE c.cveid = n.cveid AND'
