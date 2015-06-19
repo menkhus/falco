@@ -469,11 +469,22 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
                     j = {}
                 if j_data:
                     if output_type == 'json':
+                        """ refactor: this needs refactored so that json is accumulated
+                        and all the json is dumped once
+                        """
                         print (json.dumps(j_data), file=outputfile)
-                    if output_type == 'html':
-                        html = html_out.cve_table_content(package, j_data)
-                        print (html, file=outputfile)
+                if output_type == 'html':
+                    """ refactor: This logic is a little convoluted.  The html is concatenated
+                        Collect the json and then run the report once.
+                    """
+                    table_content = html_out.cve_table_content(package, j_data)
+                    html_page = html_out.html_wrap_content(table_content)
+                    print (html_page, file=outputfile)
             if output_type == 'text':
+                """ refactor:
+                    this output could be handled with pystache and make an 
+                    easier to maintain report.
+                """
                 if len(p) > 0:
                     found += "Package text: " + package + " found.\n"
                     found_c += 1
@@ -482,6 +493,9 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
                     not_found_c += 1
                     not_found += "Package text: " + package + " not found.\n"
         except KeyboardInterrupt:
+            """ refactor: this is not really needed, since the database lookups
+                take significantly less time
+            """
             # if the user is impatient, report some output after abort
             db_version = p.db_ver()
             print ("Version of https://github.com/toolswatch/vFeed/ database \
@@ -528,8 +542,10 @@ in this report was %s\n" % (db_version,), file=outputfile),
 
 
 def detailed_vuln_report(vuln_data={}, outputfile=sys.stdout):
-    """ print a detailed vulnerability report
-    based on the collected vulnerability data
+    """ refactor: put this in to a report using pystache
+
+        print a detailed vulnerability report
+        based on the collected vulnerability data
 
     input: a dictionary of vulnerability information
     output: print to std out
