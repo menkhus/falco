@@ -68,6 +68,7 @@ class collect_json():
         """
         self.json_items = []
         return None
+
     def append(self, json_item=None):
         """ collect a json item, ignore repeat entries
         """
@@ -75,6 +76,7 @@ class collect_json():
             if json_item not in self.json_items:
                 self.json_items.append(json_item)
         return True
+
     def __str__(self,):
         """ a string of the object's data
         """
@@ -82,6 +84,7 @@ class collect_json():
         for each in self.json_items:
             my_string += " " + each
         return my_string
+
     def __len__(self):
         """ implement len operations on this object's data
         """
@@ -89,10 +92,12 @@ class collect_json():
             return len(self.json_items)
         else:
             return 0
+
     def get_json_data(self):
         """ return the json data collected
         """
         return self.json_items
+
     def __repr__(self):
         """ implement the string representation of the collection
         """
@@ -482,7 +487,7 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
                     print (html_page, file=outputfile)
             if output_type == 'text':
                 """ refactor:
-                    this output could be handled with pystache and make an 
+                    this output could be handled with pystache and make and
                     easier to maintain report.
                 """
                 if len(p) > 0:
@@ -661,7 +666,7 @@ name or package version", file=outputfile)
         else:
             if args.type == 'json' or args.type == 'html':
                 (check_list_in_database(packages, d, i, outputfile,
-                args.type), build_return, outputfile, args.type)
+                 args.type), build_return, outputfile, args.type)
                 sys.exit(0)
         if build_exit(check_list_in_database(packages, d, i, outputfile,
                       args.type), build_return, outputfile, args.type):

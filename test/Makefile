@@ -15,7 +15,7 @@ bash.build.out:
 multi.build.out:
 	../falco -b -d ../vfeed.db -f testlist.txt -o multi.build.out
 clean:
-	rm nonexist.build.out
-	rm bash.build.out
-	rm multi.build.out
+	rm nonexist.build.out > /dev/null
+	rm bash.build.out > /dev/null
+	rm multi.build.out > /dev/null
 
