@@ -400,6 +400,7 @@ def check_item_in_database(package_name='', package_version='', d='', i=1,
         p = CheckNVDByPackage(package=package, database=d, items=i)
         # report is a list of ordered tuples containing CVE findings
         report = p.get_data()
+        # setup an object to contain the data
         j_data = collect_json
         j_data = j_data()
         if output_type == 'json' or output_type == 'html':
@@ -407,6 +408,10 @@ def check_item_in_database(package_name='', package_version='', d='', i=1,
             # pull the items out of the report, and stuff them
             # in a collection of json
             for item in report:
+                j['search_item_string'] = package
+                j['requested_package_name'] = package_name
+                j['requested_package_version'] = package_version
+                j['requested_output_type'] = output_type
                 j['cve'] = item[0]
                 j['cvss_base_score'] = item[1]
                 j['cpe'] = item[2]
@@ -465,6 +470,8 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
             if output_type == 'json' or output_type == 'html':
                 j = {}
                 for each in report:
+                    j['search_item_string'] = package
+                    j['requested_output_type'] = output_type
                     j['cve'] = each[0]
                     j['cvss_base_score'] = each[1]
                     j['cpe'] = each[2]
