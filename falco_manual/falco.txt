@@ -2,7 +2,7 @@ NAME
 falco - 3rd party code security intelligence for software maintainers
 
 SYNOPSIS
-falco [-h] [-b] [-c] [-d[VFEED_DATABASE]] [-f[PACKAGELISTFILE]] [-i[ITEMS_REPORTED]] [-n[PACKAGE_NAME]] [-o[OUTPUTFILE]] [-t [text|json]][-u][-v[PACKAGE_VERSION]] [-V]  
+falco [-h] [-b] [-c] [-d[VFEED_DATABASE]] [-f[PACKAGELISTFILE]] [-i[ITEMS_REPORTED]] [-n[PACKAGE_NAME]] [-o[OUTPUTFILE]] [-t [text|json|html]][-u][-v[PACKAGE_VERSION]] [-V]  
 
 DESCRIPTION
 Checks via command line arguments or, a file list of software programs for known security defects documented in the National Vulnerability Database. Matches these 3rd party code project names and version names to CPE URIs in 
@@ -22,15 +22,19 @@ OPTIONS
   -o [OUTPUTFILE], --outputfile [OUTPUTFILE]  
     name of output file  
   -t [TYPE], --type [TYPE]  
-                        format of output, options are text, json  
+    format of output, options are text, json or html 
   -u  update the toolswatch vfeed database  
   -v [PACKAGE_VERSION], --package_version [PACKAGE_VERSION]  
                         package version to look for  
   -V, --Version         report the version of falco and exit 
 
 DEPENDENCIES
-    falco uses the toolswatch/vfeed sqlite database.  Git clone the project and update database using
-    $ vfeedcli.py update
+    falco uses the toolswatch/vfeed sqlite database.  To initialize the
+    database or to update the database use:
+    $ falco -u
+    To setup the database for the required rich text queries you must do
+    this too: 
+    $ falco -c 
 
 EXAMPLE
     Use falco to look for vulnerability for python 2.7.3 in NVD:  
@@ -44,12 +48,13 @@ EXAMPLE
     Summary Description: The HTTP clients in the (1) httplib, (2) urllib, (3) urllib2, and (4) xmlrpclib libraries in CPython (aka Python) 2.x before 2.7.9 and 3.x before 3.4.3, when accessing an HTTPS URL, do not (a) check the certificate against a trust store or verify that the server hostname matches a domain name in the subject s (b) Common Name or (c) subjectAltName field of the X.509 certificate, which allows man-in-the-middle attackers to spoof SSL servers via an arbitrary valid certificate.  
 
 HINTS
-    falco uses the toolswatch/vfeed database. The database is updated every week or two. Update this database in a cron job.  
+    falco uses the toolswatch/vfeed database. The database is updated every week or two. Update this database in a cron job. with the -u followed by -c. 
 
-    To regularly search for a group of libraries, apps and operating systems, put the information in a file and run vfeed -f.   
+    To regularly search for a group of libraries, apps and operating systems, put the information in a watchfile and run vfeed -f watchfile. The format of each watch item in the file is packagename:version .   
 
-    If you are doing regular software builds, for example using make, you can use the -b option. If falco finds a match, it will return an error, the make will exit, and you will have to determine whether the bug reported has a security impact on your project and if you need to update to that newer package.  
+    If you are doing regular software builds, for example using make, you can use falco with the the -b option. If falco finds a match, it will return an error, the make will exit, and you will have to determine whether the bug reported has a security impact on your project and if you need to update to that newer package.  
 
+  Getting aquinted with packagenames as used in NVD CVE
     falco is only as good as the package name and version information you give it. Start by just using falco -n to see if you are using the correct name. You can also search the vfeed.db database using the toolswatch vfeedcli or sqlite to see how you need to name your package name to be compatible with the CPE names used in the database. To examine the CPE dictionary look at:   
         https://nvd.nist.gov/cpe.cfm
 
