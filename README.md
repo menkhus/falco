@@ -8,9 +8,14 @@ Falco is a simple tool to search the NIST NVD and report latent security bugs in
 Falco Dependencies
 ------------------
 Falco depends on the vfeed.db, a sqlite implementation of the NIST NVD vulnerability database - vFeed/vFeedApi, the open source correlated & cross-linked local vulnerability database by NJ OUCHN, Toolswatch.org 
-(cloned from https://github.com/toolswatch/vFeed/) 
+(copied from https://github.com/toolswatch/vFeed/) 
 
-You must install and update the vfeed database and then point falco at the up-to-date database in order to have an effective vulnerability intelligence feature in your software workflow. The vfeed database must be updated periodically in order to implement the notion that you are getting current threat knowledge.
+You must install and update the vfeed database and then point falco at the up-to-date database in order to have an effective vulnerability intelligence feature in your software workflow. Use this command to install and update the vfeed database:
+$ falco -u
+Use this command to update the database with the full text search tables used in falco:
+$ falco -c 
+
+Also use the same commands periodically. The vfeed database must be updated periodically in order to implement the notion that you are getting current threat knowledge.
 
 Setup for first use from the falco directory:  
 
@@ -24,7 +29,7 @@ If you find falco useful, please give a shoutout to us, and the great folks who 
 
 No free lunch
 -------------
-Users of falco are responsible for making sure the package names, and versions supplied to falco are current with the project being evaluated. There is no sophistication built into falco to survey your code for 3rd party dependencies.There are commercial products which can do this and so much more. Falco users must obtain and manage their own configuration management data for their project.  
+Users of falco are responsible for making sure the package names, and versions supplied to falco are current with the project being evaluated. There is no sophistication built into falco to survey your code for 3rd party dependencies.There are commercial products which can do this and so much more. Falco users must obtain and manage their own configuration management data for their project.
 
 Recently, Jeremy Long, of OWASP dependency-check gave me a heads up regarding other FOSS projects that also provide 3rd party code dependency security checks. See the list below for some other 3rd party code dependency check apps. 
 
@@ -80,7 +85,7 @@ Falco help
 ----------
 usage: falco [-h] [-b] [-c] [-d [VFEED_DATABASE]] [-f [PACKAGELISTFILE]]  
              [-i [ITEMS_REPORTED]] [-n [PACKAGE_NAME]] [-o [OUTPUTFILE]]  
-             [-t [text|json]][-u] [-v [PACKAGE_VERSION]] [-V]  
+             [-t [text|json|html]][-u] [-v [PACKAGE_VERSION]] [-V]  
   
 Checks command line or, a file list of software programs for known security
 defects documented in the National Vulnerability Database. Matches a project
@@ -103,7 +108,7 @@ optional arguments:
   -o [OUTPUTFILE], --outputfile [OUTPUTFILE]  
                         name of output file
   -t [TYPE], --type [TYPE]
-                        format of output, options are text, json  
+                        format of output, options are text, json or html  
   -u --update     update or load the vfeed database.  Run this about once per week.  use $ falco -c to complete the database configuration. 
   -v [PACKAGE_VERSION], --package_version [PACKAGE_VERSION]  
                         package version to look for  
