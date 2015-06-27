@@ -1,4 +1,5 @@
-#### version 0.6 added JSON and HTML output report types
+#### RELEASE version 0.6 added JSON and HTML output report types, updated the documentation, added the vfeed directory with
+all files from the https://github.com/toolswatch/vfeed directory
 
 ### version 0.5.2 added full text search to speed up searches by ~1000 times, updated docs, cleaned up code, added secondary filter for post full text search.
 
