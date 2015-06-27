@@ -1,0 +1,3 @@
+[submodule "vfeed"]
+	path = vfeed
+	url = https://github.com/toolswatch/vfeed
