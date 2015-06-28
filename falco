@@ -437,6 +437,7 @@ def check_item_in_database(package_name='', package_version='', d='', i=1,
                     print (html, file=outputfile)
                     return True
                 except Exception, error:
+                    print ("CheckNVDByPackage: %s" % (error,) , file=outputfile)
                     return False
         detailed_report = {}
         if output_type == 'text':
@@ -493,6 +494,7 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
                         """ refactor: this needs refactored so that json is accumulated
                         and all the json is dumped once
                         """
+                        found_c = len(j_data)
                         print (json.dumps(j_data), file=outputfile)
                 if output_type == 'html':
                     """ refactor: This logic is a little convoluted.  The html is concatenated
@@ -500,8 +502,10 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
                     """
                     try:
                         table_content = html_out.cve_table_content(package, j_data)
-                        html_page = html_out.html_wrap_content(table_content)
-                        print (html_page, file=outputfile)
+                        # work around for repeating html preamble, print it in
+                        # main
+                        #html_page = html_out.html_wrap_content(table_content)
+                        print (table_content, file=outputfile)
                     except Exception, error:
                         pass
             if output_type == 'text':
@@ -539,7 +543,7 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
             detailed_vuln_report(detailed_report, outputfile)
             # quit the application
             exit(1)
-    # print a summary
+    # print a summary for text
     if output_type == 'text':
         print ("\tReport of possible vulnerability findings, for %s packages \
     requested:" % (found_c + not_found_c,), file=outputfile)
@@ -680,9 +684,19 @@ name or package version", file=outputfile)
                 args.packagelistfile), file=outputfile)
         else:
             if args.type == 'json' or args.type == 'html':
-                (check_list_in_database(packages, d, i, outputfile,
-                 args.type), build_return, outputfile, args.type)
-                sys.exit(0)
+                if args.type == json:
+                    (check_list_in_database(packages, d, i, outputfile,
+                     args.type), build_return, outputfile, args.type)
+                    sys.exit(0)
+                if args.type == 'html':
+                    """ just output one html header and footer for all
+                        table content
+                    """
+                    print (html_out.html_heading(), file=outputfile)
+                    (check_list_in_database(packages, d, i, outputfile,
+                     args.type), build_return, outputfile, args.type)
+                    print (html_out.html_closing(), file=outputfile)
+                    sys.exit(0)
         if build_exit(check_list_in_database(packages, d, i, outputfile,
                       args.type), build_return, outputfile, args.type):
             sys.exit(0)

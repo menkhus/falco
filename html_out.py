@@ -7,6 +7,37 @@
 import pystache
 import re
 
+# setup the basic html for the output page a header and
+# a closing part or footer for the document
+html_header = """<!DOCTYPE html>
+<html lang="en">
+<style>
+    table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    }
+    th, td {
+        padding: 5px;
+        text-align: left;
+    }
+    tr:nth-child(odd) {
+        background-color: #BDBDBD;
+    }
+    tr:nth-child(even) {
+        background-color: #F2F2F2;
+    }
+</style>
+<head>
+     <meta charset="utf-8">
+    <title>Falco vulnerability findings</title>
+</head>
+<body>
+"""
+html_footer = """
+</body>
+</html>
+"""
+
 
 def html_header_exists(input=None):
     """ test if html headers have previously been added
@@ -48,11 +79,11 @@ def cve_table_content(packagename=None, falco_dict={}):
         start with style inline for simplicity
     """
     if falco_dict == []:
-        return None
-    table_header = r'<h4>' + 'Known vulnerabilities found using search for ' 
-    table_header += listtosentence(packagename) + ' in list of CPEs'+ r'</h4>'
+        return ''
+    table_header = r'<h4>' + 'Known vulnerabilities found using search for '
+    table_header += listtosentence(packagename) + ' in list of CPEs' + r'</h4>'
     table_header += r'<h3>Finding notes:</h3>'
-    table_header += r'<p id="editable" contenteditable=true>' 
+    table_header += r'<p id="editable" contenteditable=true>'
     table_header += 'This line is an editable area for your dispensation notes'
     table_header += r', edit in browser as needed for your vulnerability response.' + r'</p>'
     table_column_header = """<table style="width:100%">\n<div id="CVE table">\
@@ -73,37 +104,22 @@ def cve_table_content(packagename=None, falco_dict={}):
     return table
 
 
+def html_heading():
+    """ provide html headers
+    """
+    return html_header
+
+
+def html_closing():
+    """ provide closing html content or
+        footer
+    """
+    return html_footer
+
+
 def html_wrap_content(content=''):
     """ wrap content in html headers
     """
-    html_header = """<!DOCTYPE html>
-<html lang="en">
-<style>
-    table, th, td {
-    border: 1px solid black;
-    border-collapse: collapse;
-    }
-    th, td {
-        padding: 5px;
-        text-align: left;
-    }
-    tr:nth-child(odd) {
-        background-color: #BDBDBD;
-    }
-    tr:nth-child(even) {
-        background-color: #F2F2F2;
-    }
-</style>
-<head>
-     <meta charset="utf-8">
-    <title>Falco vulnerability findings</title>
-</head>
-<body>
-"""
-    html_footer = """
-</body>
-</html>
-"""
     out = ''
     if not html_header_exists(content):
         out += html_header
