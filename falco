@@ -19,13 +19,14 @@ Syntactic subtleties:
     * depends on a version of python that has the __future__ feature, 2.6 and
     higher?
 
-author: Mark Menkhus, Glynn Mitchell
+authors: Mark Menkhus, Glynn Mitchell
 falco is a RedCup research group project
+
+Copyright Falconry Concepts LLC.
+
 menkhus@icloud.com
 
 All rights reserved.
-
-Copyright 2014 Mark Menkhus, Glynn Mitchell, RedCup Research Group
 
 toolswatch vfeed is Copyright NJ OUCHN, used under license.
 

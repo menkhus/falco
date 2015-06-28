@@ -20,7 +20,6 @@ Also use the same commands periodically. The vfeed database must be updated peri
 Setup for first use from the falco directory:  
 
 ```bash
-$ bin/get_vfeed.sh
 $ falco -u 
 $ falco -c
 ```  
