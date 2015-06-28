@@ -431,10 +431,13 @@ def check_item_in_database(package_name='', package_version='', d='', i=1,
                 print (j_data, file=outputfile)
                 return True
             if output_type == 'html':
-                html = html_out.cve_table_content(package, j_data.get_json_data())
-                html = html_out.html_wrap_content(html)
-                print (html, file=outputfile)
-                return True
+                try:
+                    html = html_out.cve_table_content(package, j_data.get_json_data())
+                    html = html_out.html_wrap_content(html)
+                    print (html, file=outputfile)
+                    return True
+                except Exception, error:
+                    return False
         detailed_report = {}
         if output_type == 'text':
             if len(p) > 0:
@@ -495,9 +498,12 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
                     """ refactor: This logic is a little convoluted.  The html is concatenated
                         Collect the json and then run the report once.
                     """
-                    table_content = html_out.cve_table_content(package, j_data)
-                    html_page = html_out.html_wrap_content(table_content)
-                    print (html_page, file=outputfile)
+                    try:
+                        table_content = html_out.cve_table_content(package, j_data)
+                        html_page = html_out.html_wrap_content(table_content)
+                        print (html_page, file=outputfile)
+                    except Exception, error:
+                        pass
             if output_type == 'text':
                 """ refactor:
                     this output could be handled with pystache and make and

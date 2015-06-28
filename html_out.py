@@ -47,6 +47,8 @@ def cve_table_content(packagename=None, falco_dict={}):
     """ accept findings in dictionary form
         start with style inline for simplicity
     """
+    if falco_dict == []:
+        return None
     table_header = r'<h4>' + 'Known vulnerabilities found using search for ' 
     table_header += listtosentence(packagename) + ' in list of CPEs'+ r'</h4>'
     table_header += r'<h3>Finding notes:</h3>'
