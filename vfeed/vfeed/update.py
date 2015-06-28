@@ -108,7 +108,7 @@ class vFeedUpdate(object):
             print '\n[info] Decompressing %s ...' %self.vfeed_db_compressed
             self._uncompress()
             self.cleaning()
-            exit(0)
+            #exit(0)
             
         if self.hashRemote == self.hashLocal:
             print '\n[info] You have the latest %s vulnerability database' %self.vfeed_db

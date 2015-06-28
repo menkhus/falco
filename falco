@@ -635,13 +635,9 @@ def main():
             sys.exit(1)
     if args.update:
         d = CheckNVDByPackage()
-        if d.update():
-            print ('falco is ready to use.', file=outputfile)
-            sys.exit()
-        else:
-            print ('falco failed to load vfeed.db from toolswatch service\
-            ', file=outputfile)
-            sys.exit(1)
+        d.update()
+        print ('falco is ready to use.', file=outputfile)
+        sys.exit()
     if args.build_environment:
         build_return = True
     else:
