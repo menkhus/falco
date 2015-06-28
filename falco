@@ -162,6 +162,11 @@ class CheckNVDByPackage(object):
     def config(self):
         """ open the database using Sqlite3, setup a connection
             and add the cpe virtual table.
+
+            note: the cpe virtual table makes searches faster, 
+            its a greedy search, so there needs to be some post
+            search cleanup of the returned matches.  This saves
+            many hours of search time.
         """
         try:
             self.conn = sqlite3.connect(self.database)
@@ -427,6 +432,7 @@ def check_item_in_database(package_name='', package_version='', d='', i=1,
                 return True
             if output_type == 'html':
                 html = html_out.cve_table_content(package, j_data.get_json_data())
+                html = html_out.html_wrap_content(html)
                 print (html, file=outputfile)
                 return True
         detailed_report = {}
