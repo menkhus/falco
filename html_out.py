@@ -13,7 +13,6 @@ def html_header_exists(input=None):
     """
     for line in input.splitlines():
         if re.search(r'DOCTYPE html', line, re.IGNORECASE):
-            print (line)
             return True
     return False
 
