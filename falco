@@ -428,10 +428,18 @@ def check_item_in_database(package_name='', package_version='', d='', i=1,
                 # but this fixed a problem with not getting all items
                 j = {}
             if output_type == 'json':
+                """ This code has reached spaghetti code proportions
+                    and we need to get output managed elsewhere.
+                    refactor.
+                """
                 j_data = json.dumps(j_data.get_json_data())
                 print (j_data, file=outputfile)
                 return True
             if output_type == 'html':
+                """ This code has reached spaghetti code proportions
+                    and we need to get output managed elsewhere.
+                    refactor.
+                """
                 try:
                     html = html_out.cve_table_content(package, j_data.get_json_data())
                     html = html_out.html_wrap_content(html)
@@ -442,6 +450,10 @@ def check_item_in_database(package_name='', package_version='', d='', i=1,
                     return False
         detailed_report = {}
         if output_type == 'text':
+            """ This code has reached spaghetti code proportions
+                    and we need to get output managed elsewhere.
+                    refactor.
+            """
             if len(p) > 0:
                 detailed_report[package] = report
                 detailed_vuln_report(detailed_report, outputfile)
@@ -546,6 +558,10 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
             exit(1)
     # print a summary for text
     if output_type == 'text':
+        """ refactor:
+                    this output could be handled with pystache and make and
+                    easier to maintain report.
+        """
         print ("\tReport of possible vulnerability findings, for %s packages \
     requested:" % (found_c + not_found_c,), file=outputfile)
         print ("These %s packages were found with vulnerability in the NVD \
@@ -612,8 +628,8 @@ def build_exit(return_value=False, build_return=False, outputfile=sys.stderr,
 3) When this potential bug is resolved, update the makefile again
  to reflect the latest package number and reinstate the -b.
                 """, file=outputfile)
-            return True
-        return True
+            return not return_value
+        return not return_value
     else:
         return return_value
 
@@ -713,6 +729,8 @@ name or package version", file=outputfile)
                       args.package_version, d, i, outputfile, output_type),
                       build_return, outputfile):
             sys.exit(0)
+        else:
+            sys.exit(1)
     # we exit with true or false of the shell environment to support a
     # build_environment type of logic. If there is a finding in the
     # CVE, then cause the make/build/script to exit with fail.
