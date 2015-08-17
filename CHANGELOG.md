@@ -1,3 +1,6 @@
+#### RELEASE version 0.6.1 fixed build logic for single item and list of items
+removed the *.pyc files from the source tree
+
 #### RELEASE version 0.6 added JSON and HTML output report types, updated the documentation, added the vfeed directory with
 all files from the https://github.com/toolswatch/vfeed directory
 
