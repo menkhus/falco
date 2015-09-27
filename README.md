@@ -64,7 +64,7 @@ July 11, 2014
 
 All rights reserved.
 
-Copyright 2014 Mark Menkhus, Glynn Mitchell
+(c) Copyright 2015 Falconry Concepts LLC.
 
 License
 -------
