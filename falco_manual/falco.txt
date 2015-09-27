@@ -12,6 +12,7 @@ OPTIONS
   -h, --help  show this help message and exit  
   -b, --build_environment  for use in build environments, return fail if items found  
   -c  setup database for use after the database has been updated  
+  -C [CVE], --CVE [CVE]  display a CVE entry
   -d [VFEED_DATABASE], --vfeed_database [VFEED_DATABASE]  location of toolswatch/vfeed.db sqlite database  
   -f [PACKAGELISTFILE], --packagelistfile [PACKAGELISTFILE]
     file containing the list of packages to evaluate

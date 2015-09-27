@@ -96,6 +96,8 @@ optional arguments:
                         for use in build environments, return fail if items  
                         found  
   -c --config     setup vfeed database for use after every update
+  -C [CVE], --CVE [CVE]
+                          display a CVE entry
   -d [VFEED_DATABASE], --vfeed_database [VFEED_DATABASE]  
                         location of toolswatch/vfeed.db sqlite database
   -f [PACKAGELISTFILE], --packagelistfile [PACKAGELISTFILE]  
