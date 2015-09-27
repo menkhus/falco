@@ -1,0 +1,22 @@
+#!/bin/sh
+
+../falco -d ../vfeed.db --CVE CVE-1999-0001 > /dev/null
+if [ "$?" -eq 0 ]
+then
+    echo "CVE test succeeded for CVE existance test"
+else
+    echo "CVE exitance test, FAILED, did not find CVE-1999-0001"
+    exit
+fi
+
+# test for the non existance of the CVE CVE-1999-9999
+../falco -d ../vfeed.db --CVE CVE-1999-9999 > /dev/null
+if [ "$?" -gt 0 ]
+then
+    echo "CVE test, PASS, prgram logic correctly did not find CVE CVE-1999-9999"
+else
+    echo "CVE test, FAILED, did not fail for nonexistent CVE CVE-1999-9999"
+    exit
+fi
+
+

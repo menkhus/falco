@@ -17,12 +17,12 @@ Syntactic subtleties:
     be in name or name:version format,1 package per line, comments
     start with #
     * depends on a version of python that has the __future__ feature, 2.6 and
-    higher?
+    higher
 
 authors: Mark Menkhus, Glynn Mitchell
 falco is a RedCup research group project
 
-Copyright Falconry Concepts LLC.
+(c) Copyright Falconry Concepts LLC.
 
 menkhus@icloud.com
 
@@ -486,12 +486,11 @@ def find_cve(cve_target, database='vfeed.db'):
         print ("find_cve: %s" % (e,), file=sys.stderr)
         exit()
     sql = r"select cveid,summary,date_published,cvss_base from nvd_db"
-    sql += r' where cveid = "' + cve_target + r'" ;'
+    sql += r' where cveid = ?'
     data = []
-    cve_data = cursor.execute(sql)
-    for value in cve_data:
-        data += value
-    conn.commit()
+    cve_data = cursor.execute(sql, (cve_target,))
+    for row in cve_data:
+        data += row
     conn.close()
     return data
 
@@ -662,7 +661,7 @@ def main():
         database and reports if that packagename and version are found to be
         known vulnerable.
 
-        falco is Copyright 2014, Mark Menkhus, Glynnn Mitchell
+        falco is Copyright 2015, Falconry Concepts LLC.
 
         depends on matching a string the user provides against a database
         containing CPE URIs.

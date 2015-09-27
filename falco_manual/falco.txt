@@ -2,7 +2,10 @@ NAME
 falco - 3rd party code security intelligence for software maintainers
 
 SYNOPSIS
-falco [-h] [-b] [-c] [-d[VFEED_DATABASE]] [-f[PACKAGELISTFILE]] [-i[ITEMS_REPORTED]] [-n[PACKAGE_NAME]] [-o[OUTPUTFILE]] [-t [text|json|html]][-u][-v[PACKAGE_VERSION]] [-V]  
+
+falco    [-h] [-b] [-c] [-C [CVE]] [-d [VFEED_DATABASE]]
+      [-f [PACKAGELISTFILE]] [-i [ITEMS_REPORTED]] [-n [PACKAGE_NAME]]
+      [-o [OUTPUTFILE]] [-t [TYPE]] [-u] [-v [PACKAGE_VERSION]] [-V]
 
 DESCRIPTION
 Checks via command line arguments or, a file list of software programs for known security defects documented in the National Vulnerability Database. Matches these 3rd party code project names and version names to CPE URIs in 
@@ -71,11 +74,11 @@ AUTHORS
     toolswatch vfeed is Copyright NJ OUCHN, used under license. 
 
 LICENSE
-    (c) Copyright 2014 Mark Menkhus, Glynn Mitchell   
+    (c) Copyright Falconry Concepts LLC. 
 
     Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 
 VERSION
-    0.6.1
+    0.6.2

@@ -6,7 +6,9 @@ NNAAMMEE
        ffaallccoo - 3rd party code security intelligence for software maintainers
 
 SSYYNNOOPPSSIISS
-       ffaallccoo [[--hh]] [[--bb]] [[--cc]] [[--dd[[VVFFEEEEDD__DDAATTAABBAASSEE]]]] [[--ff[[PPAACCKKAAGGEELLIISSTTFFIILLEE]]]] [[--ii[[IITTEEMMSS__RREEPPOORRTTEEDD]]]] [[--nn[[PPAACCKKAAGGEE__NNAAMMEE]]]] [[--oo[[OOUUTTPPUUTTFFIILLEE]]]] [[--tt [[tteexxtt||jjssoonn||hhttmmll]]]][[--uu]][[--vv[[PPAACCKKAAGGEE__VVEERRSSIIOONN]]]] [[--VV]]
+       ffaallccoo  [--hh] [--bb] [--cc] [--CC [_C_V_E]] [--dd [_V_F_E_E_D___D_A_T_A_B_A_S_E]]
+              [--ff [_P_A_C_K_A_G_E_L_I_S_T_F_I_L_E]] [--ii [_I_T_E_M_S___R_E_P_O_R_T_E_D]] [--nn [_P_A_C_K_A_G_E___N_A_M_E]]
+              [--oo [_O_U_T_P_U_T_F_I_L_E]] [--tt [_T_Y_P_E]] [--uu] [--vv [_P_A_C_K_A_G_E___V_E_R_S_I_O_N]] [--VV]
 
 DDEESSCCRRIIPPTTIIOONN
        Checks  via command line arguments or, a file list of software programs
@@ -23,32 +25,32 @@ OOPPTTIIOONNSS
 
        --cc     setup database for use after the database has been updated
 
-       --CC [[CCVVEE]],, ----CCVVEE [[CCVVEE]]
-              display a CVE entry
+       --CC [[_C_V_E]],, ----_C_V_E [[_C_V_E]]
+              display a _C_V_E entry
 
-       --dd [[VVFFEEEEDD__DDAATTAABBAASSEE]],, ----vvffeeeedd__ddaattaabbaassee [[VVFFEEEEDD__DDAATTAABBAASSEE]]
-              location of toolswatch/vfeed.db sqlite database --ff [PACKAGELIST-
-              FILE],  ----ppaacckkaaggeelliissttffiillee  [PACKAGELISTFILE] file containing the
+       --dd [[_V_F_E_E_D___D_A_T_A_B_A_S_E]],, ----vvffeeeedd__ddaattaabbaassee [[_V_F_E_E_D___D_A_T_A_B_A_S_E]]
+              location of toolswatch/vfeed.db sqlite database --ff [_P_A_C_K_A_G_E_L_I_S_T_-
+              _F_I_L_E],  ----ppaacckkaaggeelliissttffiillee  [_P_A_C_K_A_G_E_L_I_S_T_F_I_L_E] file containing the
               list of packages to evaluate
 
-       --ii [[IITTEEMMSS__RREEPPOORRTTEEDD]],, ----iitteemmss__rreeppoorrtteedd [[IITTEEMMSS__RREEPPOORRTTEEDD]]
+       --ii [[_I_T_E_M_S___R_E_P_O_R_T_E_D]],, ----iitteemmss__rreeppoorrtteedd [[_I_T_E_M_S___R_E_P_O_R_T_E_D]]
 
-              nnuummbbeerr ooff iitteemmss rreeppoorrtteedd ffoorr NNVVDD//CCVVEE mmaattcchheess
+              nnuummbbeerr ooff iitteemmss rreeppoorrtteedd ffoorr NNVVDD//_C_V_E mmaattcchheess
 
-       --nn [[PPAACCKKAAGGEE__NNAAMMEE]],, ----ppaacckkaaggee__nnaammee [[PPAACCKKAAGGEE__NNAAMMEE]]
+       --nn [[_P_A_C_K_A_G_E___N_A_M_E]],, ----ppaacckkaaggee__nnaammee [[_P_A_C_K_A_G_E___N_A_M_E]]
 
               ppaacckkaaggee nnaammee ttoo sseeaarrcchh ffoorr
 
-       --oo [[OOUUTTPPUUTTFFIILLEE]],, ----oouuttppuuttffiillee [[OOUUTTPPUUTTFFIILLEE]]
+       --oo [[_O_U_T_P_U_T_F_I_L_E]],, ----oouuttppuuttffiillee [[_O_U_T_P_U_T_F_I_L_E]]
 
               nnaammee ooff oouuttppuutt ffiillee
 
-       --tt [[TTYYPPEE]],, ----ttyyppee [[TTYYPPEE]]
+       --tt [[_T_Y_P_E]],, ----ttyyppee [[_T_Y_P_E]]
               format of output, options are text, json or html
 
        --uu     update the toolswatch vfeed database
 
-       --vv [[PPAACCKKAAGGEE__VVEERRSSIIOONN]],, ----ppaacckkaaggee__vveerrssiioonn [[PPAACCKKAAGGEE__VVEERRSSIIOONN]]
+       --vv [[_P_A_C_K_A_G_E___V_E_R_S_I_O_N]],, ----ppaacckkaaggee__vveerrssiioonn [[_P_A_C_K_A_G_E___V_E_R_S_I_O_N]]
 
               ppaacckkaaggee vveerrssiioonn ttoo llooookk ffoorr
 
@@ -68,7 +70,7 @@ EEXXAAMMPPLLEE
 
        ****** PPootteennttiiaall sseeccuurriittyy ddeeffeecctt ffoouunndd iinn ppyytthhoonn::22..77..33
 
-       CCVVEE:: CCVVEE--22001144--99336655
+       _C_V_E:: _C_V_E--22001144--99336655
 
        CCVVSSSS SSccoorree:: 55..88
 
@@ -100,7 +102,7 @@ HHIINNTTSS
        wwhheetthheerr  tthhee  bbuugg rreeppoorrtteedd hhaass aa sseeccuurriittyy iimmppaacctt oonn yyoouurr pprroojjeecctt aanndd iiff
        yyoouu nneeeedd ttoo uuppddaattee ttoo tthhaatt nneewweerr ppaacckkaaggee..
 
-       Getting aquinted with packagenames as used in NVD CVE
+       Getting aquinted with packagenames as used in NVD _C_V_E
 
               ffaallccoo iiss oonnllyy aass ggoooodd aass tthhee ppaacckkaaggee nnaammee aanndd  vveerrssiioonn  iinnffoorrmmaa--
               ttiioonn yyoouu ggiivvee iitt.. SSttaarrtt bbyy jjuusstt uussiinngg ffaallccoo --nn ttoo sseeee iiff yyoouu aarree
@@ -118,14 +120,14 @@ BBUUGGSS
        tives  and  false  negatives.  The CPE matching documentation specifies
        greater than and less than logic.  ffaallccoo  and  other  tools  use  regex
        matches  and the fact that the NVD data provides an intended comprehen-
-       sive list of impacted versions for each CVE number.
+       sive list of impacted versions for each _C_V_E number.
 
 AAUUTTHHOORRSS
        Mark Menkhus <mark.menkhus@gmail.com> toolswatch vfeed is Copyright  NJ
        OUCHN, used under license.
 
 LLIICCEENNSSEE
-       ((cc)) CCooppyyrriigghhtt 22001144 MMaarrkk MMeennkkhhuuss,, GGllyynnnn MMiittcchheellll
+       (c) Copyright Falconry Concepts LLC.
 
        Licensed under the Apache License, Version 2.0 (the "License"); you may
        not use this file except in compliance with the License. You may obtain
@@ -138,7 +140,7 @@ LLIICCEENNSSEE
        limitations under the License.
 
 VVEERRSSIIOONN
-       0.6.1
+       0.6.2
 
 
 

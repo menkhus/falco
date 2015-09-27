@@ -70,6 +70,16 @@ else
     exit 1
 fi
 
+echo "********* cve:"
+./cve 2>&1 > /dev/null
+if [ "$?" -eq 0 ]
+then
+    echo "falco cve logic test succeeded"
+else
+    echo "falco cvec test FAILED"
+    exit 1
+fi
+
 echo "********* build:"
 ./build  2>&1 > /dev/null
 if [ "$?" -eq 0 ]

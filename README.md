@@ -82,10 +82,10 @@ limitations under the License.
 
 Falco help
 ----------
-usage: falco [-h] [-b] [-c] [-d [VFEED_DATABASE]] [-f [PACKAGELISTFILE]]  
-             [-i [ITEMS_REPORTED]] [-n [PACKAGE_NAME]] [-o [OUTPUTFILE]]  
-             [-t [text|json|html]][-u] [-v [PACKAGE_VERSION]] [-V]  
-  
+ usage: falco [-h] [-b] [-c] [-C [CVE]] [-d [VFEED_DATABASE]]
+              [-f [PACKAGELISTFILE]] [-i [ITEMS_REPORTED]] [-n [PACKAGE_NAME]]
+                           [-o [OUTPUTFILE]] [-t [TYPE]] [-u] [-v [PACKAGE_VERSION]] [-V]
+
 Checks command line or, a file list of software programs for known security
 defects documented in the National Vulnerability Database. Matches a project
 name and version name to CPE URIs in the NVD database.  
