@@ -625,6 +625,7 @@ def detailed_vuln_report(vuln_data={}, outputfile=sys.stdout):
 Summary Description: %s\n\n" % (cve[0], cve[1],
                                 cve[2], cve[3],
                                 cve[4])
+    s = s.encode('utf-8').strip()
     print (s, file=outputfile)
 
 
