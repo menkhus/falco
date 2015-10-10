@@ -1,3 +1,6 @@
+schema.sql
+tables.txt
+*.swp
 software_inventory_check.log
 software_inventory_check_needs_versions.txt
 test_query.sql
