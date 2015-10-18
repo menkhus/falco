@@ -44,7 +44,7 @@ You may obtain a copy of the License at
 """
 
 from __future__ import print_function
-__version__ = '0.6.2'
+__version__ = '0.6.3'
 __author__ = 'Mark Menkhus, email: menkhus@icloud.com'
 import argparse
 import sys
@@ -476,7 +476,7 @@ def check_item_in_database(package_name='', package_version='', d='', i=1,
 
 
 def find_cve(cve_target, database='vfeed.db'):
-    print ("Search request for %s" % (cve_target,))
+
     """   Get the data from the vfeed database.
     """
     try:
@@ -493,6 +493,26 @@ def find_cve(cve_target, database='vfeed.db'):
         data += row
     conn.close()
     return data
+
+
+def find_cpe(cve_target, database='vfeed.db'):
+    """   Get the data from the vfeed database.
+    """
+    try:
+        conn = sqlite3.connect(database)
+        cursor = conn.cursor()
+    except Exception, e:
+        print ("find_cpe: %s" % (e,), file=sys.stderr)
+        exit()
+    sql = r"select cpeid from cpe"
+    sql += r' where cveid = ?'
+    cpe_data = []
+    data = cursor.execute(sql, (cve_target,))
+    for cpe in data:
+        cpe_data += cpe
+    conn.close()
+    return cpe_data
+
 
 def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
                            output_type='text'):
@@ -677,7 +697,6 @@ def main():
     """
     args = command_line()
 
-    
     if args.vfeed_database:
         d = args.vfeed_database
     else:
@@ -691,25 +710,16 @@ def main():
     if args.config:
         d = CheckNVDByPackage()
         if d.config():
-            print ('falco is ready to use.', file=outputfile)
+            print ('database config completed.\nfalco is ready to use.', file=outputfile)
             sys.exit()
         else:
             print ('falco failed to initialize vfeed.db', file=outputfile)
             sys.exit(1)
 
-    if args.CVE:
-        data = find_cve(args.CVE, database=d)
-        if data:
-            print ("CVE: %s\nSummary: %s\nDate: %s\nCVSS Base Score: %s" % (data[0],
-                   data[1], data[2], data[3]))
-            sys.exit(0)
-        else:
-            sys.exit(1)
-
     if args.update:
         d = CheckNVDByPackage()
         d.update()
-        print ('falco is ready to use.', file=outputfile)
+        print ('falco database was updated, follow up with: "falco -c"', file=outputfile)
         sys.exit()
     if args.build_environment:
         build_return = True
@@ -720,7 +730,8 @@ def main():
         print ("falco version: %s" % (__version__), file=outputfile)
         exit()
 
-    if not (args.packagelistfile or args.package_name or args.package_version):
+    if not (args.packagelistfile or args.package_name or args.package_version
+            or args.CVE):
         print ("No work requested, requires either package list file, package \
 name or package version", file=outputfile)
         sys.exit(1)
@@ -772,6 +783,32 @@ name or package version", file=outputfile)
                       build_return, outputfile):
             sys.exit(0)
         else:
+            sys.exit(1)
+
+    if args.CVE:
+        data = find_cve(args.CVE, database=d)
+        cpe_list = find_cpe(args.CVE, database=d)
+        if data:
+            if args.type == 'text':
+                print("CVE: %s\nSummary: %s\nDate: %s\nCVSS Base Score: %s" % (data[0],
+                     data[1], data[2], data[3]), file = outputfile)
+                print ("There are %s CPE values for %s:" % (len(cpe_list), args.CVE), 
+                       file=outputfile)
+                for cpe in cpe_list:
+                    print ('\t%s' % (cpe,), file=outputfile)
+                sys.exit(0)
+            if args.type == 'json':
+                json_data = {}
+                json_data['CVE'] = args.CVE
+                json_data['summary'] = data[1]
+                json_data['date'] = data[2]
+                json_data['cvss_base_score'] = data[3]
+                json_data['cpes'] = cpe_list
+                print ("%s" % (json.dumps(json_data, sort_keys=True, separators=(r',',r':')
+                       )), file=outputfile)
+                sys.exit(0)
+        else:
+            print ('No data for %s' % (args.CVE,), file=outputfile)
             sys.exit(1)
 
     # we exit with true or false of the shell environment to support a
