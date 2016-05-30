@@ -1,3 +1,5 @@
+#### version 0.6.4 changed vfeed version to most current
+
 #### version 0.6.3 added json output for -C CVE
 
 #### version 0.6.2 added -C CVE - display a CVE entry for a given CVE

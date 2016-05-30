@@ -44,7 +44,7 @@ You may obtain a copy of the License at
 """
 
 from __future__ import print_function
-__version__ = '0.6.3'
+__version__ = '0.6.4'
 __author__ = 'Mark Menkhus, email: menkhus@icloud.com'
 import argparse
 import sys
@@ -53,7 +53,7 @@ import time
 import re
 import sqlite3
 import json
-import vfeed.vfeed as vfeed
+import vfeed as vfeed
 import html_out
 
 # suppress .pyc creation
