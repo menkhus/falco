@@ -164,7 +164,7 @@ class CheckNVDByPackage(object):
         """ open the database using Sqlite3, setup a connection
             and add the cpe virtual table.
 
-            note: the cpe virtual table makes searches faster, 
+            note: the cpe virtual table makes searches faster,
             its a greedy search, so there needs to be some post
             search cleanup of the returned matches.  This saves
             many hours of search time.
@@ -220,7 +220,7 @@ or two.", file=sys.stdout)
         self.sql = r"""SELECT DISTINCT c.cveid, n.cvss_base, c.cpeid,
         n.date_published, n.summary
         FROM nvd_db as n
-        JOIN cpe as c  
+        JOIN cpe as c
         """
         # this MATCH is a feature using full text search, from config()
         self.sql += r' WHERE c.cveid = n.cveid AND'
@@ -443,12 +443,13 @@ def check_item_in_database(package_name='', package_version='', d='', i=1,
                     refactor.
                 """
                 try:
-                    html = html_out.cve_table_content(package, j_data.get_json_data())
+                    html = html_out.cve_table_content(package,
+                                                      j_data.get_json_data())
                     html = html_out.html_wrap_content(html)
                     print (html, file=outputfile)
                     return True
                 except Exception, error:
-                    print ("CheckNVDByPackage: %s" % (error,) , file=outputfile)
+                    print ("CheckNVDByPackage: %s" % (error,), file=outputfile)
                     return False
         detailed_report = {}
         if output_type == 'text':
@@ -555,10 +556,11 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
                         Collect the json and then run the report once.
                     """
                     try:
-                        table_content = html_out.cve_table_content(package, j_data)
+                        table_content = html_out.cve_table_content(package,
+                                                                   j_data)
                         # work around for repeating html preamble, print it in
                         # main
-                        #html_page = html_out.html_wrap_content(table_content)
+                        # html_page = html_out.html_wrap_content(table_content)
                         print (table_content, file=outputfile)
                     except Exception, error:
                         pass
@@ -581,10 +583,11 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
             # if the user is impatient, report some output after abort
             db_version = p.db_ver()
             print ("Version of https://github.com/toolswatch/vFeed/ database \
-                   used in this report was %s, and the" % (db_version,), file=outputfile),
+                   used in this report was %s, and the" % (db_version,),
+                   file=outputfile),
             print ("report was run on %s." % (time.strftime(
                 "%m-%d-%Y at %H:%M:%S")), file=outputfile),
-            print ("The report was interrupted with control-c", file=outputfile)
+            print ("The report was interrupted with cntl-c", file=outputfile)
             # print partial summary
             print ("\tThis is a PARTIAL report of findings:", file=outputfile)
             print ("These %s packages were found in the NVD database and \
@@ -619,8 +622,8 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
             return None
         print ("Version of https://github.com/toolswatch/vFeed/ database used \
 in this report was %s\n" % (db_version,), file=outputfile),
-        print ("The report was run on %s." % (time.strftime("%m-%d-%Y at %H:%M:%S"),),
-               file=outputfile)
+        print ("The report was run on %s." % (time.strftime("%m-%d-%Y at \
+        %H:%M:%S"),), file=outputfile)
     if found_c == 0:
         return False
     else:
@@ -710,7 +713,8 @@ def main():
     if args.config:
         d = CheckNVDByPackage()
         if d.config():
-            print ('database config completed.\nfalco is ready to use.', file=outputfile)
+            print ('database config completed.\nfalco is ready to use.',
+                   file=outputfile)
             sys.exit()
         else:
             print ('falco failed to initialize vfeed.db', file=outputfile)
@@ -719,7 +723,8 @@ def main():
     if args.update:
         d = CheckNVDByPackage()
         d.update()
-        print ('falco database was updated, follow up with: "falco -c"', file=outputfile)
+        print ('falco database was updated, follow up with: "falco -c"',
+               file=outputfile)
         sys.exit()
     if args.build_environment:
         build_return = True
@@ -790,10 +795,10 @@ name or package version", file=outputfile)
         cpe_list = find_cpe(args.CVE, database=d)
         if data:
             if args.type == 'text':
-                print("CVE: %s\nSummary: %s\nDate: %s\nCVSS Base Score: %s" % (data[0],
-                     data[1], data[2], data[3]), file = outputfile)
-                print ("There are %s CPE values for %s:" % (len(cpe_list), args.CVE), 
-                       file=outputfile)
+                print("CVE: %s\nSummary: %s\nDate: %s\nCVSS Base Score: %s" %
+                      (data[0], data[1], data[2], data[3]), file=outputfile)
+                print ("There are %s CPE values for %s:" % (len(cpe_list),
+                       args.CVE), file=outputfile)
                 for cpe in cpe_list:
                     print ('\t%s' % (cpe,), file=outputfile)
                 sys.exit(0)
@@ -804,8 +809,8 @@ name or package version", file=outputfile)
                 json_data['date'] = data[2]
                 json_data['cvss_base_score'] = data[3]
                 json_data['cpes'] = cpe_list
-                print ("%s" % (json.dumps(json_data, sort_keys=True, separators=(r',',r':')
-                       )), file=outputfile)
+                print ("%s" % (json.dumps(json_data, sort_keys=True,
+                       separators=(r',', r':'))), file=outputfile)
                 sys.exit(0)
         else:
             print ('No data for %s' % (args.CVE,), file=outputfile)
