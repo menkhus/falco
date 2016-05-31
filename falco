@@ -44,7 +44,7 @@ You may obtain a copy of the License at
 """
 
 from __future__ import print_function
-__version__ = '0.6.4'
+__version__ = '0.6.5'
 __author__ = 'Mark Menkhus, email: menkhus@icloud.com'
 import argparse
 import sys
@@ -53,8 +53,8 @@ import time
 import re
 import sqlite3
 import json
-import vfeed as vfeed
 import html_out
+import subprocess
 
 # suppress .pyc creation
 sys.dont_write_bytecode
@@ -191,9 +191,8 @@ or two.", file=sys.stdout)
         and database characteristics.
         """
         try:
-            # pull in the database for 1st time, or update.
-            db = vfeed.vFeedUpdate()
-            db.update()
+            work = subprocess.call([r'./update_vfeed_db'])
+            return work
         except Exception, e:
             print ("CheckNVDByPackage.update: %s" % (e,), file=sys.stderr)
             return False
@@ -723,7 +722,7 @@ def main():
     if args.update:
         d = CheckNVDByPackage()
         d.update()
-        print ('falco database was updated, follow up with: "falco -c"',
+        print ('falco database was updated, falco ready to use',
                file=outputfile)
         sys.exit()
     if args.build_environment:

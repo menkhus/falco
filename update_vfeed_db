@@ -1,0 +1,14 @@
+#!/bin/sh
+# update the vfeed database we use in falco
+# this is a kluge, but I can't get the imports to work in vfeed
+# so I plunked this in
+# (c) Mark Menkhus
+
+# run the vfeed update program via a shell command, answer 
+# yes to the license question
+vfeed/vfeedcli.py -u <<EOV
+yes
+EOV
+# while we are at it, update the database for the cpe searching
+# configuration we use in falco
+./falco -c
