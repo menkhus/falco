@@ -1,3 +1,5 @@
+#### version 0.6.5 setup -u update for vfeed.db
+
 #### version 0.6.4 changed vfeed version to most current
 
 #### version 0.6.3 added json output for -C CVE

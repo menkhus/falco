@@ -191,8 +191,14 @@ or two.", file=sys.stdout)
         and database characteristics.
         """
         try:
-            work = subprocess.call([r'./update_vfeed_db'])
-            return work
+            subprocess.call([r'vfeed/vfeedcli.py', '-u'])
+            d = CheckNVDByPackage()
+            if d.config():
+                print ('database config completed.\nfalco is ready to use.')
+                sys.exit()
+            else:
+                print ('falco failed to initialize vfeed.db')
+                sys.exit(1)
         except Exception, e:
             print ("CheckNVDByPackage.update: %s" % (e,), file=sys.stderr)
             return False
@@ -338,7 +344,7 @@ cross-linked local vulnerability database by NJ OUCHN, Toolswatch.org
         environments, return fail if items found', action='store_true',
                         default=False)
     parser.add_argument('-c', '--config', help='update database and setup for \
-        use. Do this after downloading a new database', action='store_true',
+        use. Do this after manually downloading a new database', action='store_true',
                         default=False)
     parser.add_argument('-C', '--CVE', help='display a CVE entry', nargs='?',
                         type=str, default=None)

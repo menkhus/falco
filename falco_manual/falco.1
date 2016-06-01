@@ -23,94 +23,70 @@ OOPPTTIIOONNSS
        --bb,, ----bbuuiilldd__eennvviirroonnmmeenntt
               for use in build environments, return fail if items found
 
-       --cc     setup database for use after the database has been updated
+       --cc     setup database for use after  the  database  has  been  manually
+              updated
 
        --CC [[_C_V_E]],, ----_C_V_E [[_C_V_E]]
               display a _C_V_E entry
 
        --dd [[_V_F_E_E_D___D_A_T_A_B_A_S_E]],, ----vvffeeeedd__ddaattaabbaassee [[_V_F_E_E_D___D_A_T_A_B_A_S_E]]
               location of toolswatch/vfeed.db sqlite database --ff [_P_A_C_K_A_G_E_L_I_S_T_-
-              _F_I_L_E],  ----ppaacckkaaggeelliissttffiillee  [_P_A_C_K_A_G_E_L_I_S_T_F_I_L_E] file containing the
-              list of packages to evaluate
+              _F_I_L_E], ----ppaacckkaaggeelliissttffiillee [_P_A_C_K_A_G_E_L_I_S_T_F_I_L_E] file  containing  the
+              list    of    packages    to   evaluate   --ii   [_I_T_E_M_S___R_E_P_O_R_T_E_D],
+              ----iitteemmss__rreeppoorrtteedd [_I_T_E_M_S___R_E_P_O_R_T_E_D] number of items  reported  for
+              NVD/_C_V_E matches --nn [_P_A_C_K_A_G_E___N_A_M_E], ----ppaacckkaaggee__nnaammee [_P_A_C_K_A_G_E___N_A_M_E]
+              package name to search for --oo [_O_U_T_P_U_T_F_I_L_E],  ----oouuttppuuttffiillee  [_O_U_T_-
+              _P_U_T_F_I_L_E]  name of output file --tt [_T_Y_P_E], ----ttyyppee [_T_Y_P_E] format of
+              output, options are text, json or html
 
-       --ii [[_I_T_E_M_S___R_E_P_O_R_T_E_D]],, ----iitteemmss__rreeppoorrtteedd [[_I_T_E_M_S___R_E_P_O_R_T_E_D]]
-
-              nnuummbbeerr ooff iitteemmss rreeppoorrtteedd ffoorr NNVVDD//_C_V_E mmaattcchheess
-
-       --nn [[_P_A_C_K_A_G_E___N_A_M_E]],, ----ppaacckkaaggee__nnaammee [[_P_A_C_K_A_G_E___N_A_M_E]]
-
-              ppaacckkaaggee nnaammee ttoo sseeaarrcchh ffoorr
-
-       --oo [[_O_U_T_P_U_T_F_I_L_E]],, ----oouuttppuuttffiillee [[_O_U_T_P_U_T_F_I_L_E]]
-
-              nnaammee ooff oouuttppuutt ffiillee
-
-       --tt [[_T_Y_P_E]],, ----ttyyppee [[_T_Y_P_E]]
-              format of output, options are text, json or html
-
-       --uu     update the toolswatch vfeed database
-
-       --vv [[_P_A_C_K_A_G_E___V_E_R_S_I_O_N]],, ----ppaacckkaaggee__vveerrssiioonn [[_P_A_C_K_A_G_E___V_E_R_S_I_O_N]]
-
-              ppaacckkaaggee vveerrssiioonn ttoo llooookk ffoorr
+       --uu     update  the  toolswatch  vfeed  database  --vv  [_P_A_C_K_A_G_E___V_E_R_S_I_O_N],
+              ----ppaacckkaaggee__vveerrssiioonn [_P_A_C_K_A_G_E___V_E_R_S_I_O_N] package version to look for
 
        --VV,, ----VVeerrssiioonn
               report the version of ffaallccoo and exit
 
 DDEEPPEENNDDEENNCCIIEESS
        ffaallccoo uusseess tthhee ttoooollsswwaattcchh//vvffeeeedd ssqqlliittee ddaattaabbaassee..
-              To initialize the database or to  update  the  database  use:  $
-              ffaallccoo  --uu  To  setup  the  database  for  the required rich text
-              queries you must do this too: $ ffaallccoo --cc
+              To  initialize  the  database  or  to update the database use: $
+              ffaallccoo --uu
 
 EEXXAAMMPPLLEE
-       UUssee ffaallccoo ttoo llooookk ffoorr vvuullnneerraabbiilliittyy ffoorr ppyytthhoonn 22..77..33 iinn NNVVDD::
+       Use ffaallccoo to look for vulnerability for python 2.7.3 in NVD: $ ffaallccoo --dd
+       ./vfeed.db --nn python --vv 2.7.3
 
-       $$ ffaallccoo --dd ..//vvffeeeedd..ddbb --nn ppyytthhoonn --vv 22..77..33
-
-       ****** PPootteennttiiaall sseeccuurriittyy ddeeffeecctt ffoouunndd iinn ppyytthhoonn::22..77..33
-
-       _C_V_E:: _C_V_E--22001144--99336655
-
-       CCVVSSSS SSccoorree:: 55..88
-
-       CCPPEE iidd:: ccppee:://aa::ppyytthhoonn::ppyytthhoonn::22..77..33
-
-       PPuubblliisshheedd oonn:: 22001144--1122--1122TT0066::5599::0077..006633--0055::0000
-
-       SSuummmmaarryy DDeessccrriippttiioonn:: TThhee HHTTTTPP cclliieennttss iinn tthhee ((11)) hhttttpplliibb,,  ((22))  uurrlllliibb,,
-       ((33))  uurrlllliibb22,,  aanndd  ((44)) xxmmllrrppcclliibb lliibbrraarriieess iinn CCPPyytthhoonn ((aakkaa PPyytthhoonn)) 22..xx
-       bbeeffoorree 22..77..99 aanndd 33..xx bbeeffoorree 33..44..33,, wwhheenn aacccceessssiinngg aann HHTTTTPPSS UURRLL,, ddoo  nnoott
-       ((aa))  cchheecckk  tthhee  cceerrttiiffiiccaattee  aaggaaiinnsstt  aa ttrruusstt ssttoorree oorr vveerriiffyy tthhaatt tthhee
-       sseerrvveerr hhoossttnnaammee mmaattcchheess aa ddoommaaiinn nnaammee iinn tthhee ssuubbjjeecctt ss ((bb)) CCoommmmoonn  NNaammee
-       oorr ((cc)) ssuubbjjeeccttAAllttNNaammee ffiieelldd ooff tthhee XX..550099 cceerrttiiffiiccaattee,, wwhhiicchh aalllloowwss mmaann--
-       iinn--tthhee--mmiiddddllee aattttaacckkeerrss ttoo ssppooooff SSSSLL sseerrvveerrss  vviiaa  aann  aarrbbiittrraarryy  vvaalliidd
-       cceerrttiiffiiccaattee..
+       ***  Potential security defect found in python:2.7.3 _C_V_E: _C_V_E-2014-9365
+       CVSS  Score:  5.8  CPE  id:  cpe:/a:python:python:2.7.3  Published  on:
+       2014-12-12T06:59:07.063-05:00  Summary Description: The HTTP clients in
+       the (1) httplib, (2) urllib, (3) urllib2, and (4)  xmlrpclib  libraries
+       in  CPython  (aka  Python)  2.x before 2.7.9 and 3.x before 3.4.3, when
+       accessing an HTTPS URL, do not (a)  check  the  certificate  against  a
+       trust store or verify that the server hostname matches a domain name in
+       the subject s (b) Common Name or (c) subjectAltName field of the  X.509
+       certificate,  which  allows  man-in-the-middle  attackers  to spoof SSL
+       servers via an arbitrary valid certificate.
 
 HHIINNTTSS
        ffaallccoo uses the toolswatch/vfeed database. The database is updated every
        week  or  two. Update this database in a cron job. with the --uu followed
        by --cc.
 
-       TToo rreegguullaarrllyy sseeaarrcchh ffoorr aa ggrroouupp ooff lliibbrraarriieess,, aappppss aanndd  ooppeerraattiinngg  ssyyss--
-       tteemmss,,  ppuutt  tthhee  iinnffoorrmmaattiioonn iinn aa wwaattcchhffiillee aanndd rruunn vvffeeeedd --ff wwaattcchhffiillee..
-       TThhee ffoorrmmaatt ooff eeaacchh wwaattcchh iitteemm iinn tthhee ffiillee iiss ppaacckkaaggeennaammee::vveerrssiioonn ..
+       To regularly search for a group of libraries, apps and  operating  sys-
+       tems,  put  the  information in a watchfile and run vfeed --ff watchfile.
+       The format of each watch item in the file is packagename:version .
 
-       IIff yyoouu aarree ddooiinngg rreegguullaarr ssooffttwwaarree bbuuiillddss,, ffoorr eexxaammppllee uussiinngg  mmaakkee,,  yyoouu
-       ccaann  uussee  ffaallccoo wwiitthh tthhee tthhee --bb ooppttiioonn.. IIff ffaallccoo ffiinnddss aa mmaattcchh,, iitt wwiillll
-       rreettuurrnn aann eerrrroorr,, tthhee mmaakkee wwiillll eexxiitt,, aanndd yyoouu  wwiillll  hhaavvee  ttoo  ddeetteerrmmiinnee
-       wwhheetthheerr  tthhee  bbuugg rreeppoorrtteedd hhaass aa sseeccuurriittyy iimmppaacctt oonn yyoouurr pprroojjeecctt aanndd iiff
-       yyoouu nneeeedd ttoo uuppddaattee ttoo tthhaatt nneewweerr ppaacckkaaggee..
+       If you are doing regular software builds, for example using  make,  you
+       can  use  ffaallccoo with the the --bb option. If ffaallccoo finds a match, it will
+       return an error, the make will exit, and you  will  have  to  determine
+       whether  the  bug reported has a security impact on your project and if
+       you need to update to that newer package.
 
-       Getting aquinted with packagenames as used in NVD _C_V_E
-
-              ffaallccoo iiss oonnllyy aass ggoooodd aass tthhee ppaacckkaaggee nnaammee aanndd  vveerrssiioonn  iinnffoorrmmaa--
-              ttiioonn yyoouu ggiivvee iitt.. SSttaarrtt bbyy jjuusstt uussiinngg ffaallccoo --nn ttoo sseeee iiff yyoouu aarree
-              uussiinngg tthhee ccoorrrreecctt nnaammee.. YYoouu ccaann aallssoo sseeaarrcchh tthhee  vvffeeeedd..ddbb  ddaattaa--
-              bbaassee uussiinngg tthhee ttoooollsswwaattcchh vvffeeeeddccllii oorr ssqqlliittee ttoo sseeee hhooww yyoouu nneeeedd
-              ttoo nnaammee yyoouurr ppaacckkaaggee nnaammee ttoo bbee ccoommppaattiibbllee wwiitthh  tthhee  CCPPEE  nnaammeess
-              uusseedd iinn tthhee ddaattaabbaassee.. TToo eexxaammiinnee tthhee CCPPEE ddiiccttiioonnaarryy llooookk aatt::
-                     https://nvd.nist.gov/cpe.cfm
+       Getting aquinted with packagenames as used in NVD _C_V_E ffaallccoo is only  as
+       good  as the package name and version information you give it. Start by
+       just using ffaallccoo --nn to see if you are using the correct name.  You  can
+       also  search  the  vfeed.db  database  using the toolswatch vfeedcli or
+       sqlite to see how you need to name your package name to  be  compatible
+       with  the CPE names used in the database. To examine the CPE dictionary
+       look at: https://nvd.nist.gov/cpe.cfm
 
 SSEEEE AALLSSOO
        https://github.com/menkhus/ffaallccoo https://github.com/toolswatch/vfeed
@@ -140,8 +116,8 @@ LLIICCEENNSSEE
        limitations under the License.
 
 VVEERRSSIIOONN
-       0.6.3
+       0.6.5
 
 
 
-falco_manual                   October 18, 2015                       falco(1)
+falco_manual                     June 01, 2016                        falco(1)
