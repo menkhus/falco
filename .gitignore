@@ -16,3 +16,4 @@ falco.sublime-project
 Untitled0.ipynb
 pylint.html
 .ipynb_checkpoints
+*.out

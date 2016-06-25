@@ -44,7 +44,7 @@ You may obtain a copy of the License at
 """
 
 from __future__ import print_function
-__version__ = '0.6.5'
+__version__ = '0.6.6'
 __author__ = 'Mark Menkhus, email: menkhus@icloud.com'
 import argparse
 import sys
@@ -231,7 +231,7 @@ or two.", file=sys.stdout)
         self.sql += r' WHERE c.cveid = n.cveid AND'
         self.sql += r' c.cpeid MATCH ":' + self.package + r'"'
         self.sql += r' GROUP BY c.cveid '
-        self.sql += r' ORDER BY n.date_published DESC,'
+        self.sql += r' ORDER BY n.cvss_base DESC,'
         self.sql += r' CAST(n.cvss_base AS REAL) DESC'
         self.sql += r' LIMIT ' + str(self.items)
         self.sql += r';'
