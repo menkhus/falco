@@ -1,3 +1,7 @@
+#### version 0.6.7 changed from vfeed to database loaded by nvd2sqlite3
+
+#### version 0.6.6 changed search to make sort offer most severe CVSS
+
 #### version 0.6.5 setup -u update for vfeed.db
 
 #### version 0.6.4 changed vfeed version to most current

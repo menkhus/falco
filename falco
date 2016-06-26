@@ -5,12 +5,9 @@ searches package names and versions against the NVD database, and reports
 security defects listed against that data.
 
 3rd party dependency:
-    * Foremost falco depends on the toolswatch vfeed database.  Please look
-    * closely at https://github.com/toolswatch/vFeed/ which is
-    * Copyright 2013, vFeed/vFeed Api, the open source correlated & cross-
-    linked local vulnerability database by NJ OUCHN, Toolswatch.org
+    * falco depends on nvd2sqlite3, copied and modified under license.
 
-Code dependencies: html_out.py
+Code dependencies: html_out.py, nvdloader.py, load.sh
 
 Syntactic subtleties:
     * if testing using a packagelist file, requires that the list
@@ -28,7 +25,7 @@ menkhus@icloud.com
 
 All rights reserved.
 
-toolswatch vfeed is Copyright NJ OUCHN, used under license.
+nvd2sqlite3 used under license.
 
 falco is Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -44,8 +41,9 @@ You may obtain a copy of the License at
 """
 
 from __future__ import print_function
-__version__ = '0.6.6'
+__version__ = '0.6.7'
 __author__ = 'Mark Menkhus, email: menkhus@icloud.com'
+__DEFAULT_DATABASE__ = '/var/db/cvedb'
 import argparse
 import sys
 import os
@@ -146,10 +144,9 @@ class CheckNVDByPackage(object):
         CPE URI's like:
         cpe:/a:microsoft:internet_explorer:8.0.6001:beta
 
-        depends on the vfeed.db database from the vfeed application:
-        https://github.com/toolswatch/vFeed/
+        depends on the /var/db/cvedb database created by nvd2sqlite3
     """
-    def __init__(self, package=None, database='vfeed.db', items=99):
+    def __init__(self, package=None, database=__DEFAULT_DATABASE__, items=99):
         """ Setup class
         """
         self.package = package
@@ -191,17 +188,10 @@ or two.", file=sys.stdout)
         and database characteristics.
         """
         try:
-            subprocess.call([r'vfeed/vfeedcli.py', '-u'])
-            d = CheckNVDByPackage()
-            if d.config():
-                print ('database config completed.\nfalco is ready to use.')
-                sys.exit()
-            else:
-                print ('falco failed to initialize vfeed.db')
-                sys.exit(1)
+            subprocess.call([r'./nvdloader.py'])
         except Exception, e:
             print ("CheckNVDByPackage.update: %s" % (e,), file=sys.stderr)
-            return False
+            sys.exit(1)
 
     def get_data(self):
         """   Get the data from the vfeed database.
@@ -222,7 +212,7 @@ or two.", file=sys.stdout)
         # and then match against a package name in the CPE identifiers.
         # Match :packagename: or :packagename:n.n.n: packagename
         # sort unique items, based on date first, then CVSS score
-        self.sql = r"""SELECT DISTINCT c.cveid, n.cvss_base, c.cpeid,
+        self.sql = r"""SELECT DISTINCT cve_id, n.cvss_base, c.cpeid,
         n.date_published, n.summary
         FROM nvd_db as n
         JOIN cpe as c
@@ -336,8 +326,7 @@ def command_line():
 known security defects documented in the National Vulnerability Database.
 Matches a project name and version name to CPE URIs in the NVD database.
 
-Uses the Copyright 2013, vFeed/vFeedApi, the open source correlated &
-cross-linked local vulnerability database by NJ OUCHN, Toolswatch.org
+Uses the Copyright 2013, nvd2sqlite3 app.
     """
     parser = argparse.ArgumentParser(description=DESC)
     parser.add_argument('-b', '--build_environment', help='for use in build \
@@ -349,9 +338,8 @@ cross-linked local vulnerability database by NJ OUCHN, Toolswatch.org
     parser.add_argument('-C', '--CVE', help='display a CVE entry', nargs='?',
                         type=str, default=None)
     parser.add_argument('-d', '--vfeed_database', help='location of the \
-        toolswatch \
-        vfeed.db sqlite database from toolswatch vfeed project', nargs='?',
-                        type=str, default='vfeed.db')
+        cvedb sqlite database', nargs='?',
+                        type=str, default=__DEFAULT_DATABASE__)
     parser.add_argument('-f', '--packagelistfile', help='file where the list \
         of packages to evaluate is stored', nargs='?', default=None)
     parser.add_argument('-i', '--items_reported', help='number of items \
@@ -377,7 +365,7 @@ def check_item_in_database(package_name='', package_version='', d='', i=1,
     """ Check a string package name and version for matches in the CPE content\
     of the NVD
 
-    Depends on the https://github.com/toolswatch/vFeed/ database
+    depends on the cve database stored in /var/db/cvedb
 
     Desired outcome:
     ----------------
@@ -470,7 +458,7 @@ def check_item_in_database(package_name='', package_version='', d='', i=1,
         if re.search(r'no such table', str(e)):
             print ("\tFalco requires copying the cpe into", file=outputfile)
             print ("\ta cpe fts3 virtual table, after the", file=outputfile)
-            print ("\thttps://github.com/toolswatch/vFeed/ database",
+            print ("\cvedb.",
                    file=outputfile)
             print ("\tis setup. Run $ falco -c", file=outputfile)
             print ("\tand then try again.", file=outputfile)
@@ -481,9 +469,9 @@ def check_item_in_database(package_name='', package_version='', d='', i=1,
         return False
 
 
-def find_cve(cve_target, database='vfeed.db'):
+def find_cve(cve_target, database=__DEFAULT_DATABASE__):
 
-    """   Get the data from the vfeed database.
+    """   Get the data from the database.
     """
     try:
         conn = sqlite3.connect(database)
@@ -501,8 +489,8 @@ def find_cve(cve_target, database='vfeed.db'):
     return data
 
 
-def find_cpe(cve_target, database='vfeed.db'):
-    """   Get the data from the vfeed database.
+def find_cpe(cve_target, database=__DEFAULT_DATABASE__):
+    """   Get the data from the cvedb database.
     """
     try:
         conn = sqlite3.connect(database)
@@ -525,7 +513,8 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
     """ check a list of package names and versions for matches in the
     CPE content of the NVD
 
-    depends on the https://github.com/toolswatch/vFeed/ database
+    depends on the /var/db/cvedb database by default
+
     """
     not_found = ''
     not_found_c = 0
@@ -586,10 +575,6 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
                 take significantly less time
             """
             # if the user is impatient, report some output after abort
-            db_version = p.db_ver()
-            print ("Version of https://github.com/toolswatch/vFeed/ database \
-                   used in this report was %s, and the" % (db_version,),
-                   file=outputfile),
             print ("report was run on %s." % (time.strftime(
                 "%m-%d-%Y at %H:%M:%S")), file=outputfile),
             print ("The report was interrupted with cntl-c", file=outputfile)
@@ -625,8 +610,6 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
             db_version = p.db_ver()
         else:
             return None
-        print ("Version of https://github.com/toolswatch/vFeed/ database used \
-in this report was %s\n" % (db_version,), file=outputfile),
         print ("The report was run on %s." % (time.strftime("%m-%d-%Y at \
         %H:%M:%S"),), file=outputfile)
     if found_c == 0:
@@ -698,17 +681,13 @@ def main():
         main() Implement falco main program logic, tests for command line
         functions and generates report output
 
-        depends on https://github.com/toolswatch/vFeed/ database.  vfeed is
-        'Copyright 2013, vFeed/vFeedApi, the open source correlated &
-        cross-linked local vulnerability database by NJ OUCHN, Toolswatch.org'
-
-    """
+        depends on /var/db/cvedb a database that is created by nvd2sqlite3    """
     args = command_line()
 
     if args.vfeed_database:
         d = args.vfeed_database
     else:
-        d = 'vfeed.db'
+        d = __DEFAULT_DATABASE__
 
     if args.outputfile:
         outputfile = open(args.outputfile, 'w')
@@ -722,7 +701,7 @@ def main():
                    file=outputfile)
             sys.exit()
         else:
-            print ('falco failed to initialize vfeed.db', file=outputfile)
+            print ('falco failed to initialize cvedb', file=outputfile)
             sys.exit(1)
 
     if args.update:
@@ -752,7 +731,7 @@ name or package version", file=outputfile)
         i = 1
 
     if not os.path.exists(d):
-        print ("IOError: vfeed database does not exist: %s" % (d,))
+        print ("IOError: cvedb database does not exist: %s" % (d,))
         sys.exit(2)
 
     if args.packagelistfile:

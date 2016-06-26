@@ -7,6 +7,9 @@
 import pystache
 import re
 
+# suppress .pyc creation                                                    
+sys.dont_write_bytecode
+
 # setup the basic html for the output page a header and
 # a closing part or footer for the document
 html_header = """<!DOCTYPE html>
