@@ -212,19 +212,17 @@ or two.", file=sys.stdout)
         # and then match against a package name in the CPE identifiers.
         # Match :packagename: or :packagename:n.n.n: packagename
         # sort unique items, based on date first, then CVSS score
-        self.sql = r"""SELECT DISTINCT cve_id, n.cvss_base, c.cpeid,
-        n.date_published, n.summary
-        FROM nvd_db as n
-        JOIN cpe as c
+        self.sql = r"""SELECT DISTINCT cve_id, score, vulnerable_software_list,
+        published_datetime, summary
+        FROM nvd
         """
         # this MATCH is a feature using full text search, from config()
-        self.sql += r' WHERE c.cveid = n.cveid AND'
-        self.sql += r' c.cpeid MATCH ":' + self.package + r'"'
-        self.sql += r' GROUP BY c.cveid '
-        self.sql += r' ORDER BY n.cvss_base DESC,'
-        self.sql += r' CAST(n.cvss_base AS REAL) DESC'
+        self.sql += r' WHERE vulnerable_software_list like "%' + self.package + r'%" COLLATE NOCASE '
+        self.sql += r' GROUP BY cve_id '
+        self.sql += r' ORDER BY score DESC'
         self.sql += r' LIMIT ' + str(self.items)
         self.sql += r';'
+        print (self.sql)
         self.data = self.cursor.execute(self.sql)
 
         def clean_data():

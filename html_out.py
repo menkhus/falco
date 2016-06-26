@@ -6,6 +6,7 @@
 
 import pystache
 import re
+import sys
 
 # suppress .pyc creation                                                    
 sys.dont_write_bytecode

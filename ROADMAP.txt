@@ -1,0 +1,29 @@
+    Roadmap for falco changes
+    =========================
+
+0.6.7 - remove vfeed and replace with nvd2sqlite loaded database
+
+0.6.8 - testing, create a new set of tests, make sure that most 
+recent version of cpe id is reported, not based on CVSS, or Date,
+but the most important thing is latest version of software, then CVSS,
+then date
+
+0.6.9 - put a loader in, so that for a given project (apple for example)
+they have all their data in the database. Be able to run a client report at will with database as input.
+
+0.6.10 - store findings for a project in the database, so that you are 
+not beholding to reports stashed. client is keyname for the project. project subkey is product, and sub to that is the product version, versions
+
+0.6.11 - generate a report in CSV form, so that clients can manage the output
+
+0.6.12 - record clients security bulletins in database, so that they can 
+be rationalized against the report. Question answered - does this bulletin answer this reported CVE defect? Use this in reporting.
+
+0.6.13 - record validation in database, so that we have a working artifact against the results.  Answer, does this validation substantiate the CVE finding or invalidate it?  Use this in reporting.
+
+0.6.14 - merge reporting so that you have initial finding, security bulletin check, validation of versioni, & etc in database. Make reporting report only validated findings.  Share the report of findings, why they are invalid as well as the table of valid concerns.
+
+0.6.15 - create a tools database with documentation, so that all artifacts for client are stored in the database.  How is this not a git repository? Can a repo in tar form be stored in the DB.  Does the repo represent a historical record of that tools developement?
+
+0.6.16 - create a case management interface so that findings needinf management can be submitted to the roundup case tracker
+
