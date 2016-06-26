@@ -152,7 +152,6 @@ class CheckNVDByPackage(object):
         self.package = package
         self.database = database
         self.items = items
-        self.db_version = None
         self.json = {}
         self.matches = {}
         self.data = None
@@ -258,25 +257,6 @@ or two.", file=sys.stdout)
             return len(self.data)
         else:
             return 0
-
-    def db_ver(self, outputfile=sys.stdout):
-        """ return the db_version of the vfeed database
-        """
-        if self.db_version is None:
-            try:
-                self.conn = sqlite3.connect(self.database)
-                self.cursor = self.conn.cursor()
-                self.db_version = self.cursor.execute(
-                    r'select db_version from stat_vfeed_kpi;')
-                self.db_version = self.db_version.fetchall()
-                self.db_version = self.db_version[0]
-                self.conn.close()
-            except Exception, e:
-                print ("CheckNVDByPackage.db_ver: %s" % (e,), file=sys.stderr)
-                exit(False)
-            return self.db_version[0]
-        else:
-            return self.db_version[0]
 
     def __str__(self):
         """ implement string output for object, embedded formatting and
@@ -604,10 +584,6 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
         print (not_found, file=outputfile)
         print ("Detailed findings as follows:", file=outputfile)
         detailed_vuln_report(detailed_report, outputfile)
-        if 'p' in locals():
-            db_version = p.db_ver()
-        else:
-            return None
         print ("The report was run on %s." % (time.strftime("%m-%d-%Y at \
         %H:%M:%S"),), file=outputfile)
     if found_c == 0:
