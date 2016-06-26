@@ -221,7 +221,6 @@ or two.", file=sys.stdout)
         self.sql += r' ORDER BY score DESC'
         self.sql += r' LIMIT ' + str(self.items)
         self.sql += r';'
-        print (self.sql)
         self.data = self.cursor.execute(self.sql)
 
         def clean_data():
