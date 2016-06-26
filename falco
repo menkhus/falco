@@ -456,33 +456,14 @@ def find_cve(cve_target, database=__DEFAULT_DATABASE__):
     except Exception, e:
         print ("find_cve: %s" % (e,), file=sys.stderr)
         exit()
-    sql = r"select cveid,summary,date_published,cvss_base from nvd_db"
-    sql += r' where cveid = ?'
+    sql = r"select cve_id, summary, published_datetime, score , vulnerable_software_list from nvd"
+    sql += r' where cve_id = ?'
     data = []
     cve_data = cursor.execute(sql, (cve_target,))
     for row in cve_data:
         data += row
     conn.close()
     return data
-
-
-def find_cpe(cve_target, database=__DEFAULT_DATABASE__):
-    """   Get the data from the cvedb database.
-    """
-    try:
-        conn = sqlite3.connect(database)
-        cursor = conn.cursor()
-    except Exception, e:
-        print ("find_cpe: %s" % (e,), file=sys.stderr)
-        exit()
-    sql = r"select cpeid from cpe"
-    sql += r' where cveid = ?'
-    cpe_data = []
-    data = cursor.execute(sql, (cve_target,))
-    for cpe in data:
-        cpe_data += cpe
-    conn.close()
-    return cpe_data
 
 
 def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
@@ -749,14 +730,14 @@ name or package version", file=outputfile)
 
     if args.CVE:
         data = find_cve(args.CVE, database=d)
-        cpe_list = find_cpe(args.CVE, database=d)
+        #cpe_list = find_cpe(args.CVE, database=d)
         if data:
             if args.type == 'text':
                 print("CVE: %s\nSummary: %s\nDate: %s\nCVSS Base Score: %s" %
                       (data[0], data[1], data[2], data[3]), file=outputfile)
-                print ("There are %s CPE values for %s:" % (len(cpe_list),
+                print ("There are %s CPE values for %s:" % (len(data[4]),
                        args.CVE), file=outputfile)
-                for cpe in cpe_list:
+                for cpe in data[4].split(','):
                     print ('\t%s' % (cpe,), file=outputfile)
                 sys.exit(0)
             if args.type == 'json':
@@ -765,7 +746,7 @@ name or package version", file=outputfile)
                 json_data['summary'] = data[1]
                 json_data['date'] = data[2]
                 json_data['cvss_base_score'] = data[3]
-                json_data['cpes'] = cpe_list
+                json_data['cpes'] = data[4].split(',')
                 print ("%s" % (json.dumps(json_data, sort_keys=True,
                        separators=(r',', r':'))), file=outputfile)
                 sys.exit(0)
