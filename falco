@@ -157,7 +157,9 @@ class CheckNVDByPackage(object):
         self.data = None
 
     def config(self):
-        """ open the database using Sqlite3, setup a connection
+        """
+
+            open the database using Sqlite3, setup a connection
             and add the cpe virtual table.
 
             note: the cpe virtual table makes searches faster,
@@ -169,11 +171,11 @@ class CheckNVDByPackage(object):
             self.conn = sqlite3.connect(self.database)
             self.cursor = self.conn.cursor()
             self.sql = "CREATE VIRTUAL TABLE cpe USING \
-            fts3(cpeid, cveid references nvd_db(cveid));"
+            fts3(cpeid, cve_id references nvd(cve_id));"
             self.data = self.cursor.execute(self.sql)
             print ("Adding cpe data to virtual table, this takes a minute \
 or two.", file=sys.stdout)
-            self.sql = "INSERT INTO cpe (cpeid,cveid) SELECT * FROM cve_cpe;"
+            self.sql = "INSERT INTO cpe (cpeid,cve_id) SELECT * FROM nvd;"
             self.data = self.cursor.execute(self.sql)
             self.conn.commit()
             self.conn.close()
@@ -181,6 +183,7 @@ or two.", file=sys.stdout)
         except Exception, e:
             print ("CheckNVDByPackage.config: %s" % (e,), file=sys.stderr)
             return False
+
 
     def update(self):
         """ load or update the database with the falco specific information
@@ -193,7 +196,7 @@ or two.", file=sys.stdout)
             sys.exit(1)
 
     def get_data(self):
-        """   Get the data from the vfeed database.
+        """   Get the data from the cvedb database.
         """
         if not re.search(":", self.package):
             self.data = None
@@ -293,8 +296,8 @@ or two.", file=sys.stdout)
 
 def command_line():
     """process command line arguments
-    Arguments: --config, --packagelistfile --items_reported,
-    --vfeed_database --build_environment, --outputfile, --package_name,
+    Arguments: --config --packagelistfile --items_reported,
+    --cvedb_database --build_environment, --outputfile, --package_name,
     --package_version, --type --update, --Version
 
     output: help, usage, and state variables for options on the command line
@@ -314,7 +317,7 @@ Uses the Copyright 2013, nvd2sqlite3 app.
                         default=False)
     parser.add_argument('-C', '--CVE', help='display a CVE entry', nargs='?',
                         type=str, default=None)
-    parser.add_argument('-d', '--vfeed_database', help='location of the \
+    parser.add_argument('-d', '--cvedb_database', help='location of the \
         cvedb sqlite database', nargs='?',
                         type=str, default=__DEFAULT_DATABASE__)
     parser.add_argument('-f', '--packagelistfile', help='file where the list \
@@ -638,8 +641,8 @@ def main():
         depends on /var/db/cvedb a database that is created by nvd2sqlite3    """
     args = command_line()
 
-    if args.vfeed_database:
-        d = args.vfeed_database
+    if args.cvedb_database:
+        d = args.cvedb_database
     else:
         d = __DEFAULT_DATABASE__
 

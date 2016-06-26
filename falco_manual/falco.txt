@@ -3,43 +3,49 @@ falco - 3rd party code security intelligence for software maintainers
 
 SYNOPSIS
 
-falco    [-h] [-b] [-c] [-C [CVE]] [-d [VFEED_DATABASE]]
-      [-f [PACKAGELISTFILE]] [-i [ITEMS_REPORTED]] [-n [PACKAGE_NAME]]
-      [-o [OUTPUTFILE]] [-t [TYPE]] [-u] [-v [PACKAGE_VERSION]] [-V]
+usage: falco [-h] [-b] [-c] [-C [CVE]] [-d [CVEDB_DATABASE]]
+             [-f [PACKAGELISTFILE]] [-i [ITEMS_REPORTED]] [-n [PACKAGE_NAME]]
+             [-o [OUTPUTFILE]] [-t [TYPE]] [-u] [-v [PACKAGE_VERSION]] [-V]
 
-DESCRIPTION
-Checks via command line arguments or, a file list of software programs for known security defects documented in the National Vulnerability Database. Matches these 3rd party code project names and version names to CPE URIs in
-the NVD database.
+Checks command line or, a file list of software programs for known security
+defects documented in the National Vulnerability Database. Matches a project
+name and version name to CPE URIs in the NVD database. Uses the Copyright
+2013, nvd2sqlite3 app.
 
-OPTIONS
-  -h, --help  show this help message and exit
-  -b, --build_environment  for use in build environments, return fail if items found
-  -c  setup database for use after the database has been manually updated
-  -C [CVE], --CVE [CVE]  display a CVE entry
-  -d [VFEED_DATABASE], --vfeed_database [VFEED_DATABASE]  location of toolswatch/vfeed.db sqlite database
+optional arguments:
+  -h, --help            show this help message and exit
+  -b, --build_environment
+                        for use in build environments, return fail if items
+                        found
+  -c, --config          update database and setup for use. Do this after
+                        manually downloading a new database
+  -C [CVE], --CVE [CVE]
+                        display a CVE entry
+  -d [CVEDB_DATABASE], --cvedb_database [CVEDB_DATABASE]
+                        location of the cvedb sqlite database
   -f [PACKAGELISTFILE], --packagelistfile [PACKAGELISTFILE]
-    file containing the list of packages to evaluate
+                        file where the list of packages to evaluate is stored
   -i [ITEMS_REPORTED], --items_reported [ITEMS_REPORTED]
                         number of items reported for NVD/CVE matches
   -n [PACKAGE_NAME], --package_name [PACKAGE_NAME]
-    package name to search for
+                        package name to search for
   -o [OUTPUTFILE], --outputfile [OUTPUTFILE]
-    name of output file
+                        name of output file
   -t [TYPE], --type [TYPE]
-    format of output, options are text, json or html
-  -u  update the toolswatch vfeed database
+                        format of output, options are text, html, json
+  -u, --update          download database. Do this about once a week
   -v [PACKAGE_VERSION], --package_version [PACKAGE_VERSION]
                         package version to look for
   -V, --Version         report the version of falco and exit
 
 DEPENDENCIES
-  falco uses the toolswatch/vfeed sqlite database.  To initialize the
+  falco uses the cvedb sqlite database.  To initialize the
   database or to update the database use:
   $ falco -u
 
 EXAMPLE
   Use falco to look for vulnerability for python 2.7.3 in NVD:
-  $ falco -d ./vfeed.db -n python -v 2.7.3
+  $ falco -d /var/db/cvedb -n python -v 2.7.3
 
   *** Potential security defect found in python:2.7.3
   CVE: CVE-2014-9365
@@ -70,14 +76,12 @@ HINTS
 
 SEE ALSO
     https://github.com/menkhus/falco
-    https://github.com/toolswatch/vfeed
 
 BUGS
     Searching for package names and versions can lead to both false positives and false negatives. The CPE matching documentation specifies greater than and less than logic. falco and other tools use regex matches and the fact that the NVD data provides an intended comprehensive list of impacted versions for each CVE number.
 
 AUTHORS
     Mark Menkhus <mark.menkhus@gmail.com>
-    toolswatch vfeed is Copyright NJ OUCHN, used under license.
 
 LICENSE
     (c) Copyright Falconry Concepts LLC.
@@ -87,4 +91,4 @@ LICENSE
     Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 
 VERSION
-    0.6.5
+    0.6.7
