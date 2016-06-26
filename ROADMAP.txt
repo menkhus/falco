@@ -1,8 +1,6 @@
     Roadmap for falco changes
     =========================
 
-0.6.7 - remove vfeed and replace with nvd2sqlite loaded database
-
 0.6.8 - testing, create a new set of tests, make sure that most 
 recent version of cpe id is reported, not based on CVSS, or Date,
 but the most important thing is latest version of software, then CVSS,
