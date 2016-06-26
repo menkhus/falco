@@ -7,18 +7,23 @@ Falco is a simple tool to search the NIST NVD and report latent security bugs in
 
 Falco Dependencies
 ------------------
-Falco depends on the nvdsqlite3, a sqlite loader of the NIST NVD 
-vulnerability database
+Falco depends on the nvdsqlite3, a sqlite loader of the NIST NVD
+vulnerability database. You must pip install nvdsqlite3 and pystache. Then update the cvedb database and then point falco at runtime at the up-to-date database in order to have an effective vulnerability intelligence feature in your software workflow.
 
-You must nvdsqlite3 and update the cvedb database and then point falco at the up-to-date database in order to have an effective vulnerability intelligence feature in your software workflow. Use this command to install and update the NVD database:
-$ falco -u
+Thanks and shout outs:
+----------------------
+Jan Schaumann, twitter for https://github.com/jschauma/nvd2sqlite3
+NJ Ouchn, vfeed database, awesome tool!
 
-Also use the same commands periodically. The cvedb database must be updated periodically in order to implement the notion that you are getting current threat knowledge.
+Use this command to install and update the NVD database:
+$ ./falco -u
+
+Also use the same update command periodically. The cvedb database must be updated periodically in order to implement the notion that you are getting current threat knowledge.
 
 Setup for first use from the falco directory:  
 
 ```bash
-$ falco -u
+$ ./falco -u
 ```  
 
 If you find falco useful, please give a shoutout to us, and the great folks who build and maintain toolswatch cvedb.

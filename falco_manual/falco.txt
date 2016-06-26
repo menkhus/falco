@@ -92,3 +92,7 @@ LICENSE
 
 VERSION
     0.6.7
+
+THANKS
+  Jan Schaumann, twitter for https://github.com/jschauma/nvd2sqlite3
+  NJ Ouchn, vfeed database, awesome tool!

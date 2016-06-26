@@ -5,13 +5,13 @@ searches package names and versions against the NVD database, and reports
 security defects listed against that data.
 
 3rd party dependency:
-    * falco depends on nvd2sqlite3, copied and modified under license.
+    * falco depends on nvd2sqlite3, and pystache.
 
-Code dependencies: html_out.py, nvdloader.py, load.sh
+Falco code dependencies: html_out.py, nvdloader.py, load.sh
 
 Syntactic subtleties:
     * if testing using a packagelist file, requires that the list
-    be in name or name:version format,1 package per line, comments
+    be in name or name:version format, 1 package per line, comments
     start with #
     * depends on a version of python that has the __future__ feature, 2.6 and
     higher
@@ -38,6 +38,11 @@ You may obtain a copy of the License at
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+
+Thanks and shout outs:
+----------------------
+Jan Schaumann, twitter for https://github.com/jschauma/nvd2sqlite3
+NJ Ouchn, vfeed database, awesome tool!
 """
 
 from __future__ import print_function
@@ -184,7 +189,6 @@ or two.", file=sys.stdout)
             print ("CheckNVDByPackage.config: %s" % (e,), file=sys.stderr)
             return False
 
-
     def update(self):
         """ load or update the database with the falco specific information
         and database characteristics.
@@ -219,7 +223,8 @@ or two.", file=sys.stdout)
         FROM nvd
         """
         # this MATCH is a feature using full text search, from config()
-        self.sql += r' WHERE vulnerable_software_list like "%' + self.package + r'%" COLLATE NOCASE '
+        self.sql += r' WHERE vulnerable_software_list like "%'
+        self.sql += self.package + r'%" COLLATE NOCASE '
         self.sql += r' GROUP BY cve_id '
         self.sql += r' ORDER BY score DESC'
         self.sql += r' LIMIT ' + str(self.items)
@@ -306,15 +311,18 @@ def command_line():
 known security defects documented in the National Vulnerability Database.
 Matches a project name and version name to CPE URIs in the NVD database.
 
-Uses the Copyright 2013, nvd2sqlite3 app.
-    """
+
+Uses the Copyright 2013, nvd2sqlite3 app, thanks to:
+Jan Schaumann for https://github.com/jschauma/nvd2sqlite3
+
+"""
     parser = argparse.ArgumentParser(description=DESC)
     parser.add_argument('-b', '--build_environment', help='for use in build \
         environments, return fail if items found', action='store_true',
                         default=False)
     parser.add_argument('-c', '--config', help='update database and setup for \
-        use. Do this after manually downloading a new database', action='store_true',
-                        default=False)
+     use. Do this after manually downloading a new database',
+                        action='store_true', default=False)
     parser.add_argument('-C', '--CVE', help='display a CVE entry', nargs='?',
                         type=str, default=None)
     parser.add_argument('-d', '--cvedb_database', help='location of the \
@@ -459,7 +467,8 @@ def find_cve(cve_target, database=__DEFAULT_DATABASE__):
     except Exception, e:
         print ("find_cve: %s" % (e,), file=sys.stderr)
         exit()
-    sql = r"select cve_id, summary, published_datetime, score , vulnerable_software_list from nvd"
+    sql = r"select cve_id, summary, published_datetime, score , \
+    vulnerable_software_list from nvd"
     sql += r' where cve_id = ?'
     data = []
     cve_data = cursor.execute(sql, (cve_target,))
@@ -494,7 +503,7 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
                     j['requested_output_type'] = output_type
                     j['cve'] = each[0]
                     j['cvss_base_score'] = each[1]
-                    j['cpe'] = each[2]
+                    j['cpe'] = each[2].split(',')
                     j['date'] = each[3]
                     j['summary'] = each[4]
                     j_data.append(j)
@@ -638,7 +647,8 @@ def main():
         main() Implement falco main program logic, tests for command line
         functions and generates report output
 
-        depends on /var/db/cvedb a database that is created by nvd2sqlite3    """
+        depends on /var/db/cvedb a database that is created by nvd2sqlite3
+        """
     args = command_line()
 
     if args.cvedb_database:
@@ -733,7 +743,6 @@ name or package version", file=outputfile)
 
     if args.CVE:
         data = find_cve(args.CVE, database=d)
-        #cpe_list = find_cpe(args.CVE, database=d)
         if data:
             if args.type == 'text':
                 print("CVE: %s\nSummary: %s\nDate: %s\nCVSS Base Score: %s" %

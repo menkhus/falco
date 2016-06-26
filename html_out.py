@@ -4,12 +4,12 @@
     Copyright Mark Menkhus, May 2015
 """
 
+# suppress .pyc creation
+import sys
+sys.dont_write_bytecode
+
 import pystache
 import re
-import sys
-
-# suppress .pyc creation                                                    
-sys.dont_write_bytecode
 
 # setup the basic html for the output page a header and
 # a closing part or footer for the document
