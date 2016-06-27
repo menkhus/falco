@@ -468,8 +468,8 @@ def find_cve(cve_target, database=__DEFAULT_DATABASE__):
     except Exception, e:
         print ("find_cve: %s" % (e,), file=sys.stderr)
         exit()
-    sql = r"select cve_id, summary, published_datetime, score , \
-    vulnerable_software_list from nvd"
+    sql = "select cve_id, summary, published_datetime, \
+    score, vulnerable_software_list from nvd"
     sql += r' where cve_id = ?'
     data = []
     cve_data = cursor.execute(sql, (cve_target,))
