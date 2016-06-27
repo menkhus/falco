@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
+# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 """  falco is a software inventory vulnerability check search tool.  Falco
 searches package names and versions against the NVD database, and reports
 security defects listed against that data.
@@ -181,7 +181,8 @@ or two.", file=sys.stdout)
             fts3(cpe_id, cve_id references  nvd(vulnerable_software_list, \
             cve_id));"
             self.data = self.cursor.execute(self.sql)
-            self.sql = "INSERT INTO cpe (cpe_id, cve_id) SELECT vulnerable_software_list,  cve_id from nvd;"
+            self.sql = "INSERT INTO cpe (cpe_id, cve_id) SELECT \
+            vulnerable_software_list, cve_id from nvd;"
             self.data = self.cursor.execute(self.sql)
             self.conn.commit()
             self.conn.close()
@@ -424,15 +425,14 @@ def check_item_in_database(package_name='', package_version='', d='', i=1,
                     and we need to get output managed elsewhere.
                     refactor.
                 """
-                try:
-                    html = html_out.cve_table_content(package,
-                                                      j_data.get_json_data())
-                    html = html_out.html_wrap_content(html)
-                    print (html, file=outputfile)
-                    return True
-                except Exception, error:
-                    print ("CheckNVDByPackage: %s" % (error,), file=outputfile)
-                    return False
+                html = ''
+                html = html_out.cve_table_content(package,
+                                                  j_data.get_json_data())
+                print('line 436')
+                html = html_out.html_wrap_content(html)
+                print('line 437')
+                print (html, file=outputfile)
+                return True
         detailed_report = {}
         if output_type == 'text':
             """ This code has reached spaghetti code proportions

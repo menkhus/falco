@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-""" generate html output from dictionary of CVE finding data
+""" html_out.py: generate html output from dictionary of CVE finding data
 
     Copyright Mark Menkhus, May 2015
 """
@@ -83,28 +83,30 @@ def cve_table_content(packagename=None, falco_dict={}):
         start with style inline for simplicity
     """
     if falco_dict == []:
-        return ''
-    table_header = r'<h4>' + 'Known vulnerabilities found using search for '
+        return None
+    table_header = r'<h4>' + 'Known vulnerability found using search for '
     table_header += listtosentence(packagename) + ' in list of CPEs' + r'</h4>'
     table_header += r'<h3>Finding notes:</h3>'
     table_header += r'<p id="editable" contenteditable=true>'
     table_header += 'This line is an editable area for your dispensation notes'
-    table_header += r', edit in browser as needed for your vulnerability response.' + r'</p>'
-    table_column_header = """<table style="width:100%">\n<div id="CVE table">\
-    <tr>\n<th>CVE#</th>\n<th>CVE vulnerability summary</th> \
-    \n<th>Score</th>\n<th>Date</th>\n<th>CPE URI</th></tr>"""
+    table_header += r', edit in browser as needed for your vulnerability '
+    table_header += r'response.'
+    table_header += r'</p>'
+    table_column_header = """<table style="width:100%">\n<div id="CVE   table">\
+        <tr>\n<th>CVE#</th>\n<th>CVE vulnerability summary</th> \
+        \n<th>Score</th>\n<th>Date</th>\n<th>CPE URI</th></tr>"""
     table = table_header + table_column_header
-    table_body = ''
+    table_body = ' '
     table_footer = """</div>
-</table>
-"""
+              </table>
+              """
     for item in falco_dict:
         template_content = """<tr>\n<td>{{cve}}</td>\n<td>{{summary}}</td>\
-            \n<td>{{cvss_base_score}}</td>\n<td>{{date}}</td> \
-            \n<td>{{cpe}}</td>\n</tr>\n"""
+        \n<td>{{cvss_base_score}}</td>\n<td>{{date}}</td> \
+        \n<td>{{cpe}}</td>\n</tr>\n"""
         table_body += pystache.render(template_content, item)
-    table += table_body
-    table += table_footer
+        table += table_body
+        table += table_footer
     return table
 
 
