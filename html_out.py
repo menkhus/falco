@@ -11,6 +11,8 @@ sys.dont_write_bytecode
 import pystache
 import re
 
+__version__ = '0.1'
+
 # setup the basic html for the output page a header and
 # a closing part or footer for the document
 html_header = """<!DOCTYPE html>

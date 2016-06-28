@@ -127,7 +127,7 @@ class PackageList(object):
         try:
             self.packageListInput = open(self.packageFile, 'r').readlines()
         except Exception, e:
-            print ("packageList: Exception - %s" % (e,), file=self.outputfile)
+            print ("falco: packageList: Exception - %s" % (e,), file=self.outputfile)
             exit(1)
         for each in self.packageListInput:
             """filter commented lines, lines without package colon
@@ -188,7 +188,7 @@ or two.", file=sys.stdout)
             self.conn.close()
             return True
         except Exception, e:
-            print ("CheckNVDByPackage.config: %s" % (e,), file=sys.stderr)
+            print ("falco: CheckNVDByPackage.config: %s" % (e,), file=sys.stderr)
             return False
 
     def update(self):
@@ -198,7 +198,7 @@ or two.", file=sys.stdout)
         try:
             subprocess.call([r'./nvdloader.py'])
         except Exception, e:
-            print ("CheckNVDByPackage.update: %s" % (e,), file=sys.stderr)
+            print ("falco: CheckNVDByPackage.update: %s" % (e,), file=sys.stderr)
             sys.exit(1)
 
     def get_data(self):
@@ -214,7 +214,7 @@ or two.", file=sys.stdout)
             self.conn = sqlite3.connect(self.database)
             self.cursor = self.conn.cursor()
         except Exception, e:
-            print ("CheckNVDByPackage.get_data: %s" % (e,), file=sys.stderr)
+            print ("falco: CheckNVDByPackage.get_data: %s" % (e,), file=sys.stderr)
             exit()
         # Setting up the SQL query for get CPE and CVE data from two tables
         # and then match against a package name in the CPE identifiers.
@@ -443,7 +443,7 @@ def check_item_in_database(package_name='', package_version='', d='', i=1,
                 detailed_report[package] = report
                 detailed_vuln_report(detailed_report, outputfile)
     except Exception, e:
-        print ("check_item_in_database: %s" % (e,), file=outputfile)
+        print ("falco: check_item_in_database: %s" % (e,), file=outputfile)
         if re.search(r'no such table', str(e)):
             print ("\tFalco requires copying the cpe into", file=outputfile)
             print ("\ta cpe fts3 virtual table, after the", file=outputfile)
@@ -466,7 +466,7 @@ def find_cve(cve_target, database=__DEFAULT_DATABASE__):
         conn = sqlite3.connect(database)
         cursor = conn.cursor()
     except Exception, e:
-        print ("find_cve: %s" % (e,), file=sys.stderr)
+        print ("falco: find_cve: %s" % (e,), file=sys.stderr)
         exit()
     sql = "select cve_id, summary, published_datetime, \
     score, vulnerable_software_list from nvd"

@@ -13,6 +13,8 @@ import datetime
 import subprocess
 import sys
 
+__version__ = '0.1'
+
 # start year is the year where we want to get the
 # beginning of the NVD data
 start_year = 2002
