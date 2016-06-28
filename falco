@@ -405,7 +405,9 @@ def check_item_in_database(package_name='', package_version='', d='', i=1,
                 j['requested_output_type'] = output_type
                 j['cve'] = item[0]
                 j['cvss_base_score'] = item[1]
-                j['cpe'] = item[2]
+                cpe = item[2].split(',')
+                cpe.sort
+                j['cpe'] = cpe
                 j['date'] = item[3]
                 j['summary'] = item[4]
                 j_data.append(j)
@@ -504,7 +506,9 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
                     j['requested_output_type'] = output_type
                     j['cve'] = each[0]
                     j['cvss_base_score'] = each[1]
-                    j['cpe'] = each[2].split(',')
+                    cpes = each[2].split(',')
+                    cpes.sort()
+                    j['cpe'] = cpes
                     j['date'] = each[3]
                     j['summary'] = each[4]
                     j_data.append(j)
@@ -598,10 +602,12 @@ def detailed_vuln_report(vuln_data={}, outputfile=sys.stdout):
     for each in vuln_data.keys():
         entry = vuln_data[each]
         for cve in entry:
+            cpes = cve[2].split(',')
+            cpes.sort()
             s += "\t\t*** Potential security defect found in %s\n" % (each,)
-            s += "CVE: %s\nCVSS Score: %s\nCPE id: %s\nPublished on: %s\n\
+            s += "CVE: %s\nCVSS Score: %s\nVulnerable software list, CPE id: %s\nPublished on: %s\n\
 Summary Description: %s\n\n" % (cve[0], cve[1],
-                                cve[2], cve[3],
+                                cpes, cve[3],
                                 cve[4])
     s = s.encode('utf-8').strip()
     print (s, file=outputfile)
@@ -677,7 +683,7 @@ def main():
         d.update()
         print ('falco database was updated, falco ready to use',
                file=outputfile)
-        sys.exit()
+        sys.exit(0)
     if args.build_environment:
         build_return = True
     else:
@@ -685,7 +691,7 @@ def main():
 
     if args.Version:
         print ("falco version: %s" % (__version__), file=outputfile)
-        exit()
+        sys.exit(0)
 
     if not (args.packagelistfile or args.package_name or args.package_version
             or args.CVE):
@@ -750,7 +756,9 @@ name or package version", file=outputfile)
                       (data[0], data[1], data[2], data[3]), file=outputfile)
                 print ("There are %s CPE values for %s:" % (len(data[4]),
                        args.CVE), file=outputfile)
-                for cpe in data[4].split(','):
+                cpes = data[4].split(',')
+                cpes.sort()
+                for cpe in cpes:
                     print ('\t%s' % (cpe,), file=outputfile)
                 sys.exit(0)
             if args.type == 'json':
@@ -759,7 +767,9 @@ name or package version", file=outputfile)
                 json_data['summary'] = data[1]
                 json_data['date'] = data[2]
                 json_data['cvss_base_score'] = data[3]
-                json_data['cpes'] = data[4].split(',')
+                cpes = data[4].split(',')
+                cpes = cpes.sort()
+                json_data['cpes'] = cpes
                 print ("%s" % (json.dumps(json_data, sort_keys=True,
                        separators=(r',', r':'))), file=outputfile)
                 sys.exit(0)
