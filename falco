@@ -46,7 +46,7 @@ NJ Ouchn, vfeed database, awesome tool!
 """
 
 from __future__ import print_function
-__version__ = '0.6.7'
+__version__ = '0.6.8'
 __author__ = 'Mark Menkhus, email: menkhus@icloud.com'
 __DEFAULT_DATABASE__ = '/var/db/cvedb'
 import argparse

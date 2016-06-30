@@ -7,11 +7,11 @@ but the most important thing is latest version of vulnerable softwara,
 then CVSS, then date
 
 where i left off:
-    worked on sorting cpeids inline.  remove that code, DRY, create a function or class for cpeid that sorts the list, trims it to start with the CPE id provided and returns that trimmed list.
+    worked on sorting cpeids inline. removeid that code, DRY, create a function or class for cpeid that sorts the list, trims it to start with the CPE id provided and returns that trimmed list.
 
     X the cpeid database needs to have a cve as primary key
 
-    create tests for all the features
+    X create tests for all the features
 
     
 0.6.9 - put a loader in, so that for a given project (apple for example)
@@ -31,5 +31,5 @@ be rationalized against the report. Question answered - does this bulletin answe
 
 0.6.15 - create a tools database with documentation, so that all artifacts for client are stored in the database.  How is this not a git repository? Can a repo in tar form be stored in the DB.  Does the repo represent a historical record of that tools developement?
 
-0.6.16 - create a case management interface so that findings needinf management can be submitted to the roundup case tracker
+0.6.16 - create a case management interface so that findings needing management can be submitted to the roundup case tracker
 
