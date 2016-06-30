@@ -216,19 +216,19 @@ or two.", file=sys.stdout)
         except Exception, e:
             print ("falco: CheckNVDByPackage.get_data: %s" % (e,), file=sys.stderr)
             exit()
-        # Setting up the SQL query for get CPE and CVE data from two tables
-        # and then match against a package name in the CPE identifiers.
+        # Setting up the SQL query for get CPE and CVE data from nvd table
+        # match against a package name in the CPE identifiers.
         # Match :packagename: or :packagename:n.n.n: packagename
         # sort unique items, based on date first, then CVSS score
         self.sql = r"""SELECT DISTINCT cve_id, score, vulnerable_software_list,
         published_datetime, summary
         FROM nvd
         """
-        # this MATCH is a feature using full text search, from config()
         self.sql += r' WHERE vulnerable_software_list like "%'
         self.sql += self.package + r'%" COLLATE NOCASE '
         self.sql += r' GROUP BY cve_id '
-        self.sql += r' ORDER BY score DESC'
+        self.sql += r' ORDER BY published_datetime DESC, '
+        self.sql += r' score DESC'
         self.sql += r' LIMIT ' + str(self.items)
         self.sql += r';'
         self.data = self.cursor.execute(self.sql)
