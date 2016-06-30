@@ -9,7 +9,7 @@ then CVSS, then date
 where i left off:
     worked on sorting cpeids inline.  remove that code, DRY, create a function or class for cpeid that sorts the list, trims it to start with the CPE id provided and returns that trimmed list.
 
-    the cpeid database needs to have a cve as primary key
+    X the cpeid database needs to have a cve as primary key
 
     create tests for all the features
 

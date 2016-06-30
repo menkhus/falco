@@ -178,7 +178,7 @@ or two.", file=sys.stdout)
             self.conn = sqlite3.connect(self.database)
             self.cursor = self.conn.cursor()
             self.sql = "CREATE VIRTUAL TABLE cpe USING \
-            fts3(cpe_id, cve_id references  nvd(vulnerable_software_list, \
+            fts3(cpe_id PRIMARY KEY, cve_id references  nvd(vulnerable_software_list, \
             cve_id));"
             self.data = self.cursor.execute(self.sql)
             self.sql = "INSERT INTO cpe (cpe_id, cve_id) SELECT \
