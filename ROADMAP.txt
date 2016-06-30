@@ -2,10 +2,18 @@
     =========================
 
 0.6.8 - testing, create a new set of tests, make sure that most 
-recent version of cpe id is reported, not based on CVSS, or Date,
-but the most important thing is latest version of software, then CVSS,
-then date
+recent versions of cpe ids are reported, not based on CVSS, or Date,
+but the most important thing is latest version of vulnerable softwara,
+then CVSS, then date
 
+where i left off:
+    worked on sorting cpeids inline.  remove that code, DRY, create a function or class for cpeid that sorts the list, trims it to start with the CPE id provided and returns that trimmed list.
+
+    the cpeid database needs to have a cve as primary key
+
+    create tests for all the features
+
+    
 0.6.9 - put a loader in, so that for a given project (apple for example)
 they have all their data in the database. Be able to run a client report at will with database as input.
 

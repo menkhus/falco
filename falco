@@ -752,12 +752,12 @@ name or package version", file=outputfile)
         data = find_cve(args.CVE, database=d)
         if data:
             if args.type == 'text':
-                print("CVE: %s\nSummary: %s\nDate: %s\nCVSS Base Score: %s" %
-                      (data[0], data[1], data[2], data[3]), file=outputfile)
-                print ("There are %s CPE values for %s:" % (len(data[4]),
-                       args.CVE), file=outputfile)
                 cpes = data[4].split(',')
                 cpes.sort()
+                print("CVE: %s\nSummary: %s\nDate: %s\nCVSS Base Score: %s" %
+                      (data[0], data[1], data[2], data[3]), file=outputfile)
+                print ("There are %s CPE values for %s:" % (len(cpes),
+                       args.CVE), file=outputfile)
                 for cpe in cpes:
                     print ('\t%s' % (cpe,), file=outputfile)
                 sys.exit(0)

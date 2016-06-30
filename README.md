@@ -26,7 +26,7 @@ Setup for first use from the falco directory:
 $ ./falco -u
 ```  
 
-If you find falco useful, please give a shoutout to us, and the great folks who build and maintain toolswatch cvedb.
+If you find falco useful, please give a shoutout to us, and the great folks who build and maintain toolswatch cve database that helped use get the project started.
 
 No free lunch
 -------------
