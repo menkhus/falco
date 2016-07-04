@@ -56,8 +56,8 @@ import time
 import re
 import sqlite3
 import json
-import html_out
 import subprocess
+import lib
 
 # suppress .pyc creation
 sys.dont_write_bytecode
@@ -145,7 +145,7 @@ class PackageList(object):
 
 class CheckNVDByPackage(object):
     """ Check a package string for existence in the nvd database.
-        searched string is 'packagename:version', compared against
+        searched string is ':packagename:version', compared against
         CPE URI's like:
         cpe:/a:microsoft:internet_explorer:8.0.6001:beta
 
@@ -201,6 +201,34 @@ or two.", file=sys.stdout)
             print ("falco: CheckNVDByPackage.update: %s" % (e,), file=sys.stderr)
             sys.exit(1)
 
+    def clean_data(self):
+        """ Remove duplicate CVEs, remove matches that are
+            incorrect due to greedy match in full text search.
+        """
+        self.d = []
+        if len(self.data) > 0:
+            # accumulate CVE identifiers in cvelist, so that we don't
+            # repeat informing about a CVE
+            self.cvelist = []
+            for entry in self.data:
+                # don't repeat a CVE
+                entry = list(entry)
+                if entry[0] not in self.cvelist:
+                    self.cvelist.append(entry[0])
+                # clean up previous version CPEs not
+                # needed in output
+                version = self.package.lstrip(':')
+                version = version.split(':')[1]
+                entry[2] = lib.cpe_util.cpe_clip(version, entry[2])
+                entry = tuple(entry)
+                # greedy search on FTS returns a lot of extra stuff,
+                # double check if the cpe match is real
+                if re.search(self.package, entry[2], re.IGNORECASE):
+                            self.d.append(entry)
+            return self.d
+        else:
+            return self.data
+
     def get_data(self):
         """   Get the data from the cvedb database.
         """
@@ -227,34 +255,15 @@ or two.", file=sys.stdout)
         self.sql += r' WHERE vulnerable_software_list like "%'
         self.sql += self.package + r'%" COLLATE NOCASE '
         self.sql += r' GROUP BY cve_id '
-        self.sql += r' ORDER BY published_datetime DESC, '
-        self.sql += r' score DESC'
+        self.sql += r' ORDER BY score DESC, '
+        self.sql += r' published_datetime DESC'
         self.sql += r' LIMIT ' + str(self.items)
         self.sql += r';'
         self.data = self.cursor.execute(self.sql)
-
-        def clean_data():
-            """ Remove duplicate CVEs, remove matches that are
-                incorrect due to greedy match in full text search.
-            """
-            self.d = []
-            if len(self.data) > 0:
-                # accumulate CVE identifiers in cvelist, so that we don't
-                # repeat informing about a CVE
-                self.cvelist = []
-                for entry in self.data:
-                    # don't repeat a CVE
-                    if entry[0] not in self.cvelist:
-                        self.cvelist.append(entry[0])
-                        if re.search(self.package, entry[2], re.IGNORECASE):
-                            self.d.append(entry)
-                return self.d
-            else:
-                return self.data
         if self.data is not None:
             self.data = self.data.fetchall()
             self.conn.close()
-            self.data = clean_data()
+            self.data = self.clean_data()
             return self.data
         else:
             return None
@@ -428,13 +437,16 @@ def check_item_in_database(package_name='', package_version='', d='', i=1,
                     refactor.
                 """
                 html = ''
-                html = html_out.cve_table_content(package,
+                html = lib.html_out.cve_table_content(package,
                                                   j_data.get_json_data())
-                print('line 436')
-                html = html_out.html_wrap_content(html)
-                print('line 437')
-                print (html, file=outputfile)
-                return True
+                if html != None:
+                    print('line 444')
+                    html = lib.html_out.html_wrap_content(html)
+                    print('line 446')
+                    print (html, file=outputfile)
+                    return True
+                else:
+                    return None
         detailed_report = {}
         if output_type == 'text':
             """ This code has reached spaghetti code proportions
@@ -525,7 +537,7 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
                         Collect the json and then run the report once.
                     """
                     try:
-                        table_content = html_out.cve_table_content(package,
+                        table_content = lib.html_out.cve_table_content(package,
                                                                    j_data)
                         # work around for repeating html preamble, print it in
                         # main
@@ -724,10 +736,10 @@ name or package version", file=outputfile)
                     """ just output one html header and footer for all
                         table content
                     """
-                    print (html_out.html_heading(), file=outputfile)
+                    print (lib.html_out.html_heading(), file=outputfile)
                     (check_list_in_database(packages, d, i, outputfile,
                      args.type), build_return, outputfile, args.type)
-                    print (html_out.html_closing(), file=outputfile)
+                    print (lib.html_out.html_closing(), file=outputfile)
                     sys.exit(0)
         if build_exit(check_list_in_database(packages, d, i, outputfile,
                       args.type), build_return, outputfile, args.type):
