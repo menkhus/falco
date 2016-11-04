@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 about = """
     copy the nvd datafiles from NIST and then use the
-    nvd2sqlite3 program to load them into /var/db/cvedb
+    nvd2sqlite3 program to load them into /usr/local/falco/db/cvedb
 
     this is a python app which implements control of shell
     commands.  depends on curl, gunzip and rm to implement
