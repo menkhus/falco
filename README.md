@@ -84,7 +84,7 @@ limitations under the License.
 
 Falco help
 ----------
-usage: falco [-h] [-b] [-c] [-C [CVE]] [-d [CVEDB_DATABASE]]
+`usage: falco [-h] [-b] [-c] [-C [CVE]] [-d [CVEDB_DATABASE]]
              [-f [PACKAGELISTFILE]] [-i [ITEMS_REPORTED]] [-n [PACKAGE_NAME]]
              [-o [OUTPUTFILE]] [-t [TYPE]] [-u] [-v [PACKAGE_VERSION]] [-V]
 
@@ -134,30 +134,30 @@ optional arguments:
   -u, --update          download database. Do this about once a week
   -v [PACKAGE_VERSION], --package_version [PACKAGE_VERSION]
                         package version to look for
-  -V, --Version         report the version of falco and exit
+  -V, --Version         report the version of falco and exit`
 
 Usage Examples
 -----------------------
 Assumes cvedb is in the /usr/local/bin/falco/db directory  
 
-### Example 1, check a package named 'python' version '2.7.3' for vulnerabilities in the NVD database ###
+### Example 1, check a package named 'http_server' for vulnerabilities in the NVD database ###
 
 ```sh
 ./falco.py -n http_server -m 2001-01-01
 ```    
 *** Potential security defect found in http_server:
-CVE: CVE-2012-5955
-CVSS Score: 10.0
-Vulnerable software list, CPE id: [u'cpe:/a:ibm:http_server:5.3', u'cpe:/a:ibm:websphere_application_server:-:-:~~~z%2fos~~']
-Published on: 2012-12-20T07:02:19.937-05:00
-Summary Description: Unspecified vulnerability in the IBM HTTP Server component 5.3 in IBM WebSphere Application Server (WAS) for z/OS allows remote attackers to execute arbitrary commands via unknown vectors.
+CVE: CVE-2016-5387
+CVSS Score: 5.1
+Vulnerable software list, CPE id: [u'cpe:/a:apache:http_server:2.4.23']
+Published on: 2016-07-18T22:00:19.837-04:00
+Summary Description: The Apache HTTP Server through 2.4.23 follows RFC 3875 section 4.1.18 and therefore does not protect applications from the presence of untrusted client data in the HTTP_PROXY environment variable, which might allow remote attackers to redirect an application's outbound HTTP traffic to an arbitrary proxy server via a crafted Proxy header in an HTTP request, aka an "httpoxy" issue.  NOTE: the vendor states "This mitigation has been assigned the identifier CVE-2016-5387"; in other words, this is not a CVE ID for a vulnerability.
 
-### Example 2, using falco in build situations ###
+###example 2, using falco in build situations ###
 
-Assume the feed database is in the /var/db subdirectory. Check a package named 'python' version '2.7.3' for vulnerabilities in the NVD database and if any are found, return a non zero return value.  Placing this in a makefile will cause make to exit when a vulnerability matches.  
+Check a package named 'http_server' for vulnerabilities in the NVD database and if any are found, return a non zero return value.  Placing this in a makefile will cause make to exit when a vulnerability matches.  
 
 ```bash
-$ ./falco.py -n python -v 2.7.3 -m 2001-01-01 -b -o falcolog
+$ ./falco.py -n http_server -m 2001-01-01 -b -o falcolog
 $ echo $?  
 1  
 $  
