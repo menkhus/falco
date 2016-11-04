@@ -8,12 +8,14 @@ NNAAMMEE
 SSYYNNOOPPSSIISS
        usage: _f_a_l_c_o [--hh] [--bb] [--cc] [--CC [_C_V_E]] [--dd [_C_V_E_D_B___D_A_T_A_B_A_S_E]]
        [--ff [_P_A_C_K_A_G_E_L_I_S_T_F_I_L_E]] [--ii [_I_T_E_M_S___R_E_P_O_R_T_E_D]] [--nn [_P_A_C_K_A_G_E___N_A_M_E]]
-       [--oo [_O_U_T_P_U_T_F_I_L_E]] [--tt [_T_Y_P_E]] [--uu] [--vv [_P_A_C_K_A_G_E___V_E_R_S_I_O_N]] [--VV]
+       [--oo [_O_U_T_P_U_T_F_I_L_E]] [--tt [_T_Y_P_E]] [--mm [_M_I_N_I_M_U_M___D_A_T_E]] [--uu]
+       [--vv [_P_A_C_K_A_G_E___V_E_R_S_I_O_N]] [--VV]
 
        CChheecckkss _c_o_m_m_a_n_d _l_i_n_e or, _a _f_i_l_e _l_i_s_t _o_f _s_o_f_t_w_a_r_e _p_r_o_g_r_a_m_s _f_o_r _k_n_o_w_n _s_e_c_u_r_i_t_y
        ddeeffeeccttss _d_o_c_u_m_e_n_t_e_d _i_n _t_h_e _N_a_t_i_o_n_a_l _V_u_l_n_e_r_a_b_i_l_i_t_y Database. _M_a_t_c_h_e_s _a _p_r_o_j_e_c_t
        _n_a_m_e _a_n_d _v_e_r_s_i_o_n _n_a_m_e _t_o _C_P_E _U_R_I_s _i_n _t_h_e _N_V_D database. _U_s_e_s _t_h_e _C_o_p_y_r_i_g_h_t
-       2013, _n_v_d_2_s_q_l_i_t_e_3 app.
+       2013, _n_v_d_2_s_q_l_i_t_e_3 app, _t_h_a_n_k_s _t_o: _J_a_n _S_c_h_a_u_m_a_n_n _f_o_r
+       https://github.com/jschauma/_n_v_d_2_s_q_l_i_t_e_3
 
        ooppttiioonnaall arguments:
 
@@ -40,6 +42,10 @@ SSYYNNOOPPSSIISS
                      nnaammee _o_f _o_u_t_p_u_t _f_i_l_e
                      --tt [_T_Y_P_E], ----ttyyppee [_T_Y_P_E]
                      ffoorrmmaatt _o_f _o_u_t_p_u_t, _o_p_t_i_o_n_s _a_r_e text, html, _j_s_o_n
+                     --mm [_M_I_N_I_M_U_M___D_A_T_E], ----mmiinniimmuumm__ddaattee [_M_I_N_I_M_U_M___D_A_T_E]
+                     _t_h_e _m_i_n_i_m_u_m _d_a_t_e _w_e _l_o_o_k _f_o_r _i_n _t_h_e _d_a_t_a_b_a_s_e _f_o_r
+                     _m_a_t_c_h_e_s, _d_e_f_a_u_l_t _i_s _t_h_e _b_e_g_i_n_n_i_n_g _o_f _t_h_e data.
+                     ffoorrmmaatt _i_s _l_i_k_e _2_0_0_3_-_1_1_-_1_7
 
               --uu,, ----_u_p_d_a_t_e
                      _d_o_w_n_l_o_a_d _d_a_t_a_b_a_s_e. _D_o _t_h_i_s _a_b_o_u_t _o_n_c_e _a _w_e_e_k
@@ -55,51 +61,52 @@ DDEEPPEENNDDEENNCCIIEESS
               _f_a_l_c_o --uu
 
 EEXXAAMMPPLLEE
-       Use _f_a_l_c_o _t_o _l_o_o_k _f_o_r vulnerability _f_o_r python 2.7.3 _i_n _N_V_D: $ _f_a_l_c_o --dd
-       /var/db/_c_v_e_d_b --nn python --vv 2.7.3
+       Use _f_a_l_c_o _t_o _l_o_o_k _f_o_r vulnerability _f_o_r http_server _i_n _N_V_D: $ _f_a_l_c_o  --nn
+       http_server  ***  Potential  _s_e_c_u_r_i_t_y defect ffoouunndd _i_n http_server: _C_V_E:
+       _C_V_E-2016-5387  CVSS  Score:  5.1  Vulnerable  _s_o_f_t_w_a_r_e  _l_i_s_t,  _C_P_E  id:
+       [u'cpe:/_a:apache:http_server:2.4.23']           Published           on:
+       2016-07-18T22:00:19.837-04:00
 
-       ***  Potential _s_e_c_u_r_i_t_y defect ffoouunndd _i_n python:2.7.3 _C_V_E: _C_V_E-2014-9365
-       CVSS  Score:  5.8  _C_P_E  id:  cpe:/_a:python:python:2.7.3  Published  on:
-       2014-12-12T06:59:07.063-05:00  Summary Description: The HTTP clients _i_n
-       _t_h_e (1) httplib, (2) urllib, (3) urllib2, _a_n_d (4)  xmlrpclib  libraries
-       _i_n  CPython  (aka  Python)  2.x before 2.7.9 _a_n_d 3.x before 3.4.3, when
-       accessing an HTTPS URL, do not (_a)  check  _t_h_e  certificate  against  _a
-       trust store or verify that _t_h_e server hostname _m_a_t_c_h_e_s _a domain nnaammee _i_n
-       _t_h_e subject s (b) Common Name or (c) subjectAltName field _o_f _t_h_e  X.509
-       certificate,  which  allows  man-_i_n-_t_h_e-middle  attackers  _t_o spoof SSL
-       servers via an arbitrary valid certificate.
+       SSuummmmaarryy DDeessccrriippttiioonn:: TThhee AAppaacchhee HHTTTTPP SSeerrvveerr tthhrroouugghh 22..44..2233 ffoolllloowwss  RRFFCC
+       33887755  sseeccttiioonn  44..11..1188  _a_n_d tthheerreeffoorree ddooeess nnoott pprrootteecctt aapppplliiccaattiioonnss ffrroomm
+       _t_h_e pprreesseennccee _o_f uunnttrruusstteedd cclliieenntt ddaattaa  _i_n  _t_h_e  HHTTTTPP__PPRROOXXYY  eennvviirroonnmmeenntt
+       vvaarriiaabbllee,,  wwhhiicchh  mmiigghhtt  aallllooww rreemmoottee aattttaacckkeerrss _t_o rreeddiirreecctt aann aapppplliiccaa--
+       ttiioonn''ss oouuttbboouunndd HHTTTTPP ttrraaffffiicc _t_o aann aarrbbiittrraarryy pprrooxxyy sseerrvveerr vviiaa _a ccrraafftteedd
+       PPrrooxxyy hheeaaddeerr _i_n aann HHTTTTPP rreeqquueesstt,, aakkaa aann ""hhttttppooxxyy"" iissssuuee..
+              NOTE: _t_h_e vendor states "This mitigation has been  assigned  _t_h_e
+              identifier  _C_V_E-2016-5387"; _i_n other words, _t_h_i_s _i_s not _a _C_V_E ID
+              _f_o_r _a vulnerability.
 
 HHIINNTTSS
-       _f_a_l_c_o _u_s_e_. _t_h_e toolswatch/vfeed _d_a_t_a_b_a_s_e. The _d_a_t_a_b_a_s_e _i_s updated every
-       _w_e_e_k  or  two. Update _t_h_i_s _d_a_t_a_b_a_s_e _i_n _a cron job. with _t_h_e --uu followed
-       by --cc.
+       _f_a_l_c_o _u_s_e_. _t_h_e nvd _d_a_t_a_b_a_s_e. The _d_a_t_a_b_a_s_e _i_s updated every day or  two.
+       Update _t_h_i_s _d_a_t_a_b_a_s_e _i_n _a cron job. with _t_h_e --uu.
 
-       To regularly _s_e_a_r_c_h _f_o_r _a group _o_f libraries, _a_p_p_. _a_n_d  operating  sys-
-       tems,  put  _t_h_e  information _i_n _a watchfile _a_n_d run vfeed --ff watchfile.
+       To  regularly  _s_e_a_r_c_h _f_o_r _a group _o_f libraries, apps _a_n_d operating sys-
+       tems, put _t_h_e information _i_n _a watchfile _a_n_d run  _f_a_l_c_o  --ff  watchfile.
        The ffoorrmmaatt _o_f each watch item _i_n _t_h_e _f_i_l_e _i_s packagename:_v_e_r_s_i_o_n .
 
-       If you _a_r_e doing regular _s_o_f_t_w_a_r_e builds, _f_o_r example using  make,  you
-       can  _u_s_e  _f_a_l_c_o with _t_h_e _t_h_e --bb option. If _f_a_l_c_o finds _a match, it will
-       _r_e_t_u_r_n an error, _t_h_e make will _e_x_i_t, _a_n_d you  will  have  _t_o  determine
-       whether  _t_h_e  bug _r_e_p_o_r_t_e_d has _a _s_e_c_u_r_i_t_y impact on your _p_r_o_j_e_c_t _a_n_d _i_f
+       If  you  _a_r_e doing regular _s_o_f_t_w_a_r_e builds, _f_o_r example using make, you
+       can _u_s_e _f_a_l_c_o with _t_h_e _t_h_e --bb option. If _f_a_l_c_o finds _a match,  it  will
+       _r_e_t_u_r_n  an  error,  _t_h_e  make will _e_x_i_t, _a_n_d you will have _t_o determine
+       whether _t_h_e bug _r_e_p_o_r_t_e_d has _a _s_e_c_u_r_i_t_y impact on your _p_r_o_j_e_c_t  _a_n_d  _i_f
        you need _t_o _u_p_d_a_t_e _t_o that newer ppaacckkaaggee.
 
-       Getting aquinted with packagenames as _u_s_e_. _i_n _N_V_D _C_V_E _f_a_l_c_o _i_s only  as
-       good  as _t_h_e ppaacckkaaggee nnaammee _a_n_d _v_e_r_s_i_o_n information you give it. Start by
-       just using _f_a_l_c_o --nn _t_o see _i_f you _a_r_e using _t_h_e correct name.  You  can
-       also  _s_e_a_r_c_h  _t_h_e  vfeed.db  _d_a_t_a_b_a_s_e  using _t_h_e toolswatch vfeedcli or
-       _s_q_l_i_t_e _t_o see how you need _t_o nnaammee your ppaacckkaaggee nnaammee _t_o  be  compatible
-       with  _t_h_e _C_P_E names _u_s_e_. _i_n _t_h_e _d_a_t_a_b_a_s_e. To examine _t_h_e _C_P_E dictionary
+       Getting  aquinted with packagenames as _u_s_e_. _i_n _N_V_D _C_V_E _f_a_l_c_o _i_s only as
+       good as _t_h_e ppaacckkaaggee nnaammee _a_n_d _v_e_r_s_i_o_n information you give it. Start  by
+       just  using  _f_a_l_c_o --nn _t_o see _i_f you _a_r_e using _t_h_e correct name. You can
+       also _s_e_a_r_c_h _t_h_e vfeed.db _d_a_t_a_b_a_s_e  using  _t_h_e  toolswatch  vfeedcli  or
+       _s_q_l_i_t_e  _t_o  see how you need _t_o nnaammee your ppaacckkaaggee nnaammee _t_o be compatible
+       with _t_h_e _C_P_E names _u_s_e_. _i_n _t_h_e _d_a_t_a_b_a_s_e. To examine _t_h_e _C_P_E  dictionary
        _l_o_o_k at: https://nvd.nist.gov/cpe.cfm
 
 SSEEEE AALLSSOO
        https://github.com/menkhus/_f_a_l_c_o
 
 BBUUGGSS
-       Searching _f_o_r ppaacckkaaggee names _a_n_d versions can lead _t_o both  false  posi-
-       tives  _a_n_d  false  negatives.  The _C_P_E matching documentation specifies
-       greater than _a_n_d less than logic.  _f_a_l_c_o  _a_n_d  other  tools  _u_s_e  regex
-       _m_a_t_c_h_e_s  _a_n_d _t_h_e fact that _t_h_e _N_V_D data provides an intended comprehen-
+       Searching  _f_o_r  ppaacckkaaggee names _a_n_d versions can lead _t_o both false posi-
+       tives _a_n_d false negatives. The  _C_P_E  matching  documentation  specifies
+       greater  than  _a_n_d  less  than  logic.  _f_a_l_c_o _a_n_d other tools _u_s_e regex
+       _m_a_t_c_h_e_s _a_n_d _t_h_e fact that _t_h_e _N_V_D data provides an intended  comprehen-
        sive _l_i_s_t _o_f impacted versions _f_o_r each _C_V_E nnuummbbeerr.
 
 AAUUTTHHOORRSS
@@ -112,15 +119,19 @@ LLIICCEENNSSEE
        not _u_s_e _t_h_i_s _f_i_l_e except _i_n compliance with _t_h_e License. You may obtain
        _a copy _o_f _t_h_e License at http://www.apache.org/licenses/LICENSE-2.0
 
-       Unless required by applicable law or agreed  _t_o  _i_n  writing,  _s_o_f_t_w_a_r_e
+       Unless  required  by  applicable  law or agreed _t_o _i_n writing, _s_o_f_t_w_a_r_e
        distributed under _t_h_e License _i_s distributed on an "AS IS" BASIS, WITH-
-       OUT WARRANTIES OR CONDITIONS OF ANY KIND, either  express  or  implied.
-       See  _t_h_e  License  _f_o_r  _t_h_e specific language governing permissions _a_n_d
+       OUT  WARRANTIES  OR  CONDITIONS OF ANY KIND, either express or implied.
+       See _t_h_e License _f_o_r _t_h_e specific  language  governing  permissions  _a_n_d
        limitations under _t_h_e License.
 
 VVEERRSSIIOONN
-       0.6.7
+       0.7.alpha
+
+TTHHAANNKKSS
+       _J_a_n  _S_c_h_a_u_m_a_n_n,  twitter _f_o_r https://github.com/jschauma/_n_v_d_2_s_q_l_i_t_e_3 NJ
+       Ouchn, vfeed _d_a_t_a_b_a_s_e, awesome tool!
 
 
 
-falco_manual                     June 25, 2016                        falco(1)
+falco_manual                   November 03, 2016                      falco(1)

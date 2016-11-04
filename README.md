@@ -94,6 +94,19 @@ name and version name to CPE URIs in the NVD database. Uses the Copyright
 2013, nvd2sqlite3 app.
 
 optional arguments:
+
+usage: falco [-h] [-b] [-c] [-C [CVE]] [-d [CVEDB_DATABASE]]
+             [-f [PACKAGELISTFILE]] [-i [ITEMS_REPORTED]] [-n [PACKAGE_NAME]]
+             [-o [OUTPUTFILE]] [-t [TYPE]] [-m [MINIMUM_DATE]] [-u]
+             [-v [PACKAGE_VERSION]] [-V]
+
+Checks command line or, a file list of software programs for known security
+defects documented in the National Vulnerability Database. Matches a project
+name and version name to CPE URIs in the NVD database. Uses the Copyright
+2013, nvd2sqlite3 app, thanks to: Jan Schaumann for
+https://github.com/jschauma/nvd2sqlite3
+
+optional arguments:
   -h, --help            show this help message and exit
   -b, --build_environment
                         for use in build environments, return fail if items
@@ -114,6 +127,10 @@ optional arguments:
                         name of output file
   -t [TYPE], --type [TYPE]
                         format of output, options are text, html, json
+  -m [MINIMUM_DATE], --minimum_date [MINIMUM_DATE]
+                        the minimum date we look for in the database for
+                        matches, default is the beginning of the data.format
+                        is like 2003-11-17
   -u, --update          download database. Do this about once a week
   -v [PACKAGE_VERSION], --package_version [PACKAGE_VERSION]
                         package version to look for
@@ -121,27 +138,26 @@ optional arguments:
 
 Usage Examples
 -----------------------
-Assumes cvedb is in the /var/db directory  
+Assumes cvedb is in the /usr/local/bin/falco/db directory  
 
 ### Example 1, check a package named 'python' version '2.7.3' for vulnerabilities in the NVD database ###
 
 ```sh
-$ ./falco.py -n python -v 2.7.3
+./falco.py -n http_server -m 2001-01-01
 ```    
-One Item being checked  
-        *** Potential security defect found in python:2.7.3  
-CVE: CVE-2013-7040  
-CVSS Score: 4.3  
-CPE id: cpe:/a:python:python:2.7.3  
-Published on:             2014-05-19T10:55:09.987-04:00  
-Summary Description: Python 2.7 before 3.4 only uses the last eight bits of the prefix to randomize hash values, which causes it to compute hash values without restricting the ability to trigger hash collisions predictably and makes it easier for context-dependent attackers to cause a denial of service (CPU consumption) via crafted input to an application that maintains a hash table.  NOTE: this vulnerability exists because of an incomplete fix for CVE-2012-1150.  
+*** Potential security defect found in http_server:
+CVE: CVE-2012-5955
+CVSS Score: 10.0
+Vulnerable software list, CPE id: [u'cpe:/a:ibm:http_server:5.3', u'cpe:/a:ibm:websphere_application_server:-:-:~~~z%2fos~~']
+Published on: 2012-12-20T07:02:19.937-05:00
+Summary Description: Unspecified vulnerability in the IBM HTTP Server component 5.3 in IBM WebSphere Application Server (WAS) for z/OS allows remote attackers to execute arbitrary commands via unknown vectors.
 
 ### Example 2, using falco in build situations ###
 
 Assume the feed database is in the /var/db subdirectory. Check a package named 'python' version '2.7.3' for vulnerabilities in the NVD database and if any are found, return a non zero return value.  Placing this in a makefile will cause make to exit when a vulnerability matches.  
 
 ```bash
-$ ./falco.py -d /var/db/cvedb -b -n python -v 2.7.3 -o falcolog  
+$ ./falco.py -n python -v 2.7.3 -m 2001-01-01 -b -o falcolog
 $ echo $?  
 1  
 $  
@@ -174,7 +190,7 @@ File a bug in the bug tracker, change the makefile, remove -b, and when the bug 
 
 Dependencies
 ------------
-1) update the /var/db/cvedb for initial use, using falco -u
+1) update the cvedb for initial use, using nvdloader -a 
 
 2) Note it would be a good idea to put this "falco -u" in a cron job, since falco counts on using updated NVD data to see when new vulnerabilities exist. This database is updated every few weeks.
 
