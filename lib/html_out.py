@@ -39,6 +39,7 @@ html_header = """<!DOCTYPE html>
 </head>
 <body>
 """
+
 html_footer = """
 </body>
 </html>
@@ -100,15 +101,15 @@ def cve_table_content(packagename=None, falco_dict={}):
     table = table_header + table_column_header
     table_body = ' '
     table_footer = """</div>
-              </table>
-              """
+</table>
+"""
     for item in falco_dict:
         template_content = """<tr>\n<td>{{cve}}</td>\n<td>{{summary}}</td>\
         \n<td>{{cvss_base_score}}</td>\n<td>{{date}}</td> \
         \n<td>{{cpe}}</td>\n</tr>\n"""
         table_body += pystache.render(template_content, item)
         table += table_body
-        table += table_footer
+    table += table_footer
     return table
 
 

@@ -46,9 +46,9 @@ NJ Ouchn, vfeed database, awesome tool!
 """
 
 from __future__ import print_function
-__version__ = '0.6.8'
+__version__ = '0.7 alpha'
 __author__ = 'Mark Menkhus, email: menkhus@icloud.com'
-__DEFAULT_DATABASE__ = '/var/db/cvedb'
+__DEFAULT_DATABASE__ = '/usr/local/falco/db/cvedb'
 import argparse
 import sys
 import os
@@ -58,7 +58,9 @@ import sqlite3
 import json
 import subprocess
 import lib
-
+# sometimes I just want to knwo where the bug is in a print statement
+from inspect import currentframe, getframeinfo
+__DEBUG__ = False
 # suppress .pyc creation
 sys.dont_write_bytecode
 
@@ -127,7 +129,8 @@ class PackageList(object):
         try:
             self.packageListInput = open(self.packageFile, 'r').readlines()
         except Exception, e:
-            print ("falco: packageList: Exception - %s" % (e,), file=self.outputfile)
+            print ("falco: packageList: Exception - %s" % (e,),
+                   file=self.outputfile)
             exit(1)
         for each in self.packageListInput:
             """filter commented lines, lines without package colon
@@ -149,14 +152,16 @@ class CheckNVDByPackage(object):
         CPE URI's like:
         cpe:/a:microsoft:internet_explorer:8.0.6001:beta
 
-        depends on the /var/db/cvedb database created by nvd2sqlite3
+        depends on the cvedb database created by nvd2sqlite3
     """
-    def __init__(self, package=None, database=__DEFAULT_DATABASE__, items=99):
+    def __init__(self, package=None, database=__DEFAULT_DATABASE__, items=999,
+                 minimum_date='2015-10-01'):
         """ Setup class
         """
         self.package = package
         self.database = database
         self.items = items
+        self.minimum_date = minimum_date
         self.json = {}
         self.matches = {}
         self.data = None
@@ -178,8 +183,9 @@ or two.", file=sys.stdout)
             self.conn = sqlite3.connect(self.database)
             self.cursor = self.conn.cursor()
             self.sql = "CREATE VIRTUAL TABLE cpe USING \
-            fts3(cpe_id PRIMARY KEY, cve_id references  nvd(vulnerable_software_list, \
-            cve_id));"
+            fts3(cpe_id PRIMARY KEY, cve_id references \
+                 nvd(vulnerable_software_list, \
+                     cve_id)); "
             self.data = self.cursor.execute(self.sql)
             self.sql = "INSERT INTO cpe (cpe_id, cve_id) SELECT \
             vulnerable_software_list, cve_id from nvd;"
@@ -188,7 +194,8 @@ or two.", file=sys.stdout)
             self.conn.close()
             return True
         except Exception, e:
-            print ("falco: CheckNVDByPackage.config: %s" % (e,), file=sys.stderr)
+            print ("falco: CheckNVDByPackage.config: %s" % (e,),
+                   file=sys.stderr)
             return False
 
     def update(self):
@@ -198,7 +205,8 @@ or two.", file=sys.stdout)
         try:
             subprocess.call([r'./nvdloader.py'])
         except Exception, e:
-            print ("falco: CheckNVDByPackage.update: %s" % (e,), file=sys.stderr)
+            print ("falco: CheckNVDByPackage.update: %s" % (e,),
+                   file=sys.stderr)
             sys.exit(1)
 
     def clean_data(self):
@@ -242,24 +250,28 @@ or two.", file=sys.stdout)
             self.conn = sqlite3.connect(self.database)
             self.cursor = self.conn.cursor()
         except Exception, e:
-            print ("falco: CheckNVDByPackage.get_data: %s" % (e,), file=sys.stderr)
+            print ("falco: CheckNVDByPackage.get_data: %s" % (e,),
+                   file=sys.stderr)
             exit()
         # Setting up the SQL query for get CPE and CVE data from nvd table
         # match against a package name in the CPE identifiers.
         # Match :packagename: or :packagename:n.n.n: packagename
-        # sort unique items, based on date first, then CVSS score
+        # sort unique items, based on CVSS score first, then date
         self.sql = r"""SELECT DISTINCT cve_id, score, vulnerable_software_list,
         published_datetime, summary
         FROM nvd
         """
-        self.sql += r' WHERE vulnerable_software_list like "%'
-        self.sql += self.package + r'%" COLLATE NOCASE '
+        self.sql += r' WHERE vulnerable_software_list like "%:'
+        self.sql += self.package + r'%" COLLATE NOCASE and '
+        self.sql += "published_datetime >= " + r'"' + self.minimum_date + r'"'
         self.sql += r' GROUP BY cve_id '
         self.sql += r' ORDER BY score DESC, '
         self.sql += r' published_datetime DESC'
         self.sql += r' LIMIT ' + str(self.items)
         self.sql += r';'
         self.data = self.cursor.execute(self.sql)
+        # if __DEBUG__:
+        #    print ("\n\nquery: %s\n\n" % (self.sql,))
         if self.data is not None:
             self.data = self.data.fetchall()
             self.conn.close()
@@ -314,7 +326,7 @@ def command_line():
     """process command line arguments
     Arguments: --config --packagelistfile --items_reported,
     --cvedb_database --build_environment, --outputfile, --package_name,
-    --package_version, --type --update, --Version
+    --package_version, --type --update, --minimum_date --Version
 
     output: help, usage, and state variables for options on the command line
     """
@@ -349,6 +361,8 @@ Jan Schaumann for https://github.com/jschauma/nvd2sqlite3
                         nargs='?', default=None)
     parser.add_argument('-t', '--type', help='format of output, options are \
         text, html, json', nargs='?', default='text')
+    parser.add_argument('-m', '--minimum_date', help='the minimum date we \
+    look for in the database for matches, default is the beginning of the data. format is like 2003-11-17', nargs='?', default='2015-10-01')
     parser.add_argument('-u', '--update', help='download database. Do this \
         about once a week', action='store_true', default=False)
     parser.add_argument('-v', '--package_version', help='package version to \
@@ -360,11 +374,12 @@ Jan Schaumann for https://github.com/jschauma/nvd2sqlite3
 
 
 def check_item_in_database(package_name='', package_version='', d='', i=1,
-                           outputfile=sys.stdout, output_type='text'):
+                           outputfile=sys.stdout, output_type='text',
+                           minimum_date='2015-10-01'):
     """ Check a string package name and version for matches in the CPE content\
     of the NVD
 
-    depends on the cve database stored in /var/db/cvedb
+    depends on the cve database stored in /usr/local/falco/db/cvedb
 
     Desired outcome:
     ----------------
@@ -397,7 +412,8 @@ def check_item_in_database(package_name='', package_version='', d='', i=1,
         else:
             return False
     try:
-        p = CheckNVDByPackage(package=package, database=d, items=i)
+        p = CheckNVDByPackage(package=package, database=d, items=i,
+                              minimum_date=minimum_date)
         # report is a list of ordered tuples containing CVE findings
         report = p.get_data()
         # setup an object to contain the data
@@ -416,6 +432,7 @@ def check_item_in_database(package_name='', package_version='', d='', i=1,
                 j['cvss_base_score'] = item[1]
                 cpe = item[2].split(',')
                 cpe.sort
+                cpe = ','.join(cpe)
                 j['cpe'] = cpe
                 j['date'] = item[3]
                 j['summary'] = item[4]
@@ -437,16 +454,18 @@ def check_item_in_database(package_name='', package_version='', d='', i=1,
                     refactor.
                 """
                 html = ''
-                html = lib.html_out.cve_table_content(package,
-                                                  j_data.get_json_data())
-                if html != None:
-                    print('line 444')
+                html = lib.html_out.cve_table_content(package,                                                        j_data.get_json_data())
+                if html is not None:
+                    # whew, there be dragons
+                    if __DEBUG__:
+                        frameinfo = getframeinfo(currentframe())
+                        print ("** Debug breadcrumbs, HMTL out: %s, line: %s" %
+                               (frameinfo.filename, frameinfo.lineno))
                     html = lib.html_out.html_wrap_content(html)
-                    print('line 446')
                     print (html, file=outputfile)
                     return True
                 else:
-                    return None
+                    return
         detailed_report = {}
         if output_type == 'text':
             """ This code has reached spaghetti code proportions
@@ -472,7 +491,8 @@ def check_item_in_database(package_name='', package_version='', d='', i=1,
         return False
 
 
-def find_cve(cve_target, database=__DEFAULT_DATABASE__):
+def find_cve(cve_target, database=__DEFAULT_DATABASE__,
+             minimum_date='2015-10-01'):
 
     """   Get the data from the database.
     """
@@ -494,11 +514,11 @@ def find_cve(cve_target, database=__DEFAULT_DATABASE__):
 
 
 def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
-                           output_type='text'):
+                           output_type='text', minimum_date='2015-10-01'):
     """ check a list of package names and versions for matches in the
     CPE content of the NVD
 
-    depends on the /var/db/cvedb database by default
+    depends on the /usr/local/falco/db/cvedb database by default
 
     """
     not_found = ''
@@ -508,7 +528,8 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
     detailed_report = {}
     for package in packages:
         try:
-            p = CheckNVDByPackage(package=package, database=d, items=i)
+            p = CheckNVDByPackage(package=package, database=d, items=i,
+                                  minimum_date=minimum_date)
             report = p.get_data()
             j_data = []
             if output_type == 'json' or output_type == 'html':
@@ -538,11 +559,12 @@ def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
                     """
                     try:
                         table_content = lib.html_out.cve_table_content(package,
-                                                                   j_data)
+                                                                       j_data)
                         # work around for repeating html preamble, print it in
                         # main
                         # html_page = html_out.html_wrap_content(table_content)
-                        print (table_content, file=outputfile)
+                        if table_content is not None:
+                            print (table_content, file=outputfile)
                     except Exception, error:
                         pass
             if output_type == 'text':
@@ -625,8 +647,7 @@ Summary Description: %s\n\n" % (cve[0], cve[1],
     print (s, file=outputfile)
 
 
-def build_exit(return_value=False, build_return=False, outputfile=sys.stderr,
-               output_type='text'):
+def build_exit(return_value=False, build_return=False, outputfile=sys.stderr, output_type='text'):
     """ if the -b build_environment option is chosen, the return value
     is True if a match in the NVD is made, but we want the build
     (for example this gnu make) to sense an error and exit before
@@ -666,7 +687,8 @@ def main():
         main() Implement falco main program logic, tests for command line
         functions and generates report output
 
-        depends on /var/db/cvedb a database that is created by nvd2sqlite3
+        depends on /usr/local/falco/db/cvedba database that is created
+        by nvd2sqlite3
         """
     args = command_line()
 
@@ -716,6 +738,11 @@ name or package version", file=outputfile)
     else:
         i = 1
 
+    if args.minimum_date:
+        minimum_date = args.minimum_date
+    else:
+        minimum_date = '2015-10-01'
+
     if not os.path.exists(d):
         print ("IOError: cvedb database does not exist: %s" % (d,))
         sys.exit(2)
@@ -742,7 +769,8 @@ name or package version", file=outputfile)
                     print (lib.html_out.html_closing(), file=outputfile)
                     sys.exit(0)
         if build_exit(check_list_in_database(packages, d, i, outputfile,
-                      args.type), build_return, outputfile, args.type):
+                      args.type, minimum_date), build_return,
+                      outputfile, args.type):
             sys.exit(0)
         else:
             sys.exit(1)
@@ -754,14 +782,14 @@ name or package version", file=outputfile)
                 sys.exit(1)
             output_type = args.type
         if build_exit(check_item_in_database(args.package_name,
-                      args.package_version, d, i, outputfile, output_type),
+                      args.package_version, d, i, outputfile, output_type, minimum_date=minimum_date),
                       build_return, outputfile):
             sys.exit(0)
         else:
             sys.exit(1)
 
     if args.CVE:
-        data = find_cve(args.CVE, database=d)
+        data = find_cve(args.CVE, database=d, minimum_date=minimum_date)
         if data:
             if args.type == 'text':
                 cpes = data[4].split(',')
