@@ -44,11 +44,12 @@ Thanks and shout outs:
 Jan Schaumann, twitter for https://github.com/jschauma/nvd2sqlite3
 NJ Ouchn, vfeed database, awesome tool!
 """
-
 from __future__ import print_function
-__version__ = '0.7 alpha'
+__version__ = '0.7'
 __author__ = 'Mark Menkhus, email: menkhus@icloud.com'
 __DEFAULT_DATABASE__ = '/usr/local/falco/db/cvedb'
+
+
 import argparse
 import sys
 import os
@@ -57,8 +58,8 @@ import re
 import sqlite3
 import json
 import subprocess
-import lib
-# sometimes I just want to knwo where the bug is in a print statement
+import falco_lib as lib
+# sometimes I just want to know where the bug is in a print statement
 from inspect import currentframe, getframeinfo
 __DEBUG__ = False
 # suppress .pyc creation
@@ -155,7 +156,7 @@ class CheckNVDByPackage(object):
         depends on the cvedb database created by nvd2sqlite3
     """
     def __init__(self, package=None, database=__DEFAULT_DATABASE__, items=999,
-                 minimum_date='2015-10-01'):
+                 minimum_date='2002-01-01'):
         """ Setup class
         """
         self.package = package
@@ -203,7 +204,7 @@ or two.", file=sys.stdout)
         and database characteristics.
         """
         try:
-            subprocess.call([r'./nvdloader.py'])
+            subprocess.call([r'./nvdloader.py',self.database])
         except Exception, e:
             print ("falco: CheckNVDByPackage.update: %s" % (e,),
                    file=sys.stderr)
@@ -362,7 +363,7 @@ Jan Schaumann for https://github.com/jschauma/nvd2sqlite3
     parser.add_argument('-t', '--type', help='format of output, options are \
         text, html, json', nargs='?', default='text')
     parser.add_argument('-m', '--minimum_date', help='the minimum date we \
-    look for in the database for matches, default is the beginning of the data. format is like 2003-11-17', nargs='?', default='2015-10-01')
+    look for in the database for matches, default is the beginning of the data. format is like 2003-11-17', nargs='?', default='2002-01-01')
     parser.add_argument('-u', '--update', help='download database. Do this \
         about once a week', action='store_true', default=False)
     parser.add_argument('-v', '--package_version', help='package version to \
@@ -375,7 +376,7 @@ Jan Schaumann for https://github.com/jschauma/nvd2sqlite3
 
 def check_item_in_database(package_name='', package_version='', d='', i=1,
                            outputfile=sys.stdout, output_type='text',
-                           minimum_date='2015-10-01'):
+                           minimum_date='2002-01-01'):
     """ Check a string package name and version for matches in the CPE content\
     of the NVD
 
@@ -492,8 +493,7 @@ def check_item_in_database(package_name='', package_version='', d='', i=1,
 
 
 def find_cve(cve_target, database=__DEFAULT_DATABASE__,
-             minimum_date='2015-10-01'):
-
+             minimum_date='2002-01-01'):
     """   Get the data from the database.
     """
     try:
@@ -514,7 +514,7 @@ def find_cve(cve_target, database=__DEFAULT_DATABASE__,
 
 
 def check_list_in_database(packages=[], d='', i=1, outputfile=sys.stdout,
-                           output_type='text', minimum_date='2015-10-01'):
+                           output_type='text', minimum_date='2002-01-01'):
     """ check a list of package names and versions for matches in the
     CPE content of the NVD
 
@@ -703,7 +703,7 @@ def main():
         outputfile = sys.stdout
 
     if args.config:
-        d = CheckNVDByPackage()
+        d = CheckNVDByPackage(database=d)
         if d.config():
             print ('database config completed.\nfalco is ready to use.',
                    file=outputfile)
@@ -713,7 +713,7 @@ def main():
             sys.exit(1)
 
     if args.update:
-        d = CheckNVDByPackage()
+        d = CheckNVDByPackage(database=d)
         d.update()
         print ('falco database was updated, falco ready to use',
                file=outputfile)
@@ -741,7 +741,7 @@ name or package version", file=outputfile)
     if args.minimum_date:
         minimum_date = args.minimum_date
     else:
-        minimum_date = '2015-10-01'
+        minimum_date = '2002-01-01'
 
     if not os.path.exists(d):
         print ("IOError: cvedb database does not exist: %s" % (d,))

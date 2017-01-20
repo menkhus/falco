@@ -1,7 +1,9 @@
 #!/bin/sh
 
+db='/usr/local/falco/db/cvedb'
+
 echo "testing -t, type output, -t text:"
-../falco -t text -d /var/db/cvedb -n http_server -i 2
+../falco -t text -d $db -n openssl -i 2
 if [ "$?" -gt 0 ]
 then
     echo "format test: failed -t text test"
@@ -11,7 +13,7 @@ else:
 fi
 
 echo "testing -t, type output, -t json:"
-../falco -t json -d /var/db/cvedb -n http_server -i 2
+../falco -t json -d $db -n python -i 2
 if [ "$?" -gt 0 ]
 then
     echo "format test: failed -t json test"
@@ -21,7 +23,7 @@ else:
 fi
 
 echo "testing -t, type output, -t html:"
-../falco -t html -d /var/db/cvedb -n http_server -i 2
+../falco -t html -d $db -n python -i 2
 if [ "$?" -gt 0 ]
 then
     echo "format test: failed -t html test"

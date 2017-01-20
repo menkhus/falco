@@ -84,17 +84,6 @@ limitations under the License.
 
 Falco help
 ----------
-`usage: falco [-h] [-b] [-c] [-C [CVE]] [-d [CVEDB_DATABASE]]
-             [-f [PACKAGELISTFILE]] [-i [ITEMS_REPORTED]] [-n [PACKAGE_NAME]]
-             [-o [OUTPUTFILE]] [-t [TYPE]] [-u] [-v [PACKAGE_VERSION]] [-V]
-
-Checks command line or, a file list of software programs for known security
-defects documented in the National Vulnerability Database. Matches a project
-name and version name to CPE URIs in the NVD database. Uses the Copyright
-2013, nvd2sqlite3 app.
-
-optional arguments:
-
 usage: falco [-h] [-b] [-c] [-C [CVE]] [-d [CVEDB_DATABASE]]
              [-f [PACKAGELISTFILE]] [-i [ITEMS_REPORTED]] [-n [PACKAGE_NAME]]
              [-o [OUTPUTFILE]] [-t [TYPE]] [-m [MINIMUM_DATE]] [-u]
@@ -129,35 +118,37 @@ optional arguments:
                         format of output, options are text, html, json
   -m [MINIMUM_DATE], --minimum_date [MINIMUM_DATE]
                         the minimum date we look for in the database for
-                        matches, default is the beginning of the data.format
+                        matches, default is the beginning of the data. format
                         is like 2003-11-17
   -u, --update          download database. Do this about once a week
   -v [PACKAGE_VERSION], --package_version [PACKAGE_VERSION]
                         package version to look for
-  -V, --Version         report the version of falco and exit`
+  -V, --Version         report the version of falco and exit
+
 
 Usage Examples
 -----------------------
-Assumes cvedb is in the /usr/local/bin/falco/db directory  
+Assumes cvedb is in the /var/db directory  
 
-### Example 1, check a package named 'http_server' for vulnerabilities in the NVD database ###
+### Example 1, check a package named 'python' version '2.7.3' for vulnerabilities in the NVD database ###
 
 ```sh
-./falco.py -n http_server -m 2001-01-01
+$ ./falco -n python -v 2.7.3
 ```    
-*** Potential security defect found in http_server:
-CVE: CVE-2016-5387
-CVSS Score: 5.1
-Vulnerable software list, CPE id: [u'cpe:/a:apache:http_server:2.4.23']
-Published on: 2016-07-18T22:00:19.837-04:00
-Summary Description: The Apache HTTP Server through 2.4.23 follows RFC 3875 section 4.1.18 and therefore does not protect applications from the presence of untrusted client data in the HTTP_PROXY environment variable, which might allow remote attackers to redirect an application's outbound HTTP traffic to an arbitrary proxy server via a crafted Proxy header in an HTTP request, aka an "httpoxy" issue.  NOTE: the vendor states "This mitigation has been assigned the identifier CVE-2016-5387"; in other words, this is not a CVE ID for a vulnerability.
+One Item being checked  
+        *** Potential security defect found in python:2.7.3  
+CVE: CVE-2013-7040  
+CVSS Score: 4.3  
+CPE id: cpe:/a:python:python:2.7.3  
+Published on:             2014-05-19T10:55:09.987-04:00  
+Summary Description: Python 2.7 before 3.4 only uses the last eight bits of the prefix to randomize hash values, which causes it to compute hash values without restricting the ability to trigger hash collisions predictably and makes it easier for context-dependent attackers to cause a denial of service (CPU consumption) via crafted input to an application that maintains a hash table.  NOTE: this vulnerability exists because of an incomplete fix for CVE-2012-1150.  
 
-###example 2, using falco in build situations ###
+### Example 2, using falco in build situations ###
 
-Check a package named 'http_server' for vulnerabilities in the NVD database and if any are found, return a non zero return value.  Placing this in a makefile will cause make to exit when a vulnerability matches.  
+Assume the feed database is in the /var/db subdirectory. Check a package named 'python' version '2.7.3' for vulnerabilities in the NVD database and if any are found, return a non zero return value.  Placing this in a makefile will cause make to exit when a vulnerability matches.  
 
 ```bash
-$ ./falco.py -n http_server -m 2001-01-01 -b -o falcolog
+$ ./falco -d /var/db/cvedb -b -n python -v 2.7.3 -o falcolog  
 $ echo $?  
 1  
 $  
@@ -179,7 +170,7 @@ clean:
 
 ```bash
 $ make  
-./falco.py -b -n bash  -v 1.14.7 -d /var/db/cvedb -o bash.build.out  
+./falco -b -n bash  -v 1.14.7 -d /var/db/cvedb -o bash.build.out  
 make: *** [bash.build.out] Error 1  
 ```  
 #### Explanation ####
@@ -190,7 +181,7 @@ File a bug in the bug tracker, change the makefile, remove -b, and when the bug 
 
 Dependencies
 ------------
-1) update the cvedb for initial use, using nvdloader -a 
+1) update the /var/db/cvedb for initial use, using falco -u
 
 2) Note it would be a good idea to put this "falco -u" in a cron job, since falco counts on using updated NVD data to see when new vulnerabilities exist. This database is updated every few weeks.
 

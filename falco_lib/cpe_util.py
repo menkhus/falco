@@ -3,7 +3,7 @@
 
 """
 import cpe
-#from pkg_resources import parse_version
+# from pkg_resources import parse_version
 
 
 def cpe_clip(version, cpe_list_str):
@@ -11,7 +11,7 @@ def cpe_clip(version, cpe_list_str):
         CPE matches returned have long lists of CPEs.  While that's
         interesting to see what all is vulnerable, you might want to just
         want to see from the version you are matching to the last vulnerable
-        version, what is vulnesrable.
+        version, what is vulnerable.
 
         requires: cpe library, distutils version comparison functions
 
@@ -30,12 +30,13 @@ def cpe_clip(version, cpe_list_str):
     cpe_string_out = ','.join(cpe_list_out)
     return cpe_string_out
 
+
 def main():
     """ testing
     """
     cpes = [u'cpe:/a:openssl:openssl:1.0.1s', u'cpe:/a:openssl:openssl:1.0.2', u'cpe:/a:openssl:openssl:1.0.2:beta1', u'cpe:/a:openssl:openssl:1.0.2:beta2', u'cpe:/a:openssl:openssl:1.0.2:beta3', u'cpe:/a:openssl:openssl:1.0.2a', u'cpe:/a:openssl:openssl:1.0.2b', u'cpe:/a:openssl:openssl:1.0.2c', u'cpe:/a:openssl:openssl:1.0.2d', u'cpe:/a:openssl:openssl:1.0.2e', u'cpe:/a:openssl:openssl:1.0.2f', u'cpe:/a:openssl:openssl:1.0.2g']
-    version='1.0.2a'
-    cpes_string =  ','.join(cpes)
+    version = '1.0.2a'
+    cpes_string = ','.join(cpes)
     for each in cpes:
         version = each.split(':')[4]
         print "Version: %s\nClipped CPEs: %s" % (version, cpe_clip(version, cpes_string))

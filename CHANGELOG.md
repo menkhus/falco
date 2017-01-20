@@ -1,3 +1,6 @@
+#### version 0.7 updated -u logic to support -d database, fixed html output
+bug, updated documentation, added -m (minimum date) so a yyyy-mm-dd date can be the beginning of a search
+
 #### version 0.6.7 changed from vfeed to database loaded by nvd2sqlite3
 
 #### version 0.6.6 changed search to make sort offer most severe CVSS
